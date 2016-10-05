@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-05 10:49:55
+# @Last Modified time: 2016-10-05 10:52:00
 
 import tensorflow as tf
 import numpy as np
@@ -227,15 +227,16 @@ with tf.Session() as sess:
 
     for step in xrange(max_steps):
         # print "variables 3:", sess.run(variables)
-        summary, _ = sess.run([summarize_merged, opt_op])
-        summary_writer.add_summary(summary, step)
+        # summary, _ = sess.run([summarize_merged, opt_op])
+        sess.run([opt_op])
+        # summary_writer.add_summary(summary, step)
 
-        var_values_opt = sess.run(variables)
-        nll_value_opt = sess.run(nll)
+        # var_values_opt = sess.run(variables)
+        # nll_value_opt = sess.run(nll)
         # sess.run(update_vars)
         # var_values_clip = np.array(sess.run(variables))
         # nll_value_clip = np.array(sess.run(nll))
-        print "opt\t" + "\t".join(["%6.4e" % v for v in var_values_opt]) + "\t | %f" % nll_value_opt
+        # print "opt\t" + "\t".join(["%6.4e" % v for v in var_values_opt]) + "\t | %f" % nll_value_opt
         # clipped = np.where(var_values_opt == var_values_clip, [" "*10] * len(variables), ["%6.4e" % v for v in var_values_clip])
         # print "clip\t" + "\t".join(clipped) + "\t | %f" % nll_value_clip
 
