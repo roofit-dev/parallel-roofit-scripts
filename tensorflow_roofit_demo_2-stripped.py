@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-05 10:52:00
+# @Last Modified time: 2016-10-05 10:56:24
 
 import tensorflow as tf
 import numpy as np
@@ -206,11 +206,12 @@ check_op = tf.report_uninitialized_variables()
 # start session
 with tf.Session() as sess:
     # Merge all the summaries and write them out to /tmp/mnist_logs (by default)
-    summarize_merged = tf.merge_all_summaries()
-    summary_writer = tf.train.SummaryWriter('./train', sess.graph)
+    # summarize_merged = tf.merge_all_summaries()
+    # summary_writer = tf.train.SummaryWriter('./train', sess.graph)
     # Run the init operation.
-    print sess.run(init_op)
-    print sess.run(check_op)
+    sess.run(init_op)
+    # print sess.run(init_op)
+    # print sess.run(check_op)
 
     true_vars = {}
     for v in variables:
@@ -219,9 +220,9 @@ with tf.Session() as sess:
 
     true_vars['m0'] = m0.eval()
 
-    print "name\t" + "\t".join([v.name.ljust(10) for v in variables]) + "\t | nll"
-    print "init\t" + "\t".join(["%6.4e" % v for v in sess.run(variables)])
-    print
+    # print "name\t" + "\t".join([v.name.ljust(10) for v in variables]) + "\t | nll"
+    # print "init\t" + "\t".join(["%6.4e" % v for v in sess.run(variables)])
+    # print
 
     start = timer()
 
