@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-05 11:50:17
+# @Last Modified time: 2016-10-05 13:24:46
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -58,9 +58,14 @@ def gaussian_pdf(x, mean, std):
 def argus_pdf(m, m0, c, p=0.5):
     t = m / m0
     u = 1 - t * t
-    return tf.cond(tf.greater_equal(t, one),
-                   lambda: zero,
-                   lambda: m * tf.pow(u, p) * tf.exp(c * u), name="argus_pdf")
+    return tf.select(tf.greater_equal(t, one),
+                     tf.zeros_like(m),
+                     m * tf.pow(u, p) * tf.exp(c * u),
+                     name="argus_pdf")
+    # return tf.cond(tf.greater_equal(t, one),
+    #                lambda: zero,
+    #                lambda: m * tf.pow(u, p) * tf.exp(c * u),
+    #                name="argus_pdf")
     # N.B.: bij cond moeten de argumenten functies zijn (zonder argumenten)
     #       zodat tf ze pas hoeft te callen / uit te rekenen als ze nodig zijn.
     #       Dat is dus bij select niet mogelijk, daar krijg je meteen beide hele
@@ -179,7 +184,15 @@ for key in constraint.keys():
     constraint[key] = (tf.constant(low, dtype=tf.float64),
                        tf.constant(high, dtype=tf.float64))
 
-nll = tf.neg(tf.reduce_sum(tf.log(tf.map_fn(lambda mes: sum_pdf(mes, nsig, sigmean, sigwidth, nbkg, m0, argpar, constraint['mes'][0], constraint['mes'][1]), data))), name="nll")
+
+# nll = tf.neg(tf.reduce_sum(tf.log(tf.map_fn(lambda mes: sum_pdf(mes, nsig, sigmean, sigwidth, nbkg, m0, argpar, constraint['mes'][0], constraint['mes'][1]), data))), name="nll")
+
+print("N.B.: using direct data entry")
+nll = tf.neg(tf.reduce_sum(tf.log(sum_pdf(data, nsig, sigmean, sigwidth, nbkg, m0, argpar, constraint['mes'][0], constraint['mes'][1]))), name="nll")
+
+# print("N.B.: using unsummed version of nll! This appears to be the way people minimize cost functions in tf...")
+# nll = tf.neg(tf.log(sum_pdf(data, nsig, sigmean, sigwidth, nbkg, m0, argpar, constraint['mes'][0], constraint['mes'][1])), name="nll")
+
 # grad = tf.gradients(nll, [mu, sigma])
 
 max_steps = 10
@@ -222,9 +235,9 @@ with tf.Session() as sess:
 
     true_vars['m0'] = m0.eval()
 
-    # print "name\t" + "\t".join([v.name.ljust(10) for v in variables]) + "\t | nll"
-    # print "init\t" + "\t".join(["%6.4e" % v for v in sess.run(variables)])
-    # print
+    print("name\t" + "\t".join([v.name.ljust(10) for v in variables]) + "\t | nll")
+    print("init\t" + "\t".join(["%6.4e" % v for v in sess.run(variables)]))
+    print
 
     start = timer()
 
@@ -234,12 +247,12 @@ with tf.Session() as sess:
         sess.run([opt_op])
         # summary_writer.add_summary(summary, step)
 
-        # var_values_opt = sess.run(variables)
-        # nll_value_opt = sess.run(nll)
+        var_values_opt = sess.run(variables)
+        nll_value_opt = sess.run(nll)
         # sess.run(update_vars)
         # var_values_clip = np.array(sess.run(variables))
         # nll_value_clip = np.array(sess.run(nll))
-        # print "opt\t" + "\t".join(["%6.4e" % v for v in var_values_opt]) + "\t | %f" % nll_value_opt
+        print("opt\t" + "\t".join(["%6.4e" % v for v in var_values_opt]) + "\t | %f" % nll_value_opt)
         # clipped = np.where(var_values_opt == var_values_clip, [" "*10] * len(variables), ["%6.4e" % v for v in var_values_clip])
         # print "clip\t" + "\t".join(clipped) + "\t | %f" % nll_value_clip
 
