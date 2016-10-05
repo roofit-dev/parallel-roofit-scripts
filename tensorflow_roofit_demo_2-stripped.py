@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-05 10:56:24
+# @Last Modified time: 2016-10-05 10:57:39
 
 import tensorflow as tf
 import numpy as np
@@ -182,13 +182,13 @@ nll = tf.neg(tf.reduce_sum(tf.log(tf.map_fn(lambda mes: sum_pdf(mes, nsig, sigme
 
 max_steps = 10
 
-sigmean_c = apply_constraint(sigmean, constraint)
-sigwidth_c = apply_constraint(sigwidth, constraint)
-argpar_c = apply_constraint(argpar, constraint)
-nsig_c = apply_constraint(nsig, constraint)
-nbkg_c = apply_constraint(nbkg, constraint)
+# sigmean_c = apply_constraint(sigmean, constraint)
+# sigwidth_c = apply_constraint(sigwidth, constraint)
+# argpar_c = apply_constraint(argpar, constraint)
+# nsig_c = apply_constraint(nsig, constraint)
+# nbkg_c = apply_constraint(nbkg, constraint)
 
-update_vars = [sigmean_c, sigwidth_c, argpar_c, nsig_c, nbkg_c]
+# update_vars = [sigmean_c, sigwidth_c, argpar_c, nsig_c, nbkg_c]
 
 variables = tf.all_variables()
 
@@ -198,10 +198,10 @@ variables = tf.all_variables()
 opt = tf.train.AdamOptimizer()
 opt_op = opt.minimize(nll)
 
-tf.scalar_summary('nll', nll)
+# tf.scalar_summary('nll', nll)
 
 init_op = tf.initialize_all_variables()
-check_op = tf.report_uninitialized_variables()
+# check_op = tf.report_uninitialized_variables()
 
 # start session
 with tf.Session() as sess:
