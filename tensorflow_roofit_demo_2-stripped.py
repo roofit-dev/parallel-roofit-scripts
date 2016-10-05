@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-05 13:48:06
+# @Last Modified time: 2016-10-05 13:52:02
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -196,6 +196,7 @@ nll = tf.neg(tf.reduce_sum(tf.log(sum_pdf(data, nsig, sigmean, sigwidth, nbkg, m
 # grad = tf.gradients(nll, [mu, sigma])
 
 max_steps = 1000
+status_every = 100
 
 # sigmean_c = apply_constraint(sigmean, constraint)
 # sigwidth_c = apply_constraint(sigwidth, constraint)
@@ -213,7 +214,7 @@ variables = tf.all_variables()
 opt = tf.train.AdamOptimizer()
 opt_op = opt.minimize(nll)
 
-# tf.scalar_summary('nll', nll)
+tf.scalar_summary('nll', nll)
 
 init_op = tf.initialize_all_variables()
 # check_op = tf.report_uninitialized_variables()
@@ -221,8 +222,8 @@ init_op = tf.initialize_all_variables()
 # start session
 with tf.Session() as sess:
     # Merge all the summaries and write them out to /tmp/mnist_logs (by default)
-    # summarize_merged = tf.merge_all_summaries()
-    # summary_writer = tf.train.SummaryWriter('./train', sess.graph)
+    summarize_merged = tf.merge_all_summaries()
+    summary_writer = tf.train.SummaryWriter('./train', sess.graph)
     # Run the init operation.
     sess.run(init_op)
     # print sess.run(init_op)
@@ -235,7 +236,7 @@ with tf.Session() as sess:
 
     true_vars['m0'] = m0.eval()
 
-    print("name\t" + "\t".join([v.name.ljust(10) for v in variables]) + "\t | nll\t | step")
+    print("name\t" + "\t".join([v.name.ljust(10) for v in variables]) + "\t | nll\t\t\t | step")
     print("init\t" + "\t".join(["%6.4e" % v for v in sess.run(variables)]))
     print
 
@@ -243,11 +244,11 @@ with tf.Session() as sess:
 
     for step in xrange(max_steps):
         # print "variables 3:", sess.run(variables)
-        # summary, _ = sess.run([summarize_merged, opt_op])
-        sess.run([opt_op])
-        # summary_writer.add_summary(summary, step)
+        summary, _ = sess.run([summarize_merged, opt_op])
+        # sess.run([opt_op])
+        summary_writer.add_summary(summary, step)
 
-        if step % 100 == 0:
+        if step % status_every == 0:
             var_values_opt = sess.run(variables)
             nll_value_opt = sess.run(nll)
             # sess.run(update_vars)
