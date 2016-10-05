@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-05 11:15:55
+# @Last Modified time: 2016-10-05 11:33:50
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -119,7 +119,8 @@ def argus_pdf_phalf_WN(m, m0, c, m_low, m_high, tf_norm=tf.constant(False)):
     # norm = tf.cond(tf_norm,
     #                lambda: argus_integral_phalf(m_low, m_high, m0, c),
     #                lambda: argus_numerical_norm, name="argus_norm")
-    norm = argus_numerical_norm
+    # norm = argus_numerical_norm
+    norm = argus_integral_phalf(m_low, m_high, m0, c)
     return argus_pdf(m, m0, c) / norm
 
 
