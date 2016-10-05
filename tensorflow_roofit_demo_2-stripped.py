@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-05 10:57:39
+# @Last Modified time: 2016-10-05 10:59:14
 
 import tensorflow as tf
 import numpy as np
@@ -153,12 +153,6 @@ nbkg = tf.Variable(np.float64(800), name="nbkg")
 def sum_pdf(mes, nsig, sigmean, sigwidth, nbkg, m0, argpar, mes_low, mes_high):
     return tf.add(nsig * gaussian_pdf(mes, sigmean, sigwidth), nbkg * argus_pdf_phalf_WN(mes, m0, argpar, mes_low, mes_high), name="sum_pdf")
 
-
-def sum_pdf_test(mes, nsig, sigmean, sigwidth, nbkg, m0, argpar, mes_low, mes_high):
-    print locals()
-    return sum_pdf(mes, nsig, sigmean, sigwidth, nbkg, m0, argpar, mes_low, mes_high)
-
-sum_pdf_vec = np.vectorize(sum_pdf, otypes=[np.float])
 
 # data in RooFit genereren en importeren
 # draai dit in ROOT:
