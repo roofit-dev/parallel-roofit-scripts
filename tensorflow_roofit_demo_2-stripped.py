@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-05 13:24:46
+# @Last Modified time: 2016-10-05 13:48:06
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -121,10 +121,10 @@ def argus_pdf_phalf_WN(m, m0, c, m_low, m_high, tf_norm=tf.constant(False)):
     WN: with normalization
     tf_norm: use the tensorflow integral function (True) or the numpy one (False)
     """
-    # norm = tf.cond(tf_norm,
-    #                lambda: argus_integral_phalf(m_low, m_high, m0, c),
-    #                lambda: argus_numerical_norm, name="argus_norm")
-    norm = argus_numerical_norm
+    norm = tf.cond(tf_norm,
+                   lambda: argus_integral_phalf(m_low, m_high, m0, c),
+                   lambda: argus_numerical_norm, name="argus_norm")
+    # norm = argus_numerical_norm
     # norm = argus_integral_phalf(m_low, m_high, m0, c)
     return argus_pdf(m, m0, c) / norm
 
@@ -195,7 +195,7 @@ nll = tf.neg(tf.reduce_sum(tf.log(sum_pdf(data, nsig, sigmean, sigwidth, nbkg, m
 
 # grad = tf.gradients(nll, [mu, sigma])
 
-max_steps = 10
+max_steps = 1000
 
 # sigmean_c = apply_constraint(sigmean, constraint)
 # sigwidth_c = apply_constraint(sigwidth, constraint)
@@ -235,7 +235,7 @@ with tf.Session() as sess:
 
     true_vars['m0'] = m0.eval()
 
-    print("name\t" + "\t".join([v.name.ljust(10) for v in variables]) + "\t | nll")
+    print("name\t" + "\t".join([v.name.ljust(10) for v in variables]) + "\t | nll\t | step")
     print("init\t" + "\t".join(["%6.4e" % v for v in sess.run(variables)]))
     print
 
@@ -247,12 +247,13 @@ with tf.Session() as sess:
         sess.run([opt_op])
         # summary_writer.add_summary(summary, step)
 
-        var_values_opt = sess.run(variables)
-        nll_value_opt = sess.run(nll)
-        # sess.run(update_vars)
-        # var_values_clip = np.array(sess.run(variables))
-        # nll_value_clip = np.array(sess.run(nll))
-        print("opt\t" + "\t".join(["%6.4e" % v for v in var_values_opt]) + "\t | %f" % nll_value_opt)
+        if step % 100 == 0:
+            var_values_opt = sess.run(variables)
+            nll_value_opt = sess.run(nll)
+            # sess.run(update_vars)
+            # var_values_clip = np.array(sess.run(variables))
+            # nll_value_clip = np.array(sess.run(nll))
+            print("opt\t" + "\t".join(["%6.4e" % v for v in var_values_opt]) + "\t | %f\t | %i" % (nll_value_opt, step))
         # clipped = np.where(var_values_opt == var_values_clip, [" "*10] * len(variables), ["%6.4e" % v for v in var_values_clip])
         # print "clip\t" + "\t".join(clipped) + "\t | %f" % nll_value_clip
 
