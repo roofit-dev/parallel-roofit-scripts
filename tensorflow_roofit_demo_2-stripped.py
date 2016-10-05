@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-05 11:02:24
+# @Last Modified time: 2016-10-05 11:08:59
 
 import tensorflow as tf
 import numpy as np
@@ -49,12 +49,16 @@ def gaussian_pdf(x, mean, std):
     return val
 
 
+print("N.B.: changed argus_pdf for performance test! Should contain conditional for when m > m0, result is now wrong for m > m0.")
+
+
 def argus_pdf(m, m0, c, p=0.5):
     t = m / m0
     u = 1 - t * t
-    return tf.cond(tf.greater_equal(t, one),
-                   lambda: zero,
-                   lambda: m * tf.pow(u, p) * tf.exp(c * u), name="argus_pdf")
+    # return tf.cond(tf.greater_equal(t, one),
+    #                lambda: zero,
+    #                lambda: m * tf.pow(u, p) * tf.exp(c * u), name="argus_pdf")
+    return m * tf.pow(u, p) * tf.exp(c * u)
     # N.B.: bij cond moeten de argumenten functies zijn (zonder argumenten)
     #       zodat tf ze pas hoeft te callen / uit te rekenen als ze nodig zijn.
     #       Dat is dus bij select niet mogelijk, daar krijg je meteen beide hele
