@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-05 13:52:02
+# @Last Modified time: 2016-10-06 07:30:16
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -14,6 +14,7 @@ import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
 from timeit import default_timer as timer
+import time
 
 
 def apply_constraint(var, constraints):
@@ -164,7 +165,10 @@ nbkg = tf.Variable(np.float64(800), name="nbkg")
 # RooDataSet *data = sum.generate(mes,2000) ;
 
 def sum_pdf(mes, nsig, sigmean, sigwidth, nbkg, m0, argpar, mes_low, mes_high):
-    return tf.add(nsig * gaussian_pdf(mes, sigmean, sigwidth), nbkg * argus_pdf_phalf_WN(mes, m0, argpar, mes_low, mes_high), name="sum_pdf")
+    add = tf.add(nsig * gaussian_pdf(mes, sigmean, sigwidth),
+                 nbkg * argus_pdf_phalf_WN(mes, m0, argpar, mes_low, mes_high),
+                 name="sum_pdf")
+    return tf.div(add, nsig + nbkg, name="sum_pdf_normalized")
 
 
 # data in RooFit genereren en importeren
@@ -223,7 +227,7 @@ init_op = tf.initialize_all_variables()
 with tf.Session() as sess:
     # Merge all the summaries and write them out to /tmp/mnist_logs (by default)
     summarize_merged = tf.merge_all_summaries()
-    summary_writer = tf.train.SummaryWriter('./train', sess.graph)
+    summary_writer = tf.train.SummaryWriter('./train_%i' % int(time.time()), sess.graph)
     # Run the init operation.
     sess.run(init_op)
     # print sess.run(init_op)
@@ -237,7 +241,7 @@ with tf.Session() as sess:
     true_vars['m0'] = m0.eval()
 
     print("name\t" + "\t".join([v.name.ljust(10) for v in variables]) + "\t | nll\t\t\t | step")
-    print("init\t" + "\t".join(["%6.4e" % v for v in sess.run(variables)]))
+    print("init\t" + "\t".join(["%6.4e" % v for v in sess.run(variables)]) + "\t | %f" % sess.run(nll))
     print
 
     start = timer()
