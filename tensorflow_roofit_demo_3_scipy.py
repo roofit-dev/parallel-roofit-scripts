@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-06 14:30:33
+# @Last Modified time: 2016-10-06 16:49:03
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -180,7 +180,8 @@ def sum_pdf(mes, nsig, sigmean, sigwidth, nbkg, m0, argpar, mes_low, mes_high):
     add = tf.add(nsig * gaussian_pdf(mes, sigmean, sigwidth),
                  nbkg * argus_pdf_phalf_WN(mes, m0, argpar, mes_low, mes_high),
                  name="sum_pdf")
-    return tf.div(len(data_raw) * add, nsig + nbkg, name="sum_pdf_normalized")
+    # return tf.div(len(data_raw) * add, nsig + nbkg, name="sum_pdf_normalized")  # THIS DOESN'T WORK
+    return tf.div(add, nsig + nbkg, name="sum_pdf_normalized")
 
 
 # data in RooFit genereren en importeren
