@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-06 14:22:59
+# @Last Modified time: 2016-10-06 14:30:33
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -175,11 +175,12 @@ vdict['nbkg'] = nbkg
 # // --- Generate a toyMC sample from composite PDF ---
 # RooDataSet *data = sum.generate(mes,2000) ;
 
+
 def sum_pdf(mes, nsig, sigmean, sigwidth, nbkg, m0, argpar, mes_low, mes_high):
     add = tf.add(nsig * gaussian_pdf(mes, sigmean, sigwidth),
                  nbkg * argus_pdf_phalf_WN(mes, m0, argpar, mes_low, mes_high),
                  name="sum_pdf")
-    return tf.div(add, nsig + nbkg, name="sum_pdf_normalized")
+    return tf.div(len(data_raw) * add, nsig + nbkg, name="sum_pdf_normalized")
 
 
 # data in RooFit genereren en importeren
@@ -256,9 +257,9 @@ with tf.Session() as sess:
 
     true_vars['m0'] = m0.eval()
 
-    logging.info("name\t" + "\t".join([v.name.ljust(10) for v in variables]) + "\t | nll\t\t | step")
-    logging.info("init\t" + "\t".join(["%6.4e" % v for v in sess.run(variables)]) + "\t | %f" % sess.run(nll))
-    logging.info("")
+    print("name\t" + "\t".join([v.name.ljust(10) for v in variables]) + "\t | nll\t\t | step")
+    print("init\t" + "\t".join(["%6.4e" % v for v in sess.run(variables)]) + "\t | %f" % sess.run(nll))
+    print("")
 
     step = 0
 
@@ -275,7 +276,7 @@ with tf.Session() as sess:
             # sess.run(update_vars)
             # var_values_clip = np.array(sess.run(variables))
             # nll_value_clip = np.array(sess.run(nll))
-            logging.info("opt\t" + "\t".join(["%6.4e" % v for v in var_values_opt]) + "\t | %f\t | %i" % (nll_value_opt, step))
+            print("opt\t" + "\t".join(["%6.4e" % v for v in var_values_opt]) + "\t | %f\t | %i" % (nll_value_opt, step))
 
         # clipped = np.where(var_values_opt == var_values_clip, [" "*10] * len(variables), ["%6.4e" % v for v in var_values_clip])
         # print "clip\t" + "\t".join(clipped) + "\t | %f" % nll_value_clip
@@ -303,6 +304,8 @@ with tf.Session() as sess:
         fit_vars[key] = v.eval()
 
     fit_vars['m0'] = m0.eval()
+
+    print("fit \t" + "\t".join(["%6.4e" % v for v in sess.run(variables)]) + "\t | %f" % sess.run(nll))
 
     logging.info("create data histogram")
     counts, bins = np.histogram(data.eval(), bins=100)
