@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-06 13:23:39
+# @Last Modified time: 2016-10-06 13:54:30
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -234,28 +234,35 @@ with tf.Session() as sess:
 
     true_vars['m0'] = m0.eval()
 
-    print("name\t" + "\t".join([v.name.ljust(10) for v in variables]) + "\t | nll\t\t\t | step")
+    print("name\t" + "\t".join([v.name.ljust(10) for v in variables]) + "\t | nll\t\t | step")
     print("init\t" + "\t".join(["%6.4e" % v for v in sess.run(variables)]) + "\t | %f" % sess.run(nll))
     print
 
-    def step_callback(session, summary_writer):
-        for step in range(max_steps):
-            summary = session.run(summarize_merged)
-            summary_writer.add_summary(summary, step)
-            if step % status_every == 0:
-                var_values_opt = sess.run(variables)
-                nll_value_opt = sess.run(nll)
-                # sess.run(update_vars)
-                # var_values_clip = np.array(sess.run(variables))
-                # nll_value_clip = np.array(sess.run(nll))
-                print("opt\t" + "\t".join(["%6.4e" % v for v in var_values_opt]) + "\t | %f\t | %i" % (nll_value_opt, step))
+    step = 0
 
-            # clipped = np.where(var_values_opt == var_values_clip, [" "*10] * len(variables), ["%6.4e" % v for v in var_values_clip])
-            # print "clip\t" + "\t".join(clipped) + "\t | %f" % nll_value_clip
-            yield
+    nll_value_opt = sess.run(nll)
 
-    cbthing = step_callback(sess, summary_writer)
-    thiscallback = lambda _: cbthing.next()
+    def step_callback(var_values_opt):
+        global step, sess, summary_writer, nll_value_opt  # , variables, nll
+
+        summary = sess.run(summarize_merged)
+        summary_writer.add_summary(summary, step)
+        if step % status_every == 0:
+            # var_values_opt = sess.run(variables)
+            # nll_value_opt = sess.run(nll)
+            # sess.run(update_vars)
+            # var_values_clip = np.array(sess.run(variables))
+            # nll_value_clip = np.array(sess.run(nll))
+            print("opt\t" + "\t".join(["%6.4e" % v for v in var_values_opt]) + "\t | %f\t | %i" % (nll_value_opt, step))
+
+        # clipped = np.where(var_values_opt == var_values_clip, [" "*10] * len(variables), ["%6.4e" % v for v in var_values_clip])
+        # print "clip\t" + "\t".join(clipped) + "\t | %f" % nll_value_clip
+
+        step += 1
+
+    def loss_callback(nll_value_opt_step):
+        global nll_value_opt
+        nll_value_opt = nll_value_opt_step
 
     # def thiscallback(a):
     #     print(a)
@@ -263,7 +270,8 @@ with tf.Session() as sess:
     start = timer()
 
     tf.logging.set_verbosity(tf.logging.INFO)
-    opt.minimize(session=sess, step_callback=thiscallback)
+    opt.minimize(session=sess, step_callback=step_callback,
+                 loss_callback=loss_callback, fetches=[nll])
 
     end = timer()
 
