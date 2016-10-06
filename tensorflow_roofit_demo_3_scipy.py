@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-06 14:15:07
+# @Last Modified time: 2016-10-06 14:22:59
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -16,6 +16,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from timeit import default_timer as timer
 import time
+
+tf.logging.set_verbosity(tf.logging.INFO)
 
 
 def apply_constraint(var, constraints):
@@ -286,7 +288,6 @@ with tf.Session() as sess:
 
     start = timer()
 
-    tf.logging.set_verbosity(tf.logging.INFO)
     opt.minimize(session=sess, step_callback=step_callback,
                  loss_callback=loss_callback, fetches=[nll])
 
@@ -309,12 +310,13 @@ with tf.Session() as sess:
 
     logging.info("evaluate pdf values")
     logging.info("... fit sum_pdf")
-    y_fit = [sum_pdf(x, mes_low=constraint['mes'][0], mes_high=constraint['mes'][1], **fit_vars).eval() for x in x_bins]
+    y_fit = sum_pdf(x_bins, mes_low=constraint['mes'][0], mes_high=constraint['mes'][1], **fit_vars).eval()
     logging.info("... fit argus")
-    argus_fit = [fit_vars['nbkg'] * argus_pdf_phalf_WN(x, fit_vars['m0'], fit_vars['argpar'], m_low=constraint['mes'][0], m_high=constraint['mes'][1]).eval() for x in x_bins]
+    # argus_fit = fit_vars['nbkg'] * argus_pdf_phalf_WN(x_bins, fit_vars['m0'], fit_vars['argpar'], m_low=constraint['mes'][0], m_high=constraint['mes'][1]).eval()
+    argus_fit = argus_pdf_phalf_WN(x_bins, fit_vars['m0'], fit_vars['argpar'], m_low=constraint['mes'][0], m_high=constraint['mes'][1]).eval()
 
     logging.info("... true sum_pdf")
-    y_true = [sum_pdf(x, mes_low=constraint['mes'][0], mes_high=constraint['mes'][1], **true_vars).eval() for x in x_bins]
+    y_true = sum_pdf(x_bins, mes_low=constraint['mes'][0], mes_high=constraint['mes'][1], **true_vars).eval()
 
     logging.info("... and normalize them")
     # normalize fit values to data counts
@@ -326,10 +328,11 @@ with tf.Session() as sess:
     y_true = [y * y_true_norm for y in y_true]
 
     logging.info("plot results")
-    plt.errorbar(x_bins, counts, yerr=np.sqrt(counts), fmt='.g')
-    plt.plot(x_bins, y_fit, '-b')
-    plt.plot(x_bins, argus_fit, '--b')
-    plt.plot(x_bins, y_true, ':k')
+    plt.errorbar(x_bins, counts, yerr=np.sqrt(counts), fmt='.g', label="input data")
+    plt.plot(x_bins, y_fit, '-b', label="fit sum_pdf")
+    plt.plot(x_bins, argus_fit, '--b', label="fit argus_pdf")
+    plt.plot(x_bins, y_true, ':k', label="true sum_pdf")
+    plt.legend(loc='best')
     plt.show()
 
 # tf.InteractiveSession()
