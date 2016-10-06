@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-06 13:54:30
+# @Last Modified time: 2016-10-06 14:15:07
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -11,6 +11,7 @@ from __future__ import division
 from __future__ import print_function
 
 import tensorflow as tf
+from tensorflow.python.platform import tf_logging as logging
 import numpy as np
 import matplotlib.pyplot as plt
 from timeit import default_timer as timer
@@ -42,6 +43,10 @@ constraint['argpar'] = (-100., -1.)
 constraint['nsig'] = (0., 10000)
 constraint['nbkg'] = (0., 10000)
 constraint['mes'] = (5.20, 5.30)
+
+# keep a variable dictionary for easy key-based access compatible with constraints
+vdict = {}
+
 
 pi = tf.constant(np.pi, dtype=tf.float64, name="pi")
 sqrt2pi = tf.constant(np.sqrt(2 * np.pi), dtype=tf.float64, name="sqrt2pi")
@@ -139,6 +144,8 @@ def argus_pdf_phalf_WN(m, m0, c, m_low, m_high, tf_norm=tf.constant(False)):
 
 sigmean = tf.Variable(np.float64(5.28), name="sigmean")
 sigwidth = tf.Variable(np.float64(0.0027), name="sigwidth")
+vdict['sigmean'] = sigmean
+vdict['sigwidth'] = sigwidth
 
 # RooGaussian gauss("gauss","gaussian PDF",mes,sigmean,sigwidth) ;
 
@@ -148,6 +155,7 @@ sigwidth = tf.Variable(np.float64(0.0027), name="sigwidth")
 
 argpar = tf.Variable(np.float64(argpar_num), name="argpar")
 m0 = tf.constant(np.float64(m0_num), name="m0")
+vdict['argpar'] = argpar
 
 # RooArgusBG argus("argus","Argus PDF",mes,m0,argpar) ;
 
@@ -157,7 +165,8 @@ m0 = tf.constant(np.float64(m0_num), name="m0")
 
 nsig = tf.Variable(np.float64(200), name="nsig")
 nbkg = tf.Variable(np.float64(800), name="nbkg")
-
+vdict['nsig'] = nsig
+vdict['nbkg'] = nbkg
 
 # RooAddPdf sum("sum","g+a",RooArgList(gauss,argus),RooArgList(nsig,nbkg)) ;
 
@@ -199,6 +208,13 @@ nll = tf.neg(tf.reduce_sum(tf.log(sum_pdf(data, nsig, sigmean, sigwidth, nbkg, m
 
 # grad = tf.gradients(nll, [mu, sigma])
 
+# ### build constraint inequalities
+inequalities = []
+for key, (lower, upper) in constraint.iteritems():
+    if key != 'mes':
+        inequalities.append(vdict[key] - lower)
+        inequalities.append(upper - vdict[key])
+
 max_steps = 1000
 status_every = 1
 
@@ -213,7 +229,11 @@ status_every = 1
 variables = tf.all_variables()
 
 # Create an optimizer with the desired parameters.
-opt = tf.contrib.opt.ScipyOptimizerInterface(nll, options={'maxiter': max_steps})
+opt = tf.contrib.opt.ScipyOptimizerInterface(nll,
+                                             options={'maxiter': max_steps},
+                                             inequalities=inequalities,
+                                             method='SLSQP'  # supports inequalities
+                                             )
 
 tf.scalar_summary('nll', nll)
 
@@ -234,9 +254,9 @@ with tf.Session() as sess:
 
     true_vars['m0'] = m0.eval()
 
-    print("name\t" + "\t".join([v.name.ljust(10) for v in variables]) + "\t | nll\t\t | step")
-    print("init\t" + "\t".join(["%6.4e" % v for v in sess.run(variables)]) + "\t | %f" % sess.run(nll))
-    print
+    logging.info("name\t" + "\t".join([v.name.ljust(10) for v in variables]) + "\t | nll\t\t | step")
+    logging.info("init\t" + "\t".join(["%6.4e" % v for v in sess.run(variables)]) + "\t | %f" % sess.run(nll))
+    logging.info("")
 
     step = 0
 
@@ -253,7 +273,7 @@ with tf.Session() as sess:
             # sess.run(update_vars)
             # var_values_clip = np.array(sess.run(variables))
             # nll_value_clip = np.array(sess.run(nll))
-            print("opt\t" + "\t".join(["%6.4e" % v for v in var_values_opt]) + "\t | %f\t | %i" % (nll_value_opt, step))
+            logging.info("opt\t" + "\t".join(["%6.4e" % v for v in var_values_opt]) + "\t | %f\t | %i" % (nll_value_opt, step))
 
         # clipped = np.where(var_values_opt == var_values_clip, [" "*10] * len(variables), ["%6.4e" % v for v in var_values_clip])
         # print "clip\t" + "\t".join(clipped) + "\t | %f" % nll_value_clip
@@ -264,9 +284,6 @@ with tf.Session() as sess:
         global nll_value_opt
         nll_value_opt = nll_value_opt_step
 
-    # def thiscallback(a):
-    #     print(a)
-
     start = timer()
 
     tf.logging.set_verbosity(tf.logging.INFO)
@@ -275,9 +292,10 @@ with tf.Session() as sess:
 
     end = timer()
 
-    print("Loop took %f seconds" % (end - start))
-    raise Exception
+    logging.info("Loop took %f seconds" % (end - start))
+    # raise Exception
 
+    logging.info("get fitted variables")
     fit_vars = {}
     for v in variables:
         key = v.name[:v.name.find(':')]
@@ -285,14 +303,20 @@ with tf.Session() as sess:
 
     fit_vars['m0'] = m0.eval()
 
+    logging.info("create data histogram")
     counts, bins = np.histogram(data.eval(), bins=100)
     x_bins = (bins[:-1] + bins[1:]) / 2
 
+    logging.info("evaluate pdf values")
+    logging.info("... fit sum_pdf")
     y_fit = [sum_pdf(x, mes_low=constraint['mes'][0], mes_high=constraint['mes'][1], **fit_vars).eval() for x in x_bins]
+    logging.info("... fit argus")
     argus_fit = [fit_vars['nbkg'] * argus_pdf_phalf_WN(x, fit_vars['m0'], fit_vars['argpar'], m_low=constraint['mes'][0], m_high=constraint['mes'][1]).eval() for x in x_bins]
 
+    logging.info("... true sum_pdf")
     y_true = [sum_pdf(x, mes_low=constraint['mes'][0], mes_high=constraint['mes'][1], **true_vars).eval() for x in x_bins]
 
+    logging.info("... and normalize them")
     # normalize fit values to data counts
     y_fit_norm = np.sum(counts) / np.sum(y_fit)
     y_fit = [y * y_fit_norm for y in y_fit]
@@ -301,6 +325,7 @@ with tf.Session() as sess:
     y_true_norm = np.sum(counts) / np.sum(y_true)
     y_true = [y * y_true_norm for y in y_true]
 
+    logging.info("plot results")
     plt.errorbar(x_bins, counts, yerr=np.sqrt(counts), fmt='.g')
     plt.plot(x_bins, y_fit, '-b')
     plt.plot(x_bins, argus_fit, '--b')
