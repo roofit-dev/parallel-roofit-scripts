@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-10 09:28:19
+# @Last Modified time: 2016-10-10 10:09:26
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -211,7 +211,6 @@ nll = tf.neg(tf.reduce_sum(tf.log(sum_pdf(data, nsig, sigmean, sigwidth, nbkg, m
 # print("N.B.: using unsummed version of nll! This appears to be the way people minimize cost functions in tf...")
 # nll = tf.neg(tf.log(sum_pdf(data, nsig, sigmean, sigwidth, nbkg, m0, argpar, constraint_tf['mes'][0], constraint_tf['mes'][1])), name="nll")
 
-# grad = tf.gradients(nll, [mu, sigma])
 
 
 # sigmean_c = apply_constraint(sigmean, constraint_tf)
@@ -223,6 +222,8 @@ nll = tf.neg(tf.reduce_sum(tf.log(sum_pdf(data, nsig, sigmean, sigwidth, nbkg, m
 # update_vars = [sigmean_c, sigwidth_c, argpar_c, nsig_c, nbkg_c]
 
 variables = tf.all_variables()
+
+grads = tf.gradients(nll, variables)
 
 # ### build constraint inequalities
 inequalities = []
@@ -302,14 +303,18 @@ with tf.Session() as sess:
 
         step += 1
 
-    def loss_callback(nll_value_opt_step):
+    def loss_callback(nll_value_opt_step, g1, g2, g3, g4, g5, *other_vars):
         global nll_value_opt
         nll_value_opt = nll_value_opt_step
+        print(nll_value_opt, g1, g2, g3, g4, g5)
+        ov = "\t".join([str(v) for v in other_vars])
+        if ov:
+            print(ov)
 
     start = timer()
 
     opt.minimize(session=sess, step_callback=step_callback,
-                 loss_callback=loss_callback, fetches=[nll])
+                 loss_callback=loss_callback, fetches=[nll] + grads + variables)
     # N.B.: callbacks not supported with SLSQP!
 
     end = timer()
@@ -344,9 +349,12 @@ with tf.Session() as sess:
     logging.info("... and normalize them")
     # normalize fit values to data counts
     y_fit_norm = np.sum(counts) / np.sum(y_fit)
+    # y_fit_norm = np.sum(counts) / (fit_vars['nsig'] + fit_vars['nbkg'])
     y_fit = [y * y_fit_norm for y in y_fit]
     # argus_fit_norm = np.sum(counts) / np.sum(argus_fit)
-    argus_fit = [a * y_fit_norm for a in argus_fit]
+    argus_fit_norm = fit_vars['nbkg'] / (fit_vars['nsig'] + fit_vars['nbkg'])
+    # argus_fit = [a * y_fit_norm for a in argus_fit]
+    argus_fit = [a * argus_fit_norm * y_fit_norm for a in argus_fit]
     y_true_norm = np.sum(counts) / np.sum(y_true)
     y_true = [y * y_true_norm for y in y_true]
 
