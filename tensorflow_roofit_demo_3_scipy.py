@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-10 09:19:45
+# @Last Modified time: 2016-10-10 09:28:19
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -124,16 +124,16 @@ argus_numerical_norm = tf.constant(argus_integral_phalf_numpy(constraint['mes'][
                                    dtype=tf.float64, name="argus_numerical_norm")
 
 
-def argus_pdf_phalf_WN(m, m0, c, m_low, m_high, tf_norm=tf.constant(False)):
+def argus_pdf_phalf_WN(m, m0, c, m_low, m_high):#, tf_norm=tf.constant(False)):
     """
     WN: with normalization
     tf_norm: use the tensorflow integral function (True) or the numpy one (False)
     """
-    norm = tf.cond(tf_norm,
-                   lambda: argus_integral_phalf(m_low, m_high, m0, c),
-                   lambda: argus_numerical_norm, name="argus_norm")
+    # norm = tf.cond(tf_norm,
+    #                lambda: argus_integral_phalf(m_low, m_high, m0, c),
+    #                lambda: argus_numerical_norm, name="argus_norm")
     # norm = argus_numerical_norm
-    # norm = argus_integral_phalf(m_low, m_high, m0, c)
+    norm = argus_integral_phalf(m_low, m_high, m0, c)
     return argus_pdf(m, m0, c) / norm
 
 
