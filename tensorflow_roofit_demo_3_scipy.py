@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-10 11:38:00
+# @Last Modified time: 2016-10-10 11:39:59
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -282,13 +282,13 @@ with tf.Session() as sess:
     #                                      nll,
     #                                      [],
     #                                      delta=1e-5)
-    analytic, numerical = tf.test.compute_gradient(variables,
-                                                   [],
-                                                   nll,
-                                                   [])
-    # print("err:", err)
-    print("ana:", analytic)
-    print("num:", numerical)
+    # analytic, numerical = tf.test.compute_gradient(variables,
+    #                                                [],
+    #                                                nll,
+    #                                                [])
+    # # print("err:", err)
+    # print("ana:", analytic)
+    # print("num:", numerical)
 
     true_vars = {}
     for v in variables:
