@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-06 16:49:03
+# @Last Modified time: 2016-10-10 09:19:45
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -195,48 +195,66 @@ data = tf.constant(data_raw, name='event_data')
 # sum.fitTo(*data,"Extended") ;
 
 # convert to tf constants, otherwise you'll get complaints about float32s...
+constraint_tf = {}
 for key in constraint.keys():
     low = constraint[key][0]
     high = constraint[key][1]
-    constraint[key] = (tf.constant(low, dtype=tf.float64),
-                       tf.constant(high, dtype=tf.float64))
+    constraint_tf[key] = (tf.constant(low, dtype=tf.float64),
+                          tf.constant(high, dtype=tf.float64))
 
 
-# nll = tf.neg(tf.reduce_sum(tf.log(tf.map_fn(lambda mes: sum_pdf(mes, nsig, sigmean, sigwidth, nbkg, m0, argpar, constraint['mes'][0], constraint['mes'][1]), data))), name="nll")
+# nll = tf.neg(tf.reduce_sum(tf.log(tf.map_fn(lambda mes: sum_pdf(mes, nsig, sigmean, sigwidth, nbkg, m0, argpar, constraint_tf['mes'][0], constraint_tf['mes'][1]), data))), name="nll")
 
 print("N.B.: using direct data entry")
-nll = tf.neg(tf.reduce_sum(tf.log(sum_pdf(data, nsig, sigmean, sigwidth, nbkg, m0, argpar, constraint['mes'][0], constraint['mes'][1]))), name="nll")
+nll = tf.neg(tf.reduce_sum(tf.log(sum_pdf(data, nsig, sigmean, sigwidth, nbkg, m0, argpar, constraint_tf['mes'][0], constraint_tf['mes'][1]))), name="nll")
 
 # print("N.B.: using unsummed version of nll! This appears to be the way people minimize cost functions in tf...")
-# nll = tf.neg(tf.log(sum_pdf(data, nsig, sigmean, sigwidth, nbkg, m0, argpar, constraint['mes'][0], constraint['mes'][1])), name="nll")
+# nll = tf.neg(tf.log(sum_pdf(data, nsig, sigmean, sigwidth, nbkg, m0, argpar, constraint_tf['mes'][0], constraint_tf['mes'][1])), name="nll")
 
 # grad = tf.gradients(nll, [mu, sigma])
 
-# ### build constraint inequalities
-inequalities = []
-for key, (lower, upper) in constraint.iteritems():
-    if key != 'mes':
-        inequalities.append(vdict[key] - lower)
-        inequalities.append(upper - vdict[key])
 
-max_steps = 1000
-status_every = 1
-
-# sigmean_c = apply_constraint(sigmean, constraint)
-# sigwidth_c = apply_constraint(sigwidth, constraint)
-# argpar_c = apply_constraint(argpar, constraint)
-# nsig_c = apply_constraint(nsig, constraint)
-# nbkg_c = apply_constraint(nbkg, constraint)
+# sigmean_c = apply_constraint(sigmean, constraint_tf)
+# sigwidth_c = apply_constraint(sigwidth, constraint_tf)
+# argpar_c = apply_constraint(argpar, constraint_tf)
+# nsig_c = apply_constraint(nsig, constraint_tf)
+# nbkg_c = apply_constraint(nbkg, constraint_tf)
 
 # update_vars = [sigmean_c, sigwidth_c, argpar_c, nsig_c, nbkg_c]
 
 variables = tf.all_variables()
 
+# ### build constraint inequalities
+inequalities = []
+for key, (lower, upper) in constraint_tf.iteritems():
+    if key != 'mes':
+        inequalities.append(vdict[key] - lower)
+        inequalities.append(upper - vdict[key])
+
+print(inequalities)
+
+# ### build bounds instead of inequalities (only for L-BFGS-B, TNC and SLSQP)
+# N.B.: order important! Also supply variables to be sure the orders match.
+bounds = []
+for v in variables:
+    key = v.name[:v.name.find(':')]
+    print(key)
+    lower, upper = constraint[key]
+    bounds.append((lower, upper))
+
+print(bounds)
+
+max_steps = 1000
+status_every = 1
+
+
 # Create an optimizer with the desired parameters.
 opt = tf.contrib.opt.ScipyOptimizerInterface(nll,
                                              options={'maxiter': max_steps},
-                                             inequalities=inequalities,
-                                             method='SLSQP'  # supports inequalities
+                                             # inequalities=inequalities,
+                                             # method='SLSQP'  # supports inequalities
+                                             bounds=bounds,
+                                             var_list=variables,  # supply with bounds to match order!
                                              )
 
 tf.scalar_summary('nll', nll)
@@ -292,6 +310,7 @@ with tf.Session() as sess:
 
     opt.minimize(session=sess, step_callback=step_callback,
                  loss_callback=loss_callback, fetches=[nll])
+    # N.B.: callbacks not supported with SLSQP!
 
     end = timer()
 
@@ -314,13 +333,13 @@ with tf.Session() as sess:
 
     logging.info("evaluate pdf values")
     logging.info("... fit sum_pdf")
-    y_fit = sum_pdf(x_bins, mes_low=constraint['mes'][0], mes_high=constraint['mes'][1], **fit_vars).eval()
+    y_fit = sum_pdf(x_bins, mes_low=constraint_tf['mes'][0], mes_high=constraint_tf['mes'][1], **fit_vars).eval()
     logging.info("... fit argus")
-    # argus_fit = fit_vars['nbkg'] * argus_pdf_phalf_WN(x_bins, fit_vars['m0'], fit_vars['argpar'], m_low=constraint['mes'][0], m_high=constraint['mes'][1]).eval()
-    argus_fit = argus_pdf_phalf_WN(x_bins, fit_vars['m0'], fit_vars['argpar'], m_low=constraint['mes'][0], m_high=constraint['mes'][1]).eval()
+    # argus_fit = fit_vars['nbkg'] * argus_pdf_phalf_WN(x_bins, fit_vars['m0'], fit_vars['argpar'], m_low=constraint_tf['mes'][0], m_high=constraint_tf['mes'][1]).eval()
+    argus_fit = argus_pdf_phalf_WN(x_bins, fit_vars['m0'], fit_vars['argpar'], m_low=constraint_tf['mes'][0], m_high=constraint_tf['mes'][1]).eval()
 
     logging.info("... true sum_pdf")
-    y_true = sum_pdf(x_bins, mes_low=constraint['mes'][0], mes_high=constraint['mes'][1], **true_vars).eval()
+    y_true = sum_pdf(x_bins, mes_low=constraint_tf['mes'][0], mes_high=constraint_tf['mes'][1], **true_vars).eval()
 
     logging.info("... and normalize them")
     # normalize fit values to data counts
