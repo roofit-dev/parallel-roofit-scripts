@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-10 11:39:59
+# @Last Modified time: 2016-10-10 11:42:31
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -326,10 +326,13 @@ with tf.Session() as sess:
     def loss_callback(nll_value_opt_step, g1, g2, g3, g4, g5, *other_vars):
         global nll_value_opt
         nll_value_opt = nll_value_opt_step
-        print(nll_value_opt, g1, g2, g3, g4, g5)
+        print("loss_callback:")
+        print("nll:", nll_value_opt)
+        print("gradients:", g1, g2, g3, g4, g5)
         ov = "\t".join([str(v) for v in other_vars])
         if ov:
-            print(ov)
+            print("variables:", ov)
+        print("")
 
     start = timer()
 
