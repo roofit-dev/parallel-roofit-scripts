@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-10 10:09:26
+# @Last Modified time: 2016-10-10 11:38:00
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -66,10 +66,17 @@ def gaussian_pdf(x, mean, std):
 def argus_pdf(m, m0, c, p=0.5):
     t = m / m0
     u = 1 - t * t
-    return tf.select(tf.greater_equal(t, one),
-                     tf.zeros_like(m),
-                     m * tf.pow(u, p) * tf.exp(c * u),
-                     name="argus_pdf")
+    argus_t_ge_1 = m * tf.pow(u, p) * tf.exp(c * u)
+    return tf.maximum(tf.zeros_like(m), argus_t_ge_1,
+                      name="argus_pdf")
+    # return tf.select(tf.greater_equal(t, one),
+    #                  tf.zeros_like(m),
+    #                  m * tf.pow(u, p) * tf.exp(c * u),
+    #                  name="argus_pdf")
+    # N.B.: select creates problems with the analytical derivative (nan)!
+    #       https://github.com/tensorflow/tensorflow/issues/2540
+    #       http://stackoverflow.com/a/39155976/1199693
+    #
     # return tf.cond(tf.greater_equal(t, one),
     #                lambda: zero,
     #                lambda: m * tf.pow(u, p) * tf.exp(c * u),
@@ -269,6 +276,19 @@ with tf.Session() as sess:
     summary_writer = tf.train.SummaryWriter('./train_%i' % int(time.time()), sess.graph)
     # Run the init operation.
     sess.run(init_op)
+
+    # err = tf.test.compute_gradient_error(variables,
+    #                                      [],
+    #                                      nll,
+    #                                      [],
+    #                                      delta=1e-5)
+    analytic, numerical = tf.test.compute_gradient(variables,
+                                                   [],
+                                                   nll,
+                                                   [])
+    # print("err:", err)
+    print("ana:", analytic)
+    print("num:", numerical)
 
     true_vars = {}
     for v in variables:
