@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-11 15:44:32
+# @Last Modified time: 2016-10-11 17:13:41
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -242,18 +242,27 @@ for key, (lower, upper) in constraint_tf.iteritems():
         inequalities.append(vdict[key] - lower)
         inequalities.append(upper - vdict[key])
 
-print(inequalities)
+# print(inequalities)
 
 # ### build bounds instead of inequalities (only for L-BFGS-B, TNC and SLSQP)
 # N.B.: order important! Also supply variables to be sure the orders match.
 bounds = []
 for v in variables:
     key = v.name[:v.name.find(':')]
-    print(key)
+    # print(key)
     lower, upper = constraint[key]
     bounds.append((lower, upper))
 
-print(bounds)
+# print(bounds)
+
+bounds_no_nan = []
+variables_no_nan = []
+for v in variables:
+    key = v.name[:v.name.find(':')]
+    if key != 'argpar':
+        lower, upper = constraint[key]
+        bounds_no_nan.append((lower, upper))
+        variables_no_nan.append(v)
 
 max_steps = 1000
 status_every = 1
@@ -264,8 +273,10 @@ opt = tf.contrib.opt.ScipyOptimizerInterface(nll,
                                              options={'maxiter': max_steps},
                                              # inequalities=inequalities,
                                              # method='SLSQP'  # supports inequalities
-                                             bounds=bounds,
-                                             var_list=variables,  # supply with bounds to match order!
+                                             # bounds=bounds,
+                                             # var_list=variables,  # supply with bounds to match order!
+                                             bounds=bounds_no_nan,
+                                             var_list=variables_no_nan
                                              )
 
 tf.scalar_summary('nll', nll)
