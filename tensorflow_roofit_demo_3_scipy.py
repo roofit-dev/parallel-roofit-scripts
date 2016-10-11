@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-11 17:30:51
+# @Last Modified time: 2016-10-11 18:00:12
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -128,10 +128,10 @@ def argus_integral_phalf_numpy(m_low, m_high, m0, c):
     return area
 
 
-argus_numerical_norm = tf.constant(argus_integral_phalf_numpy(constraint['mes'][0],
-                                                              constraint['mes'][1],
-                                                              m0_num, argpar_num),
-                                   dtype=tf.float64, name="argus_numerical_norm")
+# argus_numerical_norm = tf.constant(argus_integral_phalf_numpy(constraint['mes'][0],
+#                                                               constraint['mes'][1],
+#                                                               m0_num, argpar_num),
+#                                    dtype=tf.float64, name="argus_numerical_norm")
 
 
 def argus_pdf_phalf_WN(m, m0, c, m_low, m_high):#, tf_norm=tf.constant(False)):
@@ -257,10 +257,10 @@ opt = tf.contrib.opt.ScipyOptimizerInterface(nll,
                                              options={'maxiter': max_steps},
                                              # inequalities=inequalities,
                                              # method='SLSQP'  # supports inequalities
-                                             # bounds=bounds,
-                                             # var_list=variables,  # supply with bounds to match order!
-                                             bounds=bounds_no_nan,
-                                             var_list=variables_no_nan
+                                             bounds=bounds,
+                                             var_list=variables,  # supply with bounds to match order!
+                                             # bounds=bounds_no_nan,
+                                             # var_list=variables_no_nan
                                              )
 
 tf.scalar_summary('nll', nll)
