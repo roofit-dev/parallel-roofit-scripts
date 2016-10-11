@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-11 15:21:11
+# @Last Modified time: 2016-10-11 15:28:27
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -154,8 +154,8 @@ def argus_pdf_phalf_WN(m, m0, c, m_low, m_high):#, tf_norm=tf.constant(False)):
 # RooRealVar sigmean("sigmean","B^{#pm} mass",5.28,5.20,5.30) ;
 # RooRealVar sigwidth("sigwidth","B^{#pm} width",0.0027,0.001,1.) ;
 
-sigmean = tf.Variable(np.float64(5.28), name="sigmean")
-sigwidth = tf.Variable(np.float64(0.0027), name="sigwidth")
+sigmean = tf.Variable(5.28, name="sigmean", dtype=tf.float64)
+sigwidth = tf.Variable(0.0027, name="sigwidth", dtype=tf.float64)
 vdict['sigmean'] = sigmean
 vdict['sigwidth'] = sigwidth
 
@@ -165,8 +165,8 @@ vdict['sigwidth'] = sigwidth
 # RooRealVar argpar("argpar","argus shape parameter",-20.0,-100.,-1.) ;
 # RooConstVar m0("m0", "resonant mass", 5.291);
 
-argpar = tf.Variable(np.float64(argpar_num), name="argpar")
-m0 = tf.constant(np.float64(m0_num), name="m0")
+argpar = tf.Variable(argpar_num, name="argpar", dtype=tf.float64)
+m0 = tf.constant(m0_num, name="m0", dtype=tf.float64)
 vdict['argpar'] = argpar
 
 # RooArgusBG argus("argus","Argus PDF",mes,m0,argpar) ;
@@ -175,8 +175,8 @@ vdict['argpar'] = argpar
 # RooRealVar nsig("nsig","#signal events",200,0.,10000) ;
 # RooRealVar nbkg("nbkg","#background events",800,0.,10000) ;
 
-nsig = tf.Variable(np.float64(200), name="nsig")
-nbkg = tf.Variable(np.float64(800), name="nbkg")
+nsig = tf.Variable(200, name="nsig", dtype=tf.float64)
+nbkg = tf.Variable(800, name="nbkg", dtype=tf.float64)
 vdict['nsig'] = nsig
 vdict['nbkg'] = nbkg
 
@@ -199,7 +199,7 @@ def sum_pdf(mes, nsig, sigmean, sigwidth, nbkg, m0, argpar, mes_low, mes_high):
 # data.write("roofit_demo_random_data_values.dat");
 data_raw = np.loadtxt(project_dn + "roofit_demo_random_data_values.dat",
                       dtype=np.float64)
-data = tf.constant(data_raw, name='event_data')
+data = tf.constant(data_raw, name='event_data', dtype=tf.float64)
 
 # // --- Perform extended ML fit of composite PDF to toy data ---
 # sum.fitTo(*data,"Extended") ;
