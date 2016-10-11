@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-10 11:42:31
+# @Last Modified time: 2016-10-11 13:32:46
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -387,6 +387,13 @@ with tf.Session() as sess:
     plt.plot(x_bins, argus_fit, '--b', label="fit argus_pdf")
     plt.plot(x_bins, y_true, ':k', label="true sum_pdf")
     plt.legend(loc='best')
+
+    argpar_range = np.linspace(constraint['argpar'][0], constraint['argpar'][1], 100)
+    argus_norm_fct_c = [argus_integral_phalf_numpy(constraint['mes'][0], constraint['mes'][1], m0_num, a) for a in argpar_range]
+
+    fig, ax = plt.subplots(1, 1)
+    ax.plot(argpar_range, argus_norm_fct_c, '-k')
+
     plt.show()
 
 # tf.InteractiveSession()
