@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-11 17:13:41
+# @Last Modified time: 2016-10-11 17:16:40
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -285,7 +285,7 @@ init_op = tf.initialize_all_variables()
 
 grads[2] = tf.Print(grads[2], variables + grads)
 
-check_num_op = tf.add_check_numerics_ops()
+# check_num_op = tf.add_check_numerics_ops()
 
 # start session
 with tf.Session() as sess:
@@ -294,7 +294,7 @@ with tf.Session() as sess:
     # summary_writer = tf.train.SummaryWriter('./train_%i' % int(time.time()), sess.graph)
     # Run the init operation.
     sess.run(init_op)
-    sess.run(check_num_op)
+    # sess.run(check_num_op)
 
     # err = tf.test.compute_gradient_error(variables,
     #                                      [],
@@ -322,11 +322,11 @@ with tf.Session() as sess:
 
     step = 0
 
-    grad_vals = sess.run(grads[1])
-    # grad_vals, stuff = sess.run([grads[1], check_num_op])
-    print(grad_vals)
-    # print(stuff)
-    raise SystemExit
+    # grad_vals = sess.run(grads[1])
+    # # grad_vals, stuff = sess.run([grads[1], check_num_op])
+    # print(grad_vals)
+    # # print(stuff)
+    # raise SystemExit
 
     nll_value_opt = sess.run(nll)
 
