@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-11 17:17:57
+# @Last Modified time: 2016-10-11 17:30:51
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -213,23 +213,12 @@ for key in constraint.keys():
                           tf.constant(high, dtype=tf.float64))
 
 
-# nll = tf.neg(tf.reduce_sum(tf.log(tf.map_fn(lambda mes: sum_pdf(mes, nsig, sigmean, sigwidth, nbkg, m0, argpar, constraint_tf['mes'][0], constraint_tf['mes'][1]), data))), name="nll")
-
 print("N.B.: using direct data entry")
 nll = tf.neg(tf.reduce_sum(tf.log(sum_pdf(data, nsig, sigmean, sigwidth, nbkg, m0, argpar, constraint_tf['mes'][0], constraint_tf['mes'][1]))), name="nll")
 
 # print("N.B.: using unsummed version of nll! This appears to be the way people minimize cost functions in tf...")
 # nll = tf.neg(tf.log(sum_pdf(data, nsig, sigmean, sigwidth, nbkg, m0, argpar, constraint_tf['mes'][0], constraint_tf['mes'][1])), name="nll")
 
-
-
-# sigmean_c = apply_constraint(sigmean, constraint_tf)
-# sigwidth_c = apply_constraint(sigwidth, constraint_tf)
-# argpar_c = apply_constraint(argpar, constraint_tf)
-# nsig_c = apply_constraint(nsig, constraint_tf)
-# nbkg_c = apply_constraint(nbkg, constraint_tf)
-
-# update_vars = [sigmean_c, sigwidth_c, argpar_c, nsig_c, nbkg_c]
 
 variables = tf.all_variables()
 
@@ -242,18 +231,13 @@ for key, (lower, upper) in constraint_tf.iteritems():
         inequalities.append(vdict[key] - lower)
         inequalities.append(upper - vdict[key])
 
-# print(inequalities)
-
 # ### build bounds instead of inequalities (only for L-BFGS-B, TNC and SLSQP)
 # N.B.: order important! Also supply variables to be sure the orders match.
 bounds = []
 for v in variables:
     key = v.name[:v.name.find(':')]
-    # print(key)
     lower, upper = constraint[key]
     bounds.append((lower, upper))
-
-# print(bounds)
 
 bounds_no_nan = []
 variables_no_nan = []
@@ -290,24 +274,11 @@ grads[2] = tf.Print(grads[2], variables + grads)
 # start session
 with tf.Session() as sess:
     # Merge all the summaries and write them out to /tmp/mnist_logs (by default)
-    # summarize_merged = tf.merge_all_summaries()
-    # summary_writer = tf.train.SummaryWriter('./train_%i' % int(time.time()), sess.graph)
+    summarize_merged = tf.merge_all_summaries()
+    summary_writer = tf.train.SummaryWriter('./train_%i' % int(time.time()), sess.graph)
     # Run the init operation.
     sess.run(init_op)
     # sess.run(check_num_op)
-
-    # err = tf.test.compute_gradient_error(variables,
-    #                                      [],
-    #                                      nll,
-    #                                      [],
-    #                                      delta=1e-5)
-    # analytic, numerical = tf.test.compute_gradient(variables,
-    #                                                [],
-    #                                                nll,
-    #                                                [])
-    # # print("err:", err)
-    # print("ana:", analytic)
-    # print("num:", numerical)
 
     true_vars = {}
     for v in variables:
@@ -322,29 +293,15 @@ with tf.Session() as sess:
 
     step = 0
 
-    # grad_vals = sess.run(grads[1])
-    # # grad_vals, stuff = sess.run([grads[1], check_num_op])
-    # print(grad_vals)
-    # # print(stuff)
-    # raise SystemExit
-
     nll_value_opt = sess.run(nll)
 
     def step_callback(var_values_opt):
-        global step, sess, summary_writer, nll_value_opt  # , variables, nll
+        global step, sess, summary_writer, nll_value_opt
 
-        # summary = sess.run(summarize_merged)
-        # summary_writer.add_summary(summary, step)
+        summary = sess.run(summarize_merged)
+        summary_writer.add_summary(summary, step)
         if step % status_every == 0:
-            # var_values_opt = sess.run(variables)
-            # nll_value_opt = sess.run(nll)
-            # sess.run(update_vars)
-            # var_values_clip = np.array(sess.run(variables))
-            # nll_value_clip = np.array(sess.run(nll))
             print("opt\t" + "\t".join(["%6.4e" % v for v in var_values_opt]) + "\t | %f\t | %i" % (nll_value_opt, step))
-
-        # clipped = np.where(var_values_opt == var_values_clip, [" "*10] * len(variables), ["%6.4e" % v for v in var_values_clip])
-        # print "clip\t" + "\t".join(clipped) + "\t | %f" % nll_value_clip
 
         step += 1
 
@@ -368,7 +325,6 @@ with tf.Session() as sess:
     end = timer()
 
     logging.info("Loop took %f seconds" % (end - start))
-    # raise Exception
 
     logging.info("get fitted variables")
     fit_vars = {}
@@ -395,14 +351,14 @@ with tf.Session() as sess:
     y_true = sum_pdf(x_bins, mes_low=constraint_tf['mes'][0], mes_high=constraint_tf['mes'][1], **true_vars).eval()
 
     logging.info("... and normalize them")
+
     # normalize fit values to data counts
     y_fit_norm = np.sum(counts) / np.sum(y_fit)
-    # y_fit_norm = np.sum(counts) / (fit_vars['nsig'] + fit_vars['nbkg'])
     y_fit = [y * y_fit_norm for y in y_fit]
-    # argus_fit_norm = np.sum(counts) / np.sum(argus_fit)
+
     argus_fit_norm = fit_vars['nbkg'] / (fit_vars['nsig'] + fit_vars['nbkg'])
-    # argus_fit = [a * y_fit_norm for a in argus_fit]
     argus_fit = [a * argus_fit_norm * y_fit_norm for a in argus_fit]
+
     y_true_norm = np.sum(counts) / np.sum(y_true)
     y_true = [y * y_true_norm for y in y_true]
 
