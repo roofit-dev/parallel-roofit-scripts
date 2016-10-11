@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-11 18:00:12
+# @Last Modified time: 2016-10-11 18:04:53
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -222,7 +222,8 @@ nll = tf.neg(tf.reduce_sum(tf.log(sum_pdf(data, nsig, sigmean, sigwidth, nbkg, m
 
 variables = tf.all_variables()
 
-grads = tf.gradients(nll, variables)
+grads = tf.gradients(nll, variables)#, name="DEZE_GRADIENTS")
+crappy_grad = tf.gradients(nll, argpar, name="ARGPAR_GRAD")
 
 # ### build constraint inequalities
 inequalities = []
