@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-11 13:35:53
+# @Last Modified time: 2016-10-11 14:33:01
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -393,6 +393,19 @@ with tf.Session() as sess:
 
     fig, ax = plt.subplots(1, 1)
     ax.plot(argpar_range, argus_norm_fct_c, '-k')
+
+    fig, ax = plt.subplots(1, 1)
+    x_full_range = np.linspace(constraint['sigmean'][0], constraint['sigmean'][1], 1000)
+    argus_fit_full_range = argus_pdf_phalf_WN(x_full_range, fit_vars['m0'], fit_vars['argpar'], m_low=constraint_tf['mes'][0], m_high=constraint_tf['mes'][1]).eval()
+    print(argus_fit_full_range)
+
+    ax.plot(x_full_range, argus_fit_full_range, '-k')
+
+    fig, ax = plt.subplots(1, 1)
+    argus_fit_unnormalized_full_range = argus_pdf(x_full_range, fit_vars['m0'], fit_vars['argpar']).eval()
+    print(argus_fit_unnormalized_full_range)
+
+    ax.plot(x_full_range, argus_fit_unnormalized_full_range, '-k')
 
     plt.show()
 
