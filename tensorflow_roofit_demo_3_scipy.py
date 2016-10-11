@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-11 14:33:01
+# @Last Modified time: 2016-10-11 15:21:11
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -66,12 +66,15 @@ def gaussian_pdf(x, mean, std):
 def argus_pdf(m, m0, c, p=0.5):
     t = m / m0
     u = 1 - t * t
-    argus_t_ge_1 = m * tf.pow(u, p) * tf.exp(c * u)
+    safe_pow = tf.real(tf.pow(tf.complex(u, zero), tf.complex(tf.to_double(p), zero)))
+    # argus_t_ge_1 = m * tf.pow(u, p) * tf.exp(c * u)
+    argus_t_ge_1 = m * safe_pow * tf.exp(c * u)
     return tf.maximum(tf.zeros_like(m), argus_t_ge_1,
                       name="argus_pdf")
-    # return tf.select(tf.greater_equal(t, one),
+    # return tf.select(tf.greater_equal(t, 1),
     #                  tf.zeros_like(m),
-    #                  m * tf.pow(u, p) * tf.exp(c * u),
+    #                  # m * tf.pow(u, p) * tf.exp(c * u),
+    #                  m * safe_pow * tf.exp(c * u),
     #                  name="argus_pdf")
     # N.B.: select creates problems with the analytical derivative (nan)!
     #       https://github.com/tensorflow/tensorflow/issues/2540
@@ -269,6 +272,8 @@ tf.scalar_summary('nll', nll)
 
 init_op = tf.initialize_all_variables()
 
+grads[2] = tf.Print(grads[2], variables + grads)
+
 # start session
 with tf.Session() as sess:
     # Merge all the summaries and write them out to /tmp/mnist_logs (by default)
@@ -302,6 +307,10 @@ with tf.Session() as sess:
     print("")
 
     step = 0
+
+    grad_vals = sess.run(grads[2])
+    print(grad_vals)
+    raise SystemExit
 
     nll_value_opt = sess.run(nll)
 
@@ -388,18 +397,18 @@ with tf.Session() as sess:
     plt.plot(x_bins, y_true, ':k', label="true sum_pdf")
     plt.legend(loc='best')
 
-    argpar_range = np.linspace(constraint['argpar'][0], constraint['argpar'][1], 100)
-    argus_norm_fct_c = argus_integral_phalf(constraint_tf['mes'][0], constraint_tf['mes'][1], m0, argpar_range).eval()
+    # argpar_range = np.linspace(constraint['argpar'][0], constraint['argpar'][1], 100)
+    # argus_norm_fct_c = argus_integral_phalf(constraint_tf['mes'][0], constraint_tf['mes'][1], m0, argpar_range).eval()
 
-    fig, ax = plt.subplots(1, 1)
-    ax.plot(argpar_range, argus_norm_fct_c, '-k')
+    # fig, ax = plt.subplots(1, 1)
+    # ax.plot(argpar_range, argus_norm_fct_c, '-k')
 
-    fig, ax = plt.subplots(1, 1)
+    # fig, ax = plt.subplots(1, 1)
     x_full_range = np.linspace(constraint['sigmean'][0], constraint['sigmean'][1], 1000)
-    argus_fit_full_range = argus_pdf_phalf_WN(x_full_range, fit_vars['m0'], fit_vars['argpar'], m_low=constraint_tf['mes'][0], m_high=constraint_tf['mes'][1]).eval()
-    print(argus_fit_full_range)
+    # argus_fit_full_range = argus_pdf_phalf_WN(x_full_range, fit_vars['m0'], fit_vars['argpar'], m_low=constraint_tf['mes'][0], m_high=constraint_tf['mes'][1]).eval()
+    # print(argus_fit_full_range)
 
-    ax.plot(x_full_range, argus_fit_full_range, '-k')
+    # ax.plot(x_full_range, argus_fit_full_range, '-k')
 
     fig, ax = plt.subplots(1, 1)
     argus_fit_unnormalized_full_range = argus_pdf(x_full_range, fit_vars['m0'], fit_vars['argpar']).eval()
