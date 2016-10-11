@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-11 15:44:32
+# @Last Modified time: 2016-10-11 16:59:25
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -65,17 +65,20 @@ def gaussian_pdf(x, mean, std):
 
 def argus_pdf(m, m0, c, p=0.5):
     t = m / m0
-    u = 1 - t * t
-    safe_pow = tf.real(tf.pow(tf.complex(u, zero), tf.complex(tf.to_double(p), zero)))
+    # clip to make sure both this value and, more importantly, the analytic
+    # gradient stay above zero, because in the derivative there's a log, for
+    # some reason.
+    u = tf.clip_by_value(1 - t * t, 1e-10, 1)
+    # safe_pow = tf.real(tf.pow(tf.complex(u, zero), tf.complex(tf.to_double(p), zero)))
+    # argus_t_ge_1 = m * safe_pow * tf.exp(c * u)
     # argus_t_ge_1 = m * tf.pow(u, p) * tf.exp(c * u)
-    argus_t_ge_1 = m * safe_pow * tf.exp(c * u)
-    return tf.maximum(tf.zeros_like(m), argus_t_ge_1,
-                      name="argus_pdf")
-    # return tf.select(tf.greater_equal(t, 1),
-    #                  tf.zeros_like(m),
-    #                  # m * tf.pow(u, p) * tf.exp(c * u),
-    #                  m * safe_pow * tf.exp(c * u),
-    #                  name="argus_pdf")
+    # return tf.maximum(tf.zeros_like(m), argus_t_ge_1,
+    #                   name="argus_pdf")
+    return tf.select(tf.greater_equal(t, 1),
+                     tf.zeros_like(m),
+                     m * tf.pow(u, p) * tf.exp(c * u),
+                     # m * safe_pow * tf.exp(c * u),
+                     name="argus_pdf")
     # N.B.: select creates problems with the analytical derivative (nan)!
     #       https://github.com/tensorflow/tensorflow/issues/2540
     #       http://stackoverflow.com/a/39155976/1199693
@@ -128,10 +131,10 @@ def argus_integral_phalf_numpy(m_low, m_high, m0, c):
     return area
 
 
-argus_numerical_norm = tf.constant(argus_integral_phalf_numpy(constraint['mes'][0],
-                                                              constraint['mes'][1],
-                                                              m0_num, argpar_num),
-                                   dtype=tf.float64, name="argus_numerical_norm")
+# argus_numerical_norm = tf.constant(argus_integral_phalf_numpy(constraint['mes'][0],
+#                                                               constraint['mes'][1],
+#                                                               m0_num, argpar_num),
+#                                    dtype=tf.float64, name="argus_numerical_norm")
 
 
 def argus_pdf_phalf_WN(m, m0, c, m_low, m_high):#, tf_norm=tf.constant(False)):
@@ -260,13 +263,16 @@ status_every = 1
 
 
 # Create an optimizer with the desired parameters.
-opt = tf.contrib.opt.ScipyOptimizerInterface(nll,
-                                             options={'maxiter': max_steps},
-                                             # inequalities=inequalities,
-                                             # method='SLSQP'  # supports inequalities
-                                             bounds=bounds,
-                                             var_list=variables,  # supply with bounds to match order!
-                                             )
+# opt = tf.contrib.opt.ScipyOptimizerInterface(nll,
+#                                              options={'maxiter': max_steps},
+#                                              # inequalities=inequalities,
+#                                              # method='SLSQP'  # supports inequalities
+#                                              bounds=bounds,
+#                                              var_list=variables,  # supply with bounds to match order!
+#                                              )
+opt = tf.train.AdamOptimizer()
+opt_op = opt.minimize(nll)
+
 
 tf.scalar_summary('nll', nll)
 
@@ -283,7 +289,9 @@ with tf.Session() as sess:
     # summary_writer = tf.train.SummaryWriter('./train_%i' % int(time.time()), sess.graph)
     # Run the init operation.
     sess.run(init_op)
-    sess.run(check_num_op)
+    # stuff = sess.run(check_num_op)
+    # print("2")
+    # print("stuff:", stuff)
 
     # err = tf.test.compute_gradient_error(variables,
     #                                      [],
@@ -311,10 +319,12 @@ with tf.Session() as sess:
 
     step = 0
 
-    grad_vals = sess.run(grads[1])
-    # grad_vals, stuff = sess.run([grads[1], check_num_op])
+    # grad_vals = sess.run(grads[2])
+    grad_vals, stuff = sess.run([grads[1], check_num_op])
     print(grad_vals)
-    # print(stuff)
+    print(constraint_tf['mes'][0].eval())
+    print(constraint_tf['mes'][1].eval())
+    print(stuff)
     raise SystemExit
 
     nll_value_opt = sess.run(nll)
@@ -350,8 +360,23 @@ with tf.Session() as sess:
 
     start = timer()
 
-    opt.minimize(session=sess, step_callback=step_callback,
-                 loss_callback=loss_callback, fetches=[nll] + grads + variables)
+    for step in xrange(max_steps):
+        # print "variables 3:", sess.run(variables)
+        _ = sess.run([opt_op])
+
+        if step % status_every == 0:
+            var_values_opt = sess.run(variables)
+            nll_value_opt = sess.run(nll)
+            # sess.run(update_vars)
+            # var_values_clip = np.array(sess.run(variables))
+            # nll_value_clip = np.array(sess.run(nll))
+            print("opt\t" + "\t".join(["%6.4e" % v for v in var_values_opt]) + "\t | %f\t | %i" % (nll_value_opt, step))
+        # clipped = np.where(var_values_opt == var_values_clip, [" "*10] * len(variables), ["%6.4e" % v for v in var_values_clip])
+        # print "clip\t" + "\t".join(clipped) + "\t | %f" % nll_value_clip
+
+
+    # opt.minimize(session=sess, step_callback=step_callback,
+    #              loss_callback=loss_callback, fetches=[nll] + grads + variables)
     # N.B.: callbacks not supported with SLSQP!
 
     end = timer()
