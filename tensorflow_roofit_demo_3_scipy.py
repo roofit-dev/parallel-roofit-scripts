@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-12 09:38:30
+# @Last Modified time: 2016-10-12 09:43:53
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -97,8 +97,10 @@ def argus_integral_phalf(m_low, m_high, m0, c):
     """
     def F(x):
         # return -0.5 * m0 * m0 * (tf.exp(c * x) * tf.sqrt(x) / c + 0.5 / tf.pow(-c, 1.5) * tf.sqrt(pi) * tf.erf(tf.sqrt(-c * x)))
+        fragiel_ding = tf.sqrt(-c * x, name="fragiel_ding")
+        # fragiel_ding = tf.pow(-c * x, 0.5, name="fragiel_ding")
         return -0.5 * m0 * m0 * (tf.exp(c * x) * tf.sqrt(x) / c + 0.5 / tf.pow(-c, 1.5) * tf.sqrt(pi)# * tf.erf(tf.sqrt(-c * x)))
-                                 * tf.erf(-c * x))
+                                 * tf.erf(fragiel_ding))
 
     a = tf.minimum(m_low, m0)
     b = tf.minimum(m_high, m0)
