@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-12 14:06:10
+# @Last Modified time: 2016-10-12 16:20:34
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -90,6 +90,11 @@ def argus_pdf(m, m0, c, p=0.5):
     #       tensors.
 
 
+def gradsafe_sqrt(x, clip_low=1e-18, name=None):
+    with tf.name_scope(name, "gradsafe_sqrt"):
+        return tf.sqrt(tf.clip_by_value(x, clip_low, x))
+
+
 def argus_integral_phalf(m_low, m_high, m0, c):
     """
     Only valid for argus_pdf with p=0.5! Otherwise need to do numerical
@@ -97,12 +102,12 @@ def argus_integral_phalf(m_low, m_high, m0, c):
     """
     def F(m_bound, name=None):
         with tf.name_scope(name, "argus_integral_phalf_primitive"):
-            x = 1 - tf.pow(m_bound / m0, 2)
-            fragiel_ding = tf.sqrt(-c * x, name="fragiel_ding")
-            primitive = -0.5 * m0 * m0 * (tf.exp(c * x) * tf.sqrt(x) / c + 0.5 / tf.pow(-c, 1.5) * tf.sqrt(pi) * tf.erf(fragiel_ding))
+            a = tf.minimum(m_bound, m0)
+            x = 1 - tf.pow(a / m0, 2)
+            primitive = -0.5 * m0 * m0 * (tf.exp(c * x) * tf.sqrt(x) / c + 0.5 / tf.pow(-c, 1.5) * tf.sqrt(pi) * tf.erf(gradsafe_sqrt(-c * x)))
             # We have to safeguard the sqrt, because otherwise the analytic
             # derivative blows up for x = 0
-            return tf.select(m_bound >= m0, zero, primitive)
+            return primitive
 
     area = tf.sub(F(m_high, name="F2"), F(m_low, name="F1"), name="argus_integral_phalf")
     return area
