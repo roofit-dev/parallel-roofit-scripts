@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-12 12:10:31
+# @Last Modified time: 2016-10-12 13:04:39
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -237,6 +237,11 @@ argus_integral_phalf_separate = argus_integral_phalf(constraint_tf['mes'][0], co
 argus_pdf_grad = tf.gradients(argus_pdf_separate, argpar, name="argus_pdf_ARGPAR_GRAD")
 argus_integral_phalf_grad = tf.gradients(argus_integral_phalf_separate, argpar, name="argus_integral_phalf_ARGPAR_GRAD")
 
+erfsqrt_grad = tf.gradients(tf.erf(tf.sqrt(-argpar * 0.2)), argpar, name="erfsqrt_ARGPAR_GRAD")
+
+# data_ph = tf.placeholder(tf.float64)
+# erfsqrt_ph_grad = tf.gradients()
+
 # ### build constraint inequalities
 inequalities = []
 for key, (lower, upper) in constraint_tf.iteritems():
@@ -313,6 +318,8 @@ with tf.Session() as sess:
     likeli_grad_value_opt = sess.run(likeli_grad)
     argus_pdf_grad_value_opt = sess.run(argus_pdf_grad)
     argus_integral_phalf_grad_value_opt = sess.run(argus_integral_phalf_grad)
+
+    erfsqrt_grad_value_opt = sess.run(erfsqrt_grad)
 
     print(likelihood_value_opt)
 
