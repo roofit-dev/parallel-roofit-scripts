@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-12 13:28:58
+# @Last Modified time: 2016-10-12 13:29:21
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -327,8 +327,8 @@ with tf.Session() as sess:
     argus_pdf_grad_value_opt = sess.run(argus_pdf_grad)
     argus_integral_phalf_grad_value_opt = sess.run(argus_integral_phalf_grad)
 
-    sqrt1_grad_value_opt = sess.run(sqrt1_grad)
-    sqrt2_grad_value_opt = sess.run(sqrt2_grad)
+    selsqrt1_grad_value_opt = sess.run(selsqrt1_grad)
+    selsqrt2_grad_value_opt = sess.run(selsqrt2_grad)
 
     print(likelihood_value_opt)
 
