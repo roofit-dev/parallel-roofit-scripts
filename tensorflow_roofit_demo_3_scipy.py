@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-12 13:26:46
+# @Last Modified time: 2016-10-12 13:28:58
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -244,8 +244,8 @@ b = tf.minimum(constraint_tf['mes'][1], m0)
 x1 = 1 - tf.pow(a / m0, 2)
 x2 = 1 - tf.pow(b / m0, 2)
 
-sqrt1_grad = tf.gradients(tf.sqrt(-argpar * x1), argpar, name="sqrt1_ARGPAR_GRAD")
-sqrt2_grad = tf.gradients(tf.sqrt(-argpar * x2), argpar, name="sqrt2_ARGPAR_GRAD")
+selsqrt1_grad = tf.gradients(tf.select(x1 > 0, tf.sqrt(-argpar * x1), 0), argpar, name="selsqrt1_ARGPAR_GRAD")
+selsqrt2_grad = tf.gradients(tf.select(x2 > 0, tf.sqrt(-argpar * x2), 0), argpar, name="selsqrt2_ARGPAR_GRAD")
 
 # data_ph = tf.placeholder(tf.float64)
 # erfsqrt_ph_grad = tf.gradients()
