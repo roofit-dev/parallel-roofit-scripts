@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-12 11:36:59
+# @Last Modified time: 2016-10-12 11:45:38
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -219,7 +219,8 @@ for key in constraint.keys():
 
 
 print("N.B.: using direct data entry")
-nll = tf.neg(tf.log(tf.reduce_sum(sum_pdf(data, nsig, sigmean, sigwidth, nbkg, m0, argpar, constraint_tf['mes'][0], constraint_tf['mes'][1]))), name="nll")
+likelihood = sum_pdf(data, nsig, sigmean, sigwidth, nbkg, m0, argpar, constraint_tf['mes'][0], constraint_tf['mes'][1])
+nll = tf.neg(tf.reduce_sum(tf.log(likelihood)), name="nll")
 
 # print("N.B.: using unsummed version of nll! This appears to be the way people minimize cost functions in tf...")
 # nll = tf.neg(tf.log(sum_pdf(data, nsig, sigmean, sigwidth, nbkg, m0, argpar, constraint_tf['mes'][0], constraint_tf['mes'][1])), name="nll")
@@ -301,6 +302,8 @@ with tf.Session() as sess:
 
     print("crappy grad:", sess.run(crappy_grad))
     nll_value_opt = sess.run(nll)
+    likelihood_value_opt = sess.run(likelihood)
+    print(likelihood_value_opt)
 
     def step_callback(var_values_opt):
         global step, sess, summary_writer, nll_value_opt
