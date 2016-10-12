@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-11 18:04:53
+# @Last Modified time: 2016-10-12 08:00:29
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -143,7 +143,8 @@ def argus_pdf_phalf_WN(m, m0, c, m_low, m_high):#, tf_norm=tf.constant(False)):
     #                lambda: argus_integral_phalf(m_low, m_high, m0, c),
     #                lambda: argus_numerical_norm, name="argus_norm")
     # norm = argus_numerical_norm
-    norm = argus_integral_phalf(m_low, m_high, m0, c)
+    # norm = argus_integral_phalf(m_low, m_high, m0, c)
+    norm = 1
     return argus_pdf(m, m0, c) / norm
 
 
@@ -213,11 +214,11 @@ for key in constraint.keys():
                           tf.constant(high, dtype=tf.float64))
 
 
-print("N.B.: using direct data entry")
-nll = tf.neg(tf.reduce_sum(tf.log(sum_pdf(data, nsig, sigmean, sigwidth, nbkg, m0, argpar, constraint_tf['mes'][0], constraint_tf['mes'][1]))), name="nll")
+# print("N.B.: using direct data entry")
+# nll = tf.neg(tf.reduce_sum(tf.log(sum_pdf(data, nsig, sigmean, sigwidth, nbkg, m0, argpar, constraint_tf['mes'][0], constraint_tf['mes'][1]))), name="nll")
 
-# print("N.B.: using unsummed version of nll! This appears to be the way people minimize cost functions in tf...")
-# nll = tf.neg(tf.log(sum_pdf(data, nsig, sigmean, sigwidth, nbkg, m0, argpar, constraint_tf['mes'][0], constraint_tf['mes'][1])), name="nll")
+print("N.B.: using unsummed version of nll! This appears to be the way people minimize cost functions in tf...")
+nll = tf.neg(tf.log(sum_pdf(data, nsig, sigmean, sigwidth, nbkg, m0, argpar, constraint_tf['mes'][0], constraint_tf['mes'][1])), name="nll")
 
 
 variables = tf.all_variables()
@@ -288,12 +289,13 @@ with tf.Session() as sess:
 
     true_vars['m0'] = m0.eval()
 
-    print("name\t" + "\t".join([v.name.ljust(10) for v in variables]) + "\t | nll\t\t | step")
-    print("init\t" + "\t".join(["%6.4e" % v for v in sess.run(variables)]) + "\t | %f" % sess.run(nll))
+    print("name\t" + "\t".join([v.name.ljust(10) for v in variables]) + "\t | <nll>\t\t | step")
+    print("init\t" + "\t".join(["%6.4e" % v for v in sess.run(variables)]) + "\t | %f" % np.mean(sess.run(nll)))
     print("")
 
     step = 0
 
+    print("crappy grad:", sess.run(crappy_grad))
     nll_value_opt = sess.run(nll)
 
     def step_callback(var_values_opt):
@@ -302,7 +304,7 @@ with tf.Session() as sess:
         summary = sess.run(summarize_merged)
         summary_writer.add_summary(summary, step)
         if step % status_every == 0:
-            print("opt\t" + "\t".join(["%6.4e" % v for v in var_values_opt]) + "\t | %f\t | %i" % (nll_value_opt, step))
+            print("opt\t" + "\t".join(["%6.4e" % v for v in var_values_opt]) + "\t | %f\t | %i" % (np.mean(nll_value_opt), step))
 
         step += 1
 
@@ -335,7 +337,7 @@ with tf.Session() as sess:
 
     fit_vars['m0'] = m0.eval()
 
-    print("fit \t" + "\t".join(["%6.4e" % v for v in sess.run(variables)]) + "\t | %f" % sess.run(nll))
+    print("fit \t" + "\t".join(["%6.4e" % v for v in sess.run(variables)]) + "\t | %f" % np.mean(sess.run(nll)))
 
     logging.info("create data histogram")
     counts, bins = np.histogram(data.eval(), bins=100)
