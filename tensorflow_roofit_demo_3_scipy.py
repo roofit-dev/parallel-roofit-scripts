@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-12 12:09:45
+# @Last Modified time: 2016-10-12 12:10:31
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -235,7 +235,7 @@ likeli_grad = tf.gradients(likelihood, argpar, name="likelihood_ARGPAR_GRAD")
 argus_pdf_separate = argus_pdf(data, m0, argpar)
 argus_integral_phalf_separate = argus_integral_phalf(constraint_tf['mes'][0], constraint_tf['mes'][1], m0, argpar)
 argus_pdf_grad = tf.gradients(argus_pdf_separate, argpar, name="argus_pdf_ARGPAR_GRAD")
-argus_integral_phalf_grad = tf.gradients(argus_pdf_separate, argpar, name="argus_integral_phalf_ARGPAR_GRAD")
+argus_integral_phalf_grad = tf.gradients(argus_integral_phalf_separate, argpar, name="argus_integral_phalf_ARGPAR_GRAD")
 
 # ### build constraint inequalities
 inequalities = []
