@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-12 11:45:38
+# @Last Modified time: 2016-10-12 11:52:39
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -230,6 +230,7 @@ variables = tf.all_variables()
 
 grads = tf.gradients(nll, variables)#, name="DEZE_GRADIENTS")
 crappy_grad = tf.gradients(nll, argpar, name="ARGPAR_GRAD")
+likeli_grad = tf.gradients(likelihood, argpar, name="likelihood_ARGPAR_GRAD")
 
 # ### build constraint inequalities
 inequalities = []
@@ -300,9 +301,11 @@ with tf.Session() as sess:
 
     step = 0
 
-    print("crappy grad:", sess.run(crappy_grad))
+    crappy_grad_value_opt = sess.run(crappy_grad)
+    print("crappy grad:", crappy_grad_value_opt)
     nll_value_opt = sess.run(nll)
     likelihood_value_opt = sess.run(likelihood)
+    likeli_grad_value_opt = sess.run(likeli_grad)
     print(likelihood_value_opt)
 
     def step_callback(var_values_opt):
