@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-12 13:08:33
+# @Last Modified time: 2016-10-12 13:09:40
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -238,11 +238,11 @@ argus_pdf_grad = tf.gradients(argus_pdf_separate, argpar, name="argus_pdf_ARGPAR
 argus_integral_phalf_grad = tf.gradients(argus_integral_phalf_separate, argpar, name="argus_integral_phalf_ARGPAR_GRAD")
 
 # stuff from inside argus_integral_phalf
-a = np.min([constraint_tf['mes'][0], m0])
-b = np.min([constraint_tf['mes'][1], m0])
+a = tf.minimum([constraint_tf['mes'][0], m0])
+b = tf.minimum([constraint_tf['mes'][1], m0])
 
-x1 = 1 - (a / m0)**2
-x2 = 1 - (b / m0)**2
+x1 = 1 - tf.pow(a / m0, 2)
+x2 = 1 - tf.pow(b / m0, 2)
 
 erfsqrt1_grad = tf.gradients(tf.erf(tf.sqrt(-argpar * x1)), argpar, name="erfsqrt1_ARGPAR_GRAD")
 erfsqrt2_grad = tf.gradients(tf.erf(tf.sqrt(-argpar * x2)), argpar, name="erfsqrt2_ARGPAR_GRAD")
