@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-12 12:09:06
+# @Last Modified time: 2016-10-12 12:09:45
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -232,10 +232,6 @@ grads = tf.gradients(nll, variables)#, name="DEZE_GRADIENTS")
 crappy_grad = tf.gradients(nll, argpar, name="ARGPAR_GRAD")
 likeli_grad = tf.gradients(likelihood, argpar, name="likelihood_ARGPAR_GRAD")
 
-    norm = argus_integral_phalf(m_low, m_high, m0, c)
-    return argus_pdf(m, m0, c) / norm
-
-
 argus_pdf_separate = argus_pdf(data, m0, argpar)
 argus_integral_phalf_separate = argus_integral_phalf(constraint_tf['mes'][0], constraint_tf['mes'][1], m0, argpar)
 argus_pdf_grad = tf.gradients(argus_pdf_separate, argpar, name="argus_pdf_ARGPAR_GRAD")
@@ -315,8 +311,8 @@ with tf.Session() as sess:
     nll_value_opt = sess.run(nll)
     likelihood_value_opt = sess.run(likelihood)
     likeli_grad_value_opt = sess.run(likeli_grad)
-    likeli_grad_value_opt = sess.run(argus_pdf_grad)
-    likeli_grad_value_opt = sess.run(argus_integral_phalf_grad)
+    argus_pdf_grad_value_opt = sess.run(argus_pdf_grad)
+    argus_integral_phalf_grad_value_opt = sess.run(argus_integral_phalf_grad)
 
     print(likelihood_value_opt)
 
