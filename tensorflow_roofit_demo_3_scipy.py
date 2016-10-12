@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-12 13:09:59
+# @Last Modified time: 2016-10-12 13:26:46
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -97,19 +97,19 @@ def argus_integral_phalf(m_low, m_high, m0, c):
     """
     def F(x, name=None):
         with tf.name_scope(name, "argus_integral_phalf_primitive"):
-            # return -0.5 * m0 * m0 * (tf.exp(c * x) * tf.sqrt(x) / c + 0.5 / tf.pow(-c, 1.5) * tf.sqrt(pi) * tf.erf(tf.sqrt(-c * x)))
             fragiel_ding = tf.sqrt(-c * x, name="fragiel_ding")
-            # fragiel_ding = tf.pow(-c * x, 0.5, name="fragiel_ding")
-            return -0.5 * m0 * m0 * (tf.exp(c * x) * tf.sqrt(x) / c + 0.5 / tf.pow(-c, 1.5) * tf.sqrt(pi)# * tf.erf(tf.sqrt(-c * x)))
-                                     * tf.erf(fragiel_ding))
+            return -0.5 * m0 * m0 * (tf.exp(c * x) * tf.sqrt(x) / c + 0.5 / tf.pow(-c, 1.5) * tf.sqrt(pi) * tf.erf(fragiel_ding))
 
     a = tf.minimum(m_low, m0)
     b = tf.minimum(m_high, m0)
 
     x1 = 1 - tf.pow(a / m0, 2)
     x2 = 1 - tf.pow(b / m0, 2)
+    x2 = tf.Print(x2, [x2])
 
-    area = tf.sub(F(x2, name="F2"), F(x1, name="F1"), name="argus_integral_phalf")
+    # We have to safeguard the sqrt, because otherwise the analytic
+    # derivative blows up for x = 0
+    area = tf.sub(tf.select(x2 > 0, F(x2, name="F2"), 0), tf.select(x1 > 0, F(x1, name="F1"), 0), name="argus_integral_phalf")
     return area
 
 
@@ -244,8 +244,8 @@ b = tf.minimum(constraint_tf['mes'][1], m0)
 x1 = 1 - tf.pow(a / m0, 2)
 x2 = 1 - tf.pow(b / m0, 2)
 
-erfsqrt1_grad = tf.gradients(tf.erf(tf.sqrt(-argpar * x1)), argpar, name="erfsqrt1_ARGPAR_GRAD")
-erfsqrt2_grad = tf.gradients(tf.erf(tf.sqrt(-argpar * x2)), argpar, name="erfsqrt2_ARGPAR_GRAD")
+sqrt1_grad = tf.gradients(tf.sqrt(-argpar * x1), argpar, name="sqrt1_ARGPAR_GRAD")
+sqrt2_grad = tf.gradients(tf.sqrt(-argpar * x2), argpar, name="sqrt2_ARGPAR_GRAD")
 
 # data_ph = tf.placeholder(tf.float64)
 # erfsqrt_ph_grad = tf.gradients()
@@ -327,8 +327,8 @@ with tf.Session() as sess:
     argus_pdf_grad_value_opt = sess.run(argus_pdf_grad)
     argus_integral_phalf_grad_value_opt = sess.run(argus_integral_phalf_grad)
 
-    erfsqrt1_grad_value_opt = sess.run(erfsqrt1_grad)
-    erfsqrt2_grad_value_opt = sess.run(erfsqrt2_grad)
+    sqrt1_grad_value_opt = sess.run(sqrt1_grad)
+    sqrt2_grad_value_opt = sess.run(sqrt2_grad)
 
     print(likelihood_value_opt)
 
