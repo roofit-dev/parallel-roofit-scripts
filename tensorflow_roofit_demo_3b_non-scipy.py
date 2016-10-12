@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-11 16:59:25
+# @Last Modified time: 2016-10-12 14:01:01
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -98,16 +98,12 @@ def argus_integral_phalf(m_low, m_high, m0, c):
     Only valid for argus_pdf with p=0.5! Otherwise need to do numerical
     integral.
     """
-    def F(x):
+    def F(m_bound):
+        a = tf.minimum(m_bound, m0)
+        x = 1 - tf.pow(a / m0, 2)
         return -0.5 * m0 * m0 * (tf.exp(c * x) * tf.sqrt(x) / c + 0.5 / tf.pow(-c, 1.5) * tf.sqrt(pi) * tf.erf(tf.sqrt(-c * x)))
 
-    a = tf.minimum(m_low, m0)
-    b = tf.minimum(m_high, m0)
-
-    x1 = 1 - tf.pow(a / m0, 2)
-    x2 = 1 - tf.pow(b / m0, 2)
-
-    area = tf.sub(F(x2), F(x1), name="argus_integral_phalf")
+    area = tf.sub(F(m_high), F(m_low), name="argus_integral_phalf")
     return area
 
 

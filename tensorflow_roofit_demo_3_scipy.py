@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-12 13:29:21
+# @Last Modified time: 2016-10-12 14:06:10
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -95,21 +95,16 @@ def argus_integral_phalf(m_low, m_high, m0, c):
     Only valid for argus_pdf with p=0.5! Otherwise need to do numerical
     integral.
     """
-    def F(x, name=None):
+    def F(m_bound, name=None):
         with tf.name_scope(name, "argus_integral_phalf_primitive"):
+            x = 1 - tf.pow(m_bound / m0, 2)
             fragiel_ding = tf.sqrt(-c * x, name="fragiel_ding")
-            return -0.5 * m0 * m0 * (tf.exp(c * x) * tf.sqrt(x) / c + 0.5 / tf.pow(-c, 1.5) * tf.sqrt(pi) * tf.erf(fragiel_ding))
+            primitive = -0.5 * m0 * m0 * (tf.exp(c * x) * tf.sqrt(x) / c + 0.5 / tf.pow(-c, 1.5) * tf.sqrt(pi) * tf.erf(fragiel_ding))
+            # We have to safeguard the sqrt, because otherwise the analytic
+            # derivative blows up for x = 0
+            return tf.select(m_bound >= m0, zero, primitive)
 
-    a = tf.minimum(m_low, m0)
-    b = tf.minimum(m_high, m0)
-
-    x1 = 1 - tf.pow(a / m0, 2)
-    x2 = 1 - tf.pow(b / m0, 2)
-    x2 = tf.Print(x2, [x2])
-
-    # We have to safeguard the sqrt, because otherwise the analytic
-    # derivative blows up for x = 0
-    area = tf.sub(tf.select(x2 > 0, F(x2, name="F2"), 0), tf.select(x1 > 0, F(x1, name="F1"), 0), name="argus_integral_phalf")
+    area = tf.sub(F(m_high, name="F2"), F(m_low, name="F1"), name="argus_integral_phalf")
     return area
 
 
