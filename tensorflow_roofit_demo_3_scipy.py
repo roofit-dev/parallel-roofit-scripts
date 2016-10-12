@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-12 13:04:39
+# @Last Modified time: 2016-10-12 13:08:33
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -237,7 +237,15 @@ argus_integral_phalf_separate = argus_integral_phalf(constraint_tf['mes'][0], co
 argus_pdf_grad = tf.gradients(argus_pdf_separate, argpar, name="argus_pdf_ARGPAR_GRAD")
 argus_integral_phalf_grad = tf.gradients(argus_integral_phalf_separate, argpar, name="argus_integral_phalf_ARGPAR_GRAD")
 
-erfsqrt_grad = tf.gradients(tf.erf(tf.sqrt(-argpar * 0.2)), argpar, name="erfsqrt_ARGPAR_GRAD")
+# stuff from inside argus_integral_phalf
+a = np.min([constraint_tf['mes'][0], m0])
+b = np.min([constraint_tf['mes'][1], m0])
+
+x1 = 1 - (a / m0)**2
+x2 = 1 - (b / m0)**2
+
+erfsqrt1_grad = tf.gradients(tf.erf(tf.sqrt(-argpar * x1)), argpar, name="erfsqrt1_ARGPAR_GRAD")
+erfsqrt2_grad = tf.gradients(tf.erf(tf.sqrt(-argpar * x2)), argpar, name="erfsqrt2_ARGPAR_GRAD")
 
 # data_ph = tf.placeholder(tf.float64)
 # erfsqrt_ph_grad = tf.gradients()
@@ -319,7 +327,8 @@ with tf.Session() as sess:
     argus_pdf_grad_value_opt = sess.run(argus_pdf_grad)
     argus_integral_phalf_grad_value_opt = sess.run(argus_integral_phalf_grad)
 
-    erfsqrt_grad_value_opt = sess.run(erfsqrt_grad)
+    erfsqrt1_grad_value_opt = sess.run(erfsqrt1_grad)
+    erfsqrt2_grad_value_opt = sess.run(erfsqrt2_grad)
 
     print(likelihood_value_opt)
 
