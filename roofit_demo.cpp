@@ -1,3 +1,6 @@
+#include <chrono>
+#include <iostream>
+
 using namespace RooFit ;
 
 void roofit_demo() {
@@ -20,10 +23,22 @@ void roofit_demo() {
   RooAddPdf sum("sum","g+a",RooArgList(gauss,argus),RooArgList(nsig,nbkg)) ;
 
   // --- Generate a toyMC sample from composite PDF ---
-  RooDataSet *data = sum.generate(mes,2000) ;
+/*  RooDataSet *data = sum.generate(mes,2000) ;
+  // OR reload previously written out sample:
+
+  // wegschrijven:
+  data.write("roofit_demo_random_data_values.dat");
+*/
+  // om het weer in te lezen:
+  RooDataSet *data = RooDataSet::read("../roofit_demo_random_data_values.dat", RooArgList(mes));
+
+  auto begin = std::chrono::high_resolution_clock::now();
 
   // --- Perform extended ML fit of composite PDF to toy data ---
   sum.fitTo(*data,"Extended") ;
+
+  auto end = std::chrono::high_resolution_clock::now();
+  std::cout << std::chrono::duration_cast<std::chrono::nanoseconds>(end-begin).count() / 1e9  << "s" << std::endl;
 
   // --- Plot toy data and composite PDF overlaid ---
   RooPlot* mesframe = mes.frame() ;

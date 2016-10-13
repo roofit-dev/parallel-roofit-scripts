@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-13 07:35:50
+# @Last Modified time: 2016-10-13 08:05:06
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -44,19 +44,6 @@ sqrt2pi = tf.constant(np.sqrt(2 * np.pi), dtype=tf.float64, name="sqrt2pi")
 two = tf.constant(2, dtype=tf.float64, name="two")
 one = tf.constant(1, dtype=tf.float64, name="one")
 zero = tf.constant(0, dtype=tf.float64, name="zero")
-
-
-def gaussian_pdf(x, mean, std):
-    val = tf.div(tf.exp(-tf.pow((x - mean) / std, 2) / two), (sqrt2pi * std),
-                 name="gaussian_pdf")
-    return val
-
-
-def argus_pdf(m, m0, c, p=0.5):
-    t = m / m0
-    u = 1 - t * t
-    argus_t_ge_1 = m * tf.pow(u, p) * tf.exp(c * u)
-    return tf.maximum(tf.zeros_like(m), argus_t_ge_1, name="argus_pdf")
 
 
 def gradsafe_sqrt(x, clip_low=1e-18, name=None):
@@ -104,6 +91,13 @@ vdict['sigwidth'] = sigwidth
 
 # RooGaussian gauss("gauss","gaussian PDF",mes,sigmean,sigwidth) ;
 
+
+def gaussian_pdf(x, mean, std):
+    val = tf.div(tf.exp(-tf.pow((x - mean) / std, 2) / two), (sqrt2pi * std),
+                 name="gaussian_pdf")
+    return val
+
+
 # // --- Build Argus background PDF ---
 # RooRealVar argpar("argpar","argus shape parameter",-20.0,-100.,-1.) ;
 # RooConstVar m0("m0", "resonant mass", 5.291);
@@ -113,6 +107,14 @@ m0 = tf.constant(m0_num, name="m0", dtype=tf.float64)
 vdict['argpar'] = argpar
 
 # RooArgusBG argus("argus","Argus PDF",mes,m0,argpar) ;
+
+
+def argus_pdf(m, m0, c, p=0.5):
+    t = m / m0
+    u = 1 - t * t
+    argus_t_ge_1 = m * tf.pow(u, p) * tf.exp(c * u)
+    return tf.maximum(tf.zeros_like(m), argus_t_ge_1, name="argus_pdf")
+
 
 # // --- Construct signal+background PDF ---
 # RooRealVar nsig("nsig","#signal events",200,0.,10000) ;
@@ -139,6 +141,9 @@ def sum_pdf(mes, nsig, sigmean, sigwidth, nbkg, m0, argpar, mes_low, mes_high):
 # data in RooFit genereren en importeren
 # draai dit in ROOT:
 # data.write("roofit_demo_random_data_values.dat");
+# om het weer in te lezen:
+# RooDataSet *data;
+# data->RooDataSet.read("roofit_demo_random_data_values.dat", RooArgList(mes))
 data_raw = np.loadtxt(project_dn + "roofit_demo_random_data_values.dat",
                       dtype=np.float64)
 data = tf.constant(data_raw, name='event_data', dtype=tf.float64)
