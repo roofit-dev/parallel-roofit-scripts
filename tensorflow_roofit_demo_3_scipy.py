@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-12 16:20:34
+# @Last Modified time: 2016-10-13 07:25:32
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -301,7 +301,7 @@ grads[2] = tf.Print(grads[2], variables + grads)
 with tf.Session() as sess:
     # Merge all the summaries and write them out to /tmp/mnist_logs (by default)
     summarize_merged = tf.merge_all_summaries()
-    summary_writer = tf.train.SummaryWriter('./train_%i' % int(time.time()), sess.graph)
+    summary_writer = tf.train.SummaryWriter('./train/%i' % int(time.time()), sess.graph)
     # Run the init operation.
     sess.run(init_op)
     # sess.run(check_num_op)
