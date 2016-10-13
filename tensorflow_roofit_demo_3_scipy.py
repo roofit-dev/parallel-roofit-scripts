@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-13 07:25:32
+# @Last Modified time: 2016-10-13 07:35:50
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -18,17 +18,6 @@ from timeit import default_timer as timer
 import time
 
 tf.logging.set_verbosity(tf.logging.INFO)
-
-
-def apply_constraint(var, constraints):
-    var_name = var.name[:var.name.find(':')]
-    # low = tf.constant(constraints[var_name][0], dtype=tf.float64)
-    # high = tf.constant(constraints[var_name][1], dtype=tf.float64)
-    low = constraints[var_name][0]
-    high = constraints[var_name][1]
-    return tf.assign(var, tf.clip_by_value(var, low, high),
-                     name="assign_to_" + var_name)
-    # return tf.Variable(tf.clip_by_value(var, low, high), name=var_name + '_clipped')
 
 
 project_dn = "/home/patrick/projects/apcocsm/"
@@ -66,28 +55,8 @@ def gaussian_pdf(x, mean, std):
 def argus_pdf(m, m0, c, p=0.5):
     t = m / m0
     u = 1 - t * t
-    safe_pow = tf.real(tf.pow(tf.complex(u, zero), tf.complex(tf.to_double(p), zero)))
-    # argus_t_ge_1 = m * tf.pow(u, p) * tf.exp(c * u)
-    argus_t_ge_1 = m * safe_pow * tf.exp(c * u)
-    return tf.maximum(tf.zeros_like(m), argus_t_ge_1,
-                      name="argus_pdf")
-    # return tf.select(tf.greater_equal(t, 1),
-    #                  tf.zeros_like(m),
-    #                  # m * tf.pow(u, p) * tf.exp(c * u),
-    #                  m * safe_pow * tf.exp(c * u),
-    #                  name="argus_pdf")
-    # N.B.: select creates problems with the analytical derivative (nan)!
-    #       https://github.com/tensorflow/tensorflow/issues/2540
-    #       http://stackoverflow.com/a/39155976/1199693
-    #
-    # return tf.cond(tf.greater_equal(t, one),
-    #                lambda: zero,
-    #                lambda: m * tf.pow(u, p) * tf.exp(c * u),
-    #                name="argus_pdf")
-    # N.B.: bij cond moeten de argumenten functies zijn (zonder argumenten)
-    #       zodat tf ze pas hoeft te callen / uit te rekenen als ze nodig zijn.
-    #       Dat is dus bij select niet mogelijk, daar krijg je meteen beide hele
-    #       tensors.
+    argus_t_ge_1 = m * tf.pow(u, p) * tf.exp(c * u)
+    return tf.maximum(tf.zeros_like(m), argus_t_ge_1, name="argus_pdf")
 
 
 def gradsafe_sqrt(x, clip_low=1e-18, name=None):
@@ -113,41 +82,10 @@ def argus_integral_phalf(m_low, m_high, m0, c):
     return area
 
 
-def argus_integral_phalf_numpy(m_low, m_high, m0, c):
-    """
-    Only valid for argus_pdf with p=0.5! Otherwise need to do numerical
-    integral.
-    """
-    import scipy.special
-
-    def F(x):
-        return -0.5 * m0 * m0 * (np.exp(c * x) * np.sqrt(x) / c + 0.5 / (-c)**1.5 * np.sqrt(np.pi) * scipy.special.erf(np.sqrt(-c * x)))
-
-    a = np.min([m_low, m0])
-    b = np.min([m_high, m0])
-
-    x1 = 1 - (a / m0)**2
-    x2 = 1 - (b / m0)**2
-
-    area = F(x2) - F(x1)
-    return area
-
-
-# argus_numerical_norm = tf.constant(argus_integral_phalf_numpy(constraint['mes'][0],
-#                                                               constraint['mes'][1],
-#                                                               m0_num, argpar_num),
-#                                    dtype=tf.float64, name="argus_numerical_norm")
-
-
-def argus_pdf_phalf_WN(m, m0, c, m_low, m_high):#, tf_norm=tf.constant(False)):
+def argus_pdf_phalf_WN(m, m0, c, m_low, m_high):
     """
     WN: with normalization
-    tf_norm: use the tensorflow integral function (True) or the numpy one (False)
     """
-    # norm = tf.cond(tf_norm,
-    #                lambda: argus_integral_phalf(m_low, m_high, m0, c),
-    #                lambda: argus_numerical_norm, name="argus_norm")
-    # norm = argus_numerical_norm
     norm = argus_integral_phalf(m_low, m_high, m0, c)
     return argus_pdf(m, m0, c) / norm
 
@@ -195,7 +133,6 @@ def sum_pdf(mes, nsig, sigmean, sigwidth, nbkg, m0, argpar, mes_low, mes_high):
     add = tf.add(nsig * gaussian_pdf(mes, sigmean, sigwidth),
                  nbkg * argus_pdf_phalf_WN(mes, m0, argpar, mes_low, mes_high),
                  name="sum_pdf")
-    # return tf.div(len(data_raw) * add, nsig + nbkg, name="sum_pdf_normalized")  # THIS DOESN'T WORK
     return tf.div(add, nsig + nbkg, name="sum_pdf_normalized")
 
 
@@ -222,33 +159,10 @@ print("N.B.: using direct data entry")
 likelihood = sum_pdf(data, nsig, sigmean, sigwidth, nbkg, m0, argpar, constraint_tf['mes'][0], constraint_tf['mes'][1])
 nll = tf.neg(tf.reduce_sum(tf.log(likelihood)), name="nll")
 
-# print("N.B.: using unsummed version of nll! This appears to be the way people minimize cost functions in tf...")
-# nll = tf.neg(tf.log(sum_pdf(data, nsig, sigmean, sigwidth, nbkg, m0, argpar, constraint_tf['mes'][0], constraint_tf['mes'][1])), name="nll")
-
 
 variables = tf.all_variables()
 
-grads = tf.gradients(nll, variables)#, name="DEZE_GRADIENTS")
-crappy_grad = tf.gradients(nll, argpar, name="ARGPAR_GRAD")
-likeli_grad = tf.gradients(likelihood, argpar, name="likelihood_ARGPAR_GRAD")
-
-argus_pdf_separate = argus_pdf(data, m0, argpar)
-argus_integral_phalf_separate = argus_integral_phalf(constraint_tf['mes'][0], constraint_tf['mes'][1], m0, argpar)
-argus_pdf_grad = tf.gradients(argus_pdf_separate, argpar, name="argus_pdf_ARGPAR_GRAD")
-argus_integral_phalf_grad = tf.gradients(argus_integral_phalf_separate, argpar, name="argus_integral_phalf_ARGPAR_GRAD")
-
-# stuff from inside argus_integral_phalf
-a = tf.minimum(constraint_tf['mes'][0], m0)
-b = tf.minimum(constraint_tf['mes'][1], m0)
-
-x1 = 1 - tf.pow(a / m0, 2)
-x2 = 1 - tf.pow(b / m0, 2)
-
-selsqrt1_grad = tf.gradients(tf.select(x1 > 0, tf.sqrt(-argpar * x1), 0), argpar, name="selsqrt1_ARGPAR_GRAD")
-selsqrt2_grad = tf.gradients(tf.select(x2 > 0, tf.sqrt(-argpar * x2), 0), argpar, name="selsqrt2_ARGPAR_GRAD")
-
-# data_ph = tf.placeholder(tf.float64)
-# erfsqrt_ph_grad = tf.gradients()
+grads = tf.gradients(nll, variables)
 
 # ### build constraint inequalities
 inequalities = []
@@ -265,14 +179,6 @@ for v in variables:
     lower, upper = constraint[key]
     bounds.append((lower, upper))
 
-bounds_no_nan = []
-variables_no_nan = []
-for v in variables:
-    key = v.name[:v.name.find(':')]
-    if key != 'argpar':
-        lower, upper = constraint[key]
-        bounds_no_nan.append((lower, upper))
-        variables_no_nan.append(v)
 
 max_steps = 1000
 status_every = 1
@@ -285,17 +191,11 @@ opt = tf.contrib.opt.ScipyOptimizerInterface(nll,
                                              # method='SLSQP'  # supports inequalities
                                              bounds=bounds,
                                              var_list=variables,  # supply with bounds to match order!
-                                             # bounds=bounds_no_nan,
-                                             # var_list=variables_no_nan
                                              )
 
 tf.scalar_summary('nll', nll)
 
 init_op = tf.initialize_all_variables()
-
-grads[2] = tf.Print(grads[2], variables + grads)
-
-# check_num_op = tf.add_check_numerics_ops()
 
 # start session
 with tf.Session() as sess:
@@ -304,7 +204,6 @@ with tf.Session() as sess:
     summary_writer = tf.train.SummaryWriter('./train/%i' % int(time.time()), sess.graph)
     # Run the init operation.
     sess.run(init_op)
-    # sess.run(check_num_op)
 
     true_vars = {}
     for v in variables:
@@ -319,18 +218,7 @@ with tf.Session() as sess:
 
     step = 0
 
-    crappy_grad_value_opt = sess.run(crappy_grad)
-    print("crappy grad:", crappy_grad_value_opt)
     nll_value_opt = sess.run(nll)
-    likelihood_value_opt = sess.run(likelihood)
-    likeli_grad_value_opt = sess.run(likeli_grad)
-    argus_pdf_grad_value_opt = sess.run(argus_pdf_grad)
-    argus_integral_phalf_grad_value_opt = sess.run(argus_integral_phalf_grad)
-
-    selsqrt1_grad_value_opt = sess.run(selsqrt1_grad)
-    selsqrt2_grad_value_opt = sess.run(selsqrt2_grad)
-
-    print(likelihood_value_opt)
 
     def step_callback(var_values_opt):
         global step, sess, summary_writer, nll_value_opt
@@ -361,7 +249,7 @@ with tf.Session() as sess:
 
     end = timer()
 
-    logging.info("Loop took %f seconds" % (end - start))
+    print("Loop took %f seconds" % (end - start))
 
     logging.info("get fitted variables")
     fit_vars = {}
@@ -373,21 +261,22 @@ with tf.Session() as sess:
 
     print("fit \t" + "\t".join(["%6.4e" % v for v in sess.run(variables)]) + "\t | %f" % np.mean(sess.run(nll)))
 
+    # // --- Plot toy data and composite PDF overlaid ---
+    # RooPlot* mesframe = mes.frame() ;
+    # data->plotOn(mesframe) ;
+    # sum.plotOn(mesframe) ;
+    # sum.plotOn(mesframe,Components(argus),LineStyle(kDashed)) ;
+    # mesframe->Draw();
+
     logging.info("create data histogram")
     counts, bins = np.histogram(data.eval(), bins=100)
     x_bins = (bins[:-1] + bins[1:]) / 2
 
     logging.info("evaluate pdf values")
-    logging.info("... fit sum_pdf")
     y_fit = sum_pdf(x_bins, mes_low=constraint_tf['mes'][0], mes_high=constraint_tf['mes'][1], **fit_vars).eval()
-    logging.info("... fit argus")
-    # argus_fit = fit_vars['nbkg'] * argus_pdf_phalf_WN(x_bins, fit_vars['m0'], fit_vars['argpar'], m_low=constraint_tf['mes'][0], m_high=constraint_tf['mes'][1]).eval()
     argus_fit = argus_pdf_phalf_WN(x_bins, fit_vars['m0'], fit_vars['argpar'], m_low=constraint_tf['mes'][0], m_high=constraint_tf['mes'][1]).eval()
 
-    logging.info("... true sum_pdf")
     y_true = sum_pdf(x_bins, mes_low=constraint_tf['mes'][0], mes_high=constraint_tf['mes'][1], **true_vars).eval()
-
-    logging.info("... and normalize them")
 
     # normalize fit values to data counts
     y_fit_norm = np.sum(counts) / np.sum(y_fit)
@@ -399,51 +288,11 @@ with tf.Session() as sess:
     y_true_norm = np.sum(counts) / np.sum(y_true)
     y_true = [y * y_true_norm for y in y_true]
 
-    logging.info("plot results")
+    # plot results
     plt.errorbar(x_bins, counts, yerr=np.sqrt(counts), fmt='.g', label="input data")
     plt.plot(x_bins, y_fit, '-b', label="fit sum_pdf")
     plt.plot(x_bins, argus_fit, '--b', label="fit argus_pdf")
     plt.plot(x_bins, y_true, ':k', label="true sum_pdf")
     plt.legend(loc='best')
 
-    # argpar_range = np.linspace(constraint['argpar'][0], constraint['argpar'][1], 100)
-    # argus_norm_fct_c = argus_integral_phalf(constraint_tf['mes'][0], constraint_tf['mes'][1], m0, argpar_range).eval()
-
-    # fig, ax = plt.subplots(1, 1)
-    # ax.plot(argpar_range, argus_norm_fct_c, '-k')
-
-    # fig, ax = plt.subplots(1, 1)
-    # x_full_range = np.linspace(constraint['sigmean'][0], constraint['sigmean'][1], 1000)
-    # argus_fit_full_range = argus_pdf_phalf_WN(x_full_range, fit_vars['m0'], fit_vars['argpar'], m_low=constraint_tf['mes'][0], m_high=constraint_tf['mes'][1]).eval()
-    # print(argus_fit_full_range)
-
-    # ax.plot(x_full_range, argus_fit_full_range, '-k')
-
-    # fig, ax = plt.subplots(1, 1)
-    # argus_fit_unnormalized_full_range = argus_pdf(x_full_range, fit_vars['m0'], fit_vars['argpar']).eval()
-    # print(argus_fit_unnormalized_full_range)
-
-    # ax.plot(x_full_range, argus_fit_unnormalized_full_range, '-k')
-
     plt.show()
-
-# tf.InteractiveSession()
-
-# sess = tf.Session()
-
-# sess.run(init_op)
-
-# opt = tf.train.GradientDescentOptimizer(learning_rate=1)
-# opt_op = opt.minimize(nll, var_list=[sigmean, sigwidth, argpar, nsig, nbkg])
-# for step in xrange(10):
-#     out = sess.run([opt_op, nll, sigmean, sigwidth, argpar, nsig, nbkg])
-#     print out[1:]
-
-# sess.close()
-
-# // --- Plot toy data and composite PDF overlaid ---
-# RooPlot* mesframe = mes.frame() ;
-# data->plotOn(mesframe) ;
-# sum.plotOn(mesframe) ;
-# sum.plotOn(mesframe,Components(argus),LineStyle(kDashed)) ;
-# mesframe->Draw();
