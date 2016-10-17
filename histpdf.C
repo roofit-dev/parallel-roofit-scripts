@@ -1,3 +1,5 @@
+using namespace RooFit ;
+
 void histpdf()
 {
   
@@ -10,11 +12,11 @@ void histpdf()
   RooDataHist* h_g = w.pdf("g")->generateBinned(*w.var("x"),1000) ;
   RooDataHist* h_u = w.pdf("u")->generateBinned(*w.var("x"),1000) ;
 
-  // Make 2 pdfs die histogram also onderliggende implementatie hebben
+  // Make 2 pdfs die histogram als onderliggende implementatie hebben
   RooHistPdf hp_g("hp_g","hp_g",*w.var("x"),*h_g) ;
   RooHistPdf hp_u("hp_u","hp_u",*w.var("x"),*h_u) ;
 
-  // Construct pdf als some van twee histogram-based pdf
+  // Construct pdf als som van twee histogram-based pdf
   RooRealVar frac("frac","frac",0,1) ;
   RooAddPdf model("model","model",RooArgList(hp_g,hp_u),frac) ;
 
@@ -24,4 +26,14 @@ void histpdf()
   // Fit toy daya
   model.fitTo(*toyData) ;
   
+  // EGP: toegevoegd, aangepast uit roofit_demo.cpp
+  // --- Plot toy data and composite PDF overlaid ---
+  RooPlot* frame = w.var("x")->frame() ;
+  toyData->plotOn(frame) ;
+  model.plotOn(frame) ;
+  model.plotOn(frame, Components(hp_g), LineStyle(kDashed), LineColor(kRed)) ;
+  model.plotOn(frame, Components(hp_u), LineStyle(kDashed), LineColor(kGreen)) ;
+
+  frame->Draw();
+
 }
