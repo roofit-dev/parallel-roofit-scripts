@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-13 08:05:06
+# @Last Modified time: 2016-10-17 10:42:03
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -248,8 +248,9 @@ with tf.Session() as sess:
 
     start = timer()
 
-    opt.minimize(session=sess, step_callback=step_callback,
-                 loss_callback=loss_callback, fetches=[nll] + grads + variables)
+    # opt.minimize(session=sess, step_callback=step_callback,
+    #              loss_callback=loss_callback, fetches=[nll] + grads + variables)
+    opt.minimize(session=sess)
     # N.B.: callbacks not supported with SLSQP!
 
     end = timer()
