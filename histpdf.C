@@ -10,6 +10,7 @@ void histpdf()
 
   // Sample twee histogrammen van parent distributions
   RooDataHist* h_g = w.pdf("g")->generateBinned(*w.var("x"),1000) ;
+  h_g.write("histpdf_h_g.dat");
   RooDataHist* h_u = w.pdf("u")->generateBinned(*w.var("x"),1000) ;
 
   // Make 2 pdfs die histogram als onderliggende implementatie hebben
