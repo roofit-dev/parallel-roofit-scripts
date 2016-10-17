@@ -3,7 +3,7 @@
 
 using namespace RooFit ;
 
-void roofit_demo() {
+void roofit_demo_fitonly() {
   // --- Observable ---
   RooRealVar mes("mes","m_{ES} (GeV)",5.20,5.30) ;
 
@@ -32,11 +32,22 @@ void roofit_demo() {
   // om het weer in te lezen:
   RooDataSet *data = RooDataSet::read("../roofit_demo_random_data_values.dat", RooArgList(mes));
 
-  auto begin = std::chrono::high_resolution_clock::now();
 
   // --- Perform extended ML fit of composite PDF to toy data ---
-  // sum.fitTo(*data,"Extended", PrintLevel(-1)) ;
-  sum.fitTo(*data,"Extended") ;
+  // sum.fitTo(*data,"Extended") ;
+  // instead of full fitTo, only do the fit, leave out error matrix, using
+  // run style of run_higgs.C
+  RooAbsReal* nll = sum.createNLL(*data,"Extended");
+  RooMinimizer m(*nll) ;
+  // m.setVerbose(1) ;
+  m.setStrategy(0) ;
+  m.setProfile(1) ;
+  m.optimizeConst(2) ;
+
+  auto begin = std::chrono::high_resolution_clock::now();
+  // m.hesse();
+
+  m.minimize("Minuit2","migrad") ;
 
   auto end = std::chrono::high_resolution_clock::now();
   std::cout << std::chrono::duration_cast<std::chrono::nanoseconds>(end-begin).count() / 1e9  << "s" << std::endl;

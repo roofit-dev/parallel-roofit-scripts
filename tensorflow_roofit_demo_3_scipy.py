@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-17 13:10:12
+# @Last Modified time: 2016-10-17 17:13:54
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -192,13 +192,16 @@ status_every = 1
 # Create an optimizer with the desired parameters.
 opt = tf.contrib.opt.ScipyOptimizerInterface(nll,
                                              options={'maxiter': max_steps,
-                                                      'disp': True,
-                                                      'ftol': 1e-20},
+                                                      # 'disp': True,
+                                                      # 'tol': 1e-20,
+                                                      'maxls': 10,
+                                                      },
                                              # inequalities=inequalities,
                                              # method='SLSQP'  # supports inequalities
-                                             method='BFGS',
+                                             # method='BFGS',
                                              bounds=bounds,
                                              var_list=variables,  # supply with bounds to match order!
+                                             tol=1e-14,
                                              )
 
 tf.scalar_summary('nll', nll)
@@ -249,6 +252,7 @@ with tf.Session() as sess:
             print("variables:", ov)
         print("")
 
+    """
     start = timer()
 
     opt.minimize(session=sess, step_callback=step_callback,
@@ -274,7 +278,6 @@ with tf.Session() as sess:
     tf.logging.set_verbosity(tf.logging.INFO)
 
     print("Timing total: %f s, average: %f s, minimum: %f s" % (np.sum(timings), np.mean(timings), np.min(timings)))
-    """
 
     # logging.info("get fitted variables")
     fit_vars = {}
