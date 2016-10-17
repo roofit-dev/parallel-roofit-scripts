@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-17 11:11:21
+# @Last Modified time: 2016-10-17 13:10:12
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -191,9 +191,12 @@ status_every = 1
 
 # Create an optimizer with the desired parameters.
 opt = tf.contrib.opt.ScipyOptimizerInterface(nll,
-                                             options={'maxiter': max_steps},
+                                             options={'maxiter': max_steps,
+                                                      'disp': True,
+                                                      'ftol': 1e-20},
                                              # inequalities=inequalities,
                                              # method='SLSQP'  # supports inequalities
+                                             method='BFGS',
                                              bounds=bounds,
                                              var_list=variables,  # supply with bounds to match order!
                                              )
@@ -246,18 +249,17 @@ with tf.Session() as sess:
             print("variables:", ov)
         print("")
 
-    """
     start = timer()
 
-    # opt.minimize(session=sess, step_callback=step_callback,
-    #              loss_callback=loss_callback, fetches=[nll] + grads + variables)
+    opt.minimize(session=sess, step_callback=step_callback,
+                 loss_callback=loss_callback, fetches=[nll] + grads + variables)
     # N.B.: callbacks not supported with SLSQP!
 
     end = timer()
 
     print("Loop took %f seconds" % (end - start))
-    """
 
+    """
     N_loops = 1000
     timings = []
     tf.logging.set_verbosity(tf.logging.ERROR)
@@ -272,8 +274,9 @@ with tf.Session() as sess:
     tf.logging.set_verbosity(tf.logging.INFO)
 
     print("Timing total: %f s, average: %f s, minimum: %f s" % (np.sum(timings), np.mean(timings), np.min(timings)))
+    """
 
-    logging.info("get fitted variables")
+    # logging.info("get fitted variables")
     fit_vars = {}
     for v in variables:
         key = v.name[:v.name.find(':')]
@@ -283,6 +286,28 @@ with tf.Session() as sess:
 
     print("fit \t" + "\t".join(["%6.4e" % v for v in sess.run(variables)]) + "\t | %f" % np.mean(sess.run(nll)))
 
+    root_fit_vals = {'argpar': -22.8765, 'nbkg': 816.137, 'nsig': 195.976,
+                     'sigmean': 5.27987, 'sigwidth': 3.01048e-3, 'nll': -4976.4}
+
+    print("=== WARNING: setting variables to ROOT fit values! ===")
+    for v in variables:
+        key = v.name[:v.name.find(':')]
+        sess.run(v.assign(root_fit_vals[key]))
+
+    nll_root_val = sess.run(nll)
+
+    print("ROOT \t" + "\t".join(["%6.4e" % root_fit_vals[v.name[:v.name.find(':')]] for v in variables]) + "\t | %f (own calc: %f)" % (root_fit_vals['nll'], nll_root_val))
+
+    # FCN=-4976.4 FROM MIGRAD    STATUS=CONVERGED     101 CALLS         102 TOTAL
+    #                     EDM=1.00861e-05    STRATEGY= 1      ERROR MATRIX ACCURATE 
+    #  EXT PARAMETER                                   STEP         FIRST   
+    #  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+    #   1  argpar      -2.28765e+01   3.42616e+00   3.56317e-03  -1.23184e-02
+    #   2  nbkg         8.16137e+02   9.44657e+02   1.04092e-03   7.76879e-02
+    #   3  nsig         1.95976e+02   2.30582e+02   4.93414e-04  -1.64158e-01
+    #   4  sigmean      5.27987e+00   2.15796e-04   2.61026e-04  -3.20933e-01
+    #   5  sigwidth     3.01048e-03   1.99232e-04   1.93308e-04   5.48995e-01
+
     # // --- Plot toy data and composite PDF overlaid ---
     # RooPlot* mesframe = mes.frame() ;
     # data->plotOn(mesframe) ;
@@ -290,11 +315,11 @@ with tf.Session() as sess:
     # sum.plotOn(mesframe,Components(argus),LineStyle(kDashed)) ;
     # mesframe->Draw();
 
-    logging.info("create data histogram")
+    # logging.info("create data histogram")
     counts, bins = np.histogram(data.eval(), bins=100)
     x_bins = (bins[:-1] + bins[1:]) / 2
 
-    logging.info("evaluate pdf values")
+    # logging.info("evaluate pdf values")
     y_fit = sum_pdf(x_bins, mes_low=constraint_tf['mes'][0], mes_high=constraint_tf['mes'][1], **fit_vars).eval()
     argus_fit = argus_pdf_phalf_WN(x_bins, fit_vars['m0'], fit_vars['argpar'], m_low=constraint_tf['mes'][0], m_high=constraint_tf['mes'][1]).eval()
 
@@ -311,10 +336,10 @@ with tf.Session() as sess:
     y_true = [y * y_true_norm for y in y_true]
 
     # plot results
-    plt.errorbar(x_bins, counts, yerr=np.sqrt(counts), fmt='.g', label="input data")
-    plt.plot(x_bins, y_fit, '-b', label="fit sum_pdf")
-    plt.plot(x_bins, argus_fit, '--b', label="fit argus_pdf")
-    plt.plot(x_bins, y_true, ':k', label="true sum_pdf")
-    plt.legend(loc='best')
+    # plt.errorbar(x_bins, counts, yerr=np.sqrt(counts), fmt='.g', label="input data")
+    # plt.plot(x_bins, y_fit, '-b', label="fit sum_pdf")
+    # plt.plot(x_bins, argus_fit, '--b', label="fit argus_pdf")
+    # plt.plot(x_bins, y_true, ':k', label="true sum_pdf")
+    # plt.legend(loc='best')
 
-    plt.show()
+    # plt.show()
