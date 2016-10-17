@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-17 10:42:03
+# @Last Modified time: 2016-10-17 10:58:55
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -246,16 +246,32 @@ with tf.Session() as sess:
             print("variables:", ov)
         print("")
 
+    """
     start = timer()
 
     # opt.minimize(session=sess, step_callback=step_callback,
     #              loss_callback=loss_callback, fetches=[nll] + grads + variables)
-    opt.minimize(session=sess)
     # N.B.: callbacks not supported with SLSQP!
 
     end = timer()
 
     print("Loop took %f seconds" % (end - start))
+    """
+
+    N_loops = 100
+    timings = []
+    tf.logging.set_verbosity(tf.logging.ERROR)
+
+    for i in range(N_loops):
+        sess.run(init_op)
+        start = timer()
+        opt.minimize(session=sess)
+        end = timer()
+        timings.append(end - start)
+
+    tf.logging.set_verbosity(tf.logging.INFO)
+
+    print("Timing average: %f s, minimum: %f" % (np.mean(timings), np.min(timings)))
 
     logging.info("get fitted variables")
     fit_vars = {}
