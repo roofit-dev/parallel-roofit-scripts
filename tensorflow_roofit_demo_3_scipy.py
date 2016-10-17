@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-17 10:58:55
+# @Last Modified time: 2016-10-17 11:11:21
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -258,7 +258,7 @@ with tf.Session() as sess:
     print("Loop took %f seconds" % (end - start))
     """
 
-    N_loops = 100
+    N_loops = 1000
     timings = []
     tf.logging.set_verbosity(tf.logging.ERROR)
 
@@ -271,7 +271,7 @@ with tf.Session() as sess:
 
     tf.logging.set_verbosity(tf.logging.INFO)
 
-    print("Timing average: %f s, minimum: %f" % (np.mean(timings), np.min(timings)))
+    print("Timing total: %f s, average: %f s, minimum: %f s" % (np.sum(timings), np.mean(timings), np.min(timings)))
 
     logging.info("get fitted variables")
     fit_vars = {}
