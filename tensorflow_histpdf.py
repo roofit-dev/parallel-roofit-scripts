@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-10-17 18:12:26
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-19 09:49:51
+# @Last Modified time: 2016-10-19 09:51:12
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -33,11 +33,7 @@ h_u = tf.constant([i['weight'] for i in uniform_raw], dtype=tf.float64)
 # in this case all bins have equal width
 binw = tf.constant([i['vol'] for i in gaussian_raw], dtype=tf.float64)
 
-part_a = tf.Variable(0.5, dtype=tf.float64)
-part_b = tf.Variable(0.5, dtype=tf.float64)
-parts_tot = part_a + part_b
-frac = tf.div(part_a, parts_tot, name="frac")
-# kan ook met alleen 1 variabele, maar dan heb je geen gegarandeerde som = 1
+frac = tf.Variable(0.5, dtype=tf.float64, name="frac")
 
 model = frac * h_g + (1 - frac) * h_u
 
