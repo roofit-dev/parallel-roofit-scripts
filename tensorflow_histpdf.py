@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-10-17 18:12:26
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-19 11:22:06
+# @Last Modified time: 2016-10-19 12:03:45
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -159,7 +159,7 @@ def run_scipy():
         print("Loop took %f seconds" % (end - start))
 
         """
-        N_loops = 1000
+        N_loops = 1
         timings = []
         tf.logging.set_verbosity(tf.logging.ERROR)
 
@@ -188,6 +188,7 @@ def run_adam():
     opt = tf.train.AdamOptimizer()
     opt_op = opt.minimize(nll)
 
+    ix = tf.Variable(tf.constant(0, dtype=tf.int32))
     init_op = tf.initialize_all_variables()
 
     # start session
@@ -209,23 +210,35 @@ def run_adam():
         timings = []
         tf.logging.set_verbosity(tf.logging.ERROR)
 
+        def body(i):
+            sess.run([opt_op])
+            print(i)
+            return i + 1
+
+        def condition(i):
+            print(i)
+            return i < max_steps
+
+        loop_run = tf.while_loop(condition, body, [ix])
+
         for i in range(N_loops):
             sess.run(init_op)
             nll_cur = sess.run(nll)
             start = timer()
 
-            for step in xrange(max_steps):
-                nll_prev = nll_cur
-                # print "variables 3:", sess.run(variables)
-                sess.run([opt_op])
-                nll_cur = sess.run(nll)
+            sess.run(loop_run)
+            # for step in xrange(max_steps):
+            #     nll_prev = nll_cur
+            #     # print "variables 3:", sess.run(variables)
+            #     sess.run([opt_op])
+            #     nll_cur = sess.run(nll)
 
-                if tf.abs((nll_prev - nll_cur) / (nll_prev + nll_cur) / 2).eval() < 1e-8:
-                    break
+            #     if tf.abs((nll_prev - nll_cur) / (nll_prev + nll_cur) / 2).eval() < 1e-8:
+            #         break
 
-                # if step % status_every == 0:
-                #     var_values_opt = sess.run(variables)
-                #     print("opt\t" + "\t".join(["%6.4e" % v for v in var_values_opt]) + "\t | %f\t | %i" % (nll_cur, step))
+            #     # if step % status_every == 0:
+            #     #     var_values_opt = sess.run(variables)
+            #     #     print("opt\t" + "\t".join(["%6.4e" % v for v in var_values_opt]) + "\t | %f\t | %i" % (nll_cur, step))
 
             end = timer()
             timings.append(end - start)
@@ -242,6 +255,7 @@ def run_adam():
 
         print("fit \t" + "\t".join(["%6.4e" % v for v in sess.run(variables)]) + "\t | %f" % np.mean(sess.run(nll)))
 
-
+print("\nSCIPY RUN")
 run_scipy()
+print("\nADAM RUN")
 run_adam()
