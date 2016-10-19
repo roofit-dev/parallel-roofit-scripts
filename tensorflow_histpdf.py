@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-10-17 18:12:26
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-19 10:01:26
+# @Last Modified time: 2016-10-19 10:06:12
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -102,8 +102,8 @@ opt = tf.contrib.opt.ScipyOptimizerInterface(nll,
                                              options={'maxiter': max_steps,
                                                       # 'maxls': 10,
                                                       },
-                                             # bounds=bounds,
-                                             # var_list=variables,  # supply with bounds to match order!
+                                             bounds=bounds,
+                                             var_list=variables,  # supply with bounds to match order!
                                              # tol=1e-14,
                                              )
 
