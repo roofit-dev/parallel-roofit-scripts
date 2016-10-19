@@ -1,4 +1,21 @@
-using namespace RooFit ;
+#include <chrono>
+#include <iostream>
+
+using namespace RooFit;
+
+void printDataHistPyDict(RooDataHist *hist) {
+  // EGP: write out data in Python dict format
+  std::cout << "hist size = " << hist->numEntries() << std::endl ;
+  std::cout << "[" << std::endl;
+  for (Int_t i=0 ; i<hist->numEntries() ; i++) {
+    std::cout << "  {'x_bin': " << hist->get(i)->getRealValue("x")
+              << ", 'weight': " << hist->weight()
+              << ", 'vol': " << hist->binVolume()
+              << "}," << std::endl;
+  }
+  std::cout << "]" << std::endl;
+
+}
 
 void histpdf()
 {
@@ -10,8 +27,12 @@ void histpdf()
 
   // Sample twee histogrammen van parent distributions
   RooDataHist* h_g = w.pdf("g")->generateBinned(*w.var("x"),1000) ;
-  h_g.write("histpdf_h_g.dat");
   RooDataHist* h_u = w.pdf("u")->generateBinned(*w.var("x"),1000) ;
+
+  // std::cout << "GAUSSIAN SAMPLE" << std::endl;
+  // printDataHistPyDict(h_g);
+  // std::cout << "UNIFORM SAMPLE" << std::endl;
+  // printDataHistPyDict(h_u);
 
   // Make 2 pdfs die histogram als onderliggende implementatie hebben
   RooHistPdf hp_g("hp_g","hp_g",*w.var("x"),*h_g) ;
@@ -24,9 +45,38 @@ void histpdf()
   // Sample toy data van gezamenlijk model
   RooDataHist* toyData = model.generateBinned(*w.var("x"),1000) ;
   
+  // std::cout << "COMBINED SAMPLE" << std::endl;
+  // printDataHistPyDict(toyData);
+
   // Fit toy daya
-  model.fitTo(*toyData) ;
+  unsigned int duration_ns;
+  unsigned int total_duration_ns(0);
+  unsigned int min_duration_ns;
+
+  int num_loops = 1;
+  int printlevel = 1;
+
+  for (int i = 0; i < num_loops; ++i) {
+    auto begin = std::chrono::high_resolution_clock::now();
+    model.fitTo(*toyData, PrintLevel(printlevel)) ;    
+    auto end = std::chrono::high_resolution_clock::now();
+
+    frac = 0.5;
+    duration_ns = std::chrono::duration_cast<std::chrono::nanoseconds>(end-begin).count();
+    total_duration_ns += duration_ns;
+    if (i==0) {
+      min_duration_ns = duration_ns;
+    } else {
+      min_duration_ns = min(min_duration_ns, duration_ns);
+    }
+  }
   
+  std::cout << std::endl
+            << num_loops << " loops" << std::endl
+            << total_duration_ns / 1e9 << "s total duration" << std::endl
+            << total_duration_ns / 1e9 / num_loops << "s average per loop" << std::endl
+            << min_duration_ns / 1e9 << "s fastest loop" << std::endl << std::endl;
+
   // EGP: toegevoegd, aangepast uit roofit_demo.cpp
   // --- Plot toy data and composite PDF overlaid ---
   RooPlot* frame = w.var("x")->frame() ;
