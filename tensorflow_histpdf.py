@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-10-17 18:12:26
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-19 14:11:28
+# @Last Modified time: 2016-10-19 14:47:05
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -159,7 +159,7 @@ def run_scipy():
         print("Loop took %f seconds" % (end - start))
 
         """
-        N_loops = 1
+        N_loops = 100
         timings = []
         tf.logging.set_verbosity(tf.logging.ERROR)
 
@@ -186,27 +186,32 @@ def run_scipy():
 def run_adam():
     # Create an optimizer with the desired parameters.
     opt = tf.train.AdamOptimizer()
-    ix = tf.Variable(0)
+    ix_init = tf.Variable(0)
+    nll_init = tf.Variable(0., dtype=tf.float64)
+    nll_cur_init = tf.Variable(2., dtype=tf.float64)
     max_steps_tf = tf.constant(max_steps)
     gs = tf.Variable(0)
 
-    def body(i):
+    def body(ix, nll_prev, nll_cur):
         # When using while_loop, everything except the variables and constants,
         # i.e. everything that has to be recalculated every iteration, has to
         # be inside the body!
         # See http://stackoverflow.com/a/38999135/1199693
+        nll_prev = nll_cur
         model = frac * h_g + (1 - frac) * h_u
         mu = model * binw
         nll = tf.reduce_sum(-(-mu + N * tf.log(mu) - tf.lgamma(N + 1)),
                             name="nll_body")
         opt_op = opt.minimize(nll, global_step=gs)
         with tf.control_dependencies([opt_op]):
-            return i + 1
+            nll_cur = nll
+            return ix + 1, nll_prev, nll_cur
 
-    def condition(i, *args):
-        return i < max_steps_tf
+    def condition(ix, nll_prev, nll_cur):
+        return tf.abs((nll_prev - nll_cur) / (nll_prev + nll_cur) / 2) > 1e-8
+        return ix < max_steps_tf
 
-    adam_loop = tf.while_loop(condition, body, [ix])
+    adam_loop = tf.while_loop(condition, body, [ix_init, nll_init, nll_cur_init])
 
     init_op = tf.initialize_all_variables()
 
@@ -225,7 +230,7 @@ def run_adam():
         print("init\t" + "\t".join(["%6.4e" % v for v in sess.run(variables)]) + "\t | %f" % np.mean(nll_cur))
         print("")
 
-        N_loops = 100
+        N_loops = 1000
         timings = []
         tf.logging.set_verbosity(tf.logging.ERROR)
 
