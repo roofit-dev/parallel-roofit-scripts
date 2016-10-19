@@ -16,11 +16,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 from timeit import default_timer as timer
 import time
+import os
 
 tf.logging.set_verbosity(tf.logging.INFO)
 
 
-project_dn = "/home/patrick/projects/apcocsm/"
+project_dn = os.path.expanduser("~/projects/apcocsm/")
 # project_dn = "/home/pbos/apcocsm/"
 
 m0_num = 5.291
