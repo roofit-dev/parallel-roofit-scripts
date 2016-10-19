@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-10-17 18:12:26
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-19 12:03:45
+# @Last Modified time: 2016-10-19 14:09:39
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -186,9 +186,28 @@ def run_scipy():
 def run_adam():
     # Create an optimizer with the desired parameters.
     opt = tf.train.AdamOptimizer()
-    opt_op = opt.minimize(nll)
+    ix = tf.Variable(0)
+    max_steps_tf = tf.constant(max_steps)
+    gs = tf.Variable(0)
 
-    ix = tf.Variable(tf.constant(0, dtype=tf.int32))
+    def body(i):
+        # When using while_loop, everything except the variables and constants,
+        # i.e. everything that has to be recalculated every iteration, has to
+        # be inside the body!
+        # See http://stackoverflow.com/a/38999135/1199693
+        model = frac * h_g + (1 - frac) * h_u
+        mu = model * binw
+        nll = tf.reduce_sum(-(-mu + N * tf.log(mu) - tf.lgamma(N + 1)),
+                            name="nll_body")
+        opt_op = opt.minimize(nll, global_step=gs)
+        with tf.control_dependencies([opt_op]):
+            return i + 1
+
+    def condition(i, *args):
+        return i < max_steps_tf
+
+    adam_loop = tf.while_loop(condition, body, [ix])
+
     init_op = tf.initialize_all_variables()
 
     # start session
@@ -210,23 +229,15 @@ def run_adam():
         timings = []
         tf.logging.set_verbosity(tf.logging.ERROR)
 
-        def body(i):
-            sess.run([opt_op])
-            print(i)
-            return i + 1
-
-        def condition(i):
-            print(i)
-            return i < max_steps
-
-        loop_run = tf.while_loop(condition, body, [ix])
-
         for i in range(N_loops):
+            print('loop', i)
             sess.run(init_op)
             nll_cur = sess.run(nll)
             start = timer()
 
-            sess.run(loop_run)
+            print(sess.run(gs))
+            sess.run(adam_loop)
+            print(sess.run(gs))
             # for step in xrange(max_steps):
             #     nll_prev = nll_cur
             #     # print "variables 3:", sess.run(variables)
