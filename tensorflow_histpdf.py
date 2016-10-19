@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-10-17 18:12:26
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-19 14:09:39
+# @Last Modified time: 2016-10-19 14:11:28
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -225,19 +225,16 @@ def run_adam():
         print("init\t" + "\t".join(["%6.4e" % v for v in sess.run(variables)]) + "\t | %f" % np.mean(nll_cur))
         print("")
 
-        N_loops = 10
+        N_loops = 100
         timings = []
         tf.logging.set_verbosity(tf.logging.ERROR)
 
         for i in range(N_loops):
-            print('loop', i)
             sess.run(init_op)
             nll_cur = sess.run(nll)
             start = timer()
 
-            print(sess.run(gs))
             sess.run(adam_loop)
-            print(sess.run(gs))
             # for step in xrange(max_steps):
             #     nll_prev = nll_cur
             #     # print "variables 3:", sess.run(variables)
