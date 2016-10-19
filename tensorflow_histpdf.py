@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-10-17 18:12:26
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-19 09:51:12
+# @Last Modified time: 2016-10-19 10:01:26
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -15,7 +15,6 @@ from tensorflow.python.platform import tf_logging as logging
 import numpy as np
 import matplotlib.pyplot as plt
 from timeit import default_timer as timer
-import time
 
 from histpdf_data import combined_raw, gaussian_raw, uniform_raw
 
@@ -39,13 +38,8 @@ model = frac * h_g + (1 - frac) * h_u
 
 mu = model * binw
 
-n = 2.  # two pdfs combined
-
-logn = tf.constant(np.log(n), dtype=tf.float64)
-
-nll = tf.add(tf.reduce_sum(-(-mu + N * tf.log(mu) - tf.lgamma(N + 1))),
-             tf.reduce_sum(N) * logn,  # Normalize due to multiple pdfs
-             name="nll")
+nll = tf.reduce_sum(-(-mu + N * tf.log(mu) - tf.lgamma(N + 1)),
+                    name="nll")
 
 print("\nstill missing:\n - Kahan summation\n - zero/small checks\n")
 
