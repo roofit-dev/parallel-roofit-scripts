@@ -53,8 +53,8 @@ void histpdf()
   unsigned int total_duration_ns(0);
   unsigned int min_duration_ns;
 
-  int num_loops = 1000;
-  int printlevel = -1;
+  int num_loops = 1;
+  int printlevel = 3;
 
   for (int i = 0; i < num_loops; ++i) {
     auto begin = std::chrono::high_resolution_clock::now();

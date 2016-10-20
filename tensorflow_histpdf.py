@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-10-17 18:12:26
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-19 14:47:05
+# @Last Modified time: 2016-10-20 08:57:19
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -159,9 +159,9 @@ def run_scipy():
         print("Loop took %f seconds" % (end - start))
 
         """
-        N_loops = 100
+        N_loops = 1
         timings = []
-        tf.logging.set_verbosity(tf.logging.ERROR)
+        tf.logging.set_verbosity(tf.logging.INFO)
 
         for i in range(N_loops):
             sess.run(init_op)
@@ -189,7 +189,7 @@ def run_adam():
     ix_init = tf.Variable(0)
     nll_init = tf.Variable(0., dtype=tf.float64)
     nll_cur_init = tf.Variable(2., dtype=tf.float64)
-    max_steps_tf = tf.constant(max_steps)
+    # max_steps_tf = tf.constant(max_steps)
     gs = tf.Variable(0)
 
     def body(ix, nll_prev, nll_cur):
@@ -202,14 +202,16 @@ def run_adam():
         mu = model * binw
         nll = tf.reduce_sum(-(-mu + N * tf.log(mu) - tf.lgamma(N + 1)),
                             name="nll_body")
-        opt_op = opt.minimize(nll, global_step=gs)
+        # dnll, = tf.gradients(nll, [frac])
+        # dnll = tf.Print(dnll, [dnll])
+        opt_op = opt.minimize(nll, global_step=gs)#, grad_loss=dnll)
         with tf.control_dependencies([opt_op]):
             nll_cur = nll
             return ix + 1, nll_prev, nll_cur
 
     def condition(ix, nll_prev, nll_cur):
         return tf.abs((nll_prev - nll_cur) / (nll_prev + nll_cur) / 2) > 1e-8
-        return ix < max_steps_tf
+        # return ix < max_steps_tf
 
     adam_loop = tf.while_loop(condition, body, [ix_init, nll_init, nll_cur_init])
 
@@ -230,16 +232,18 @@ def run_adam():
         print("init\t" + "\t".join(["%6.4e" % v for v in sess.run(variables)]) + "\t | %f" % np.mean(nll_cur))
         print("")
 
-        N_loops = 1000
+        N_loops = 1
         timings = []
-        tf.logging.set_verbosity(tf.logging.ERROR)
+        tf.logging.set_verbosity(tf.logging.INFO)
 
         for i in range(N_loops):
             sess.run(init_op)
             nll_cur = sess.run(nll)
             start = timer()
 
+            print(gs.eval())
             sess.run(adam_loop)
+            print(gs.eval())
             # for step in xrange(max_steps):
             #     nll_prev = nll_cur
             #     # print "variables 3:", sess.run(variables)
