@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-10-17 18:12:26
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-20 08:57:19
+# @Last Modified time: 2016-10-20 09:14:20
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -24,13 +24,13 @@ tf.logging.set_verbosity(tf.logging.INFO)
 
 project_dn = os.path.expanduser("~/projects/apcocsm/")
 
-N = eventWeight = tf.constant([i['weight'] for i in combined_raw], dtype=tf.float64)
+N = eventWeight = tf.constant(np.array([i['weight'] for i in combined_raw], dtype=np.float64), dtype=tf.float64)
 
-h_g = tf.constant([i['weight'] for i in gaussian_raw], dtype=tf.float64)
-h_u = tf.constant([i['weight'] for i in uniform_raw], dtype=tf.float64)
+h_g = tf.constant(np.array([i['weight'] for i in gaussian_raw], dtype=np.float64), dtype=tf.float64)
+h_u = tf.constant(np.array([i['weight'] for i in uniform_raw], dtype=np.float64), dtype=tf.float64)
 
 # in this case all bins have equal width
-binw = tf.constant([i['vol'] for i in gaussian_raw], dtype=tf.float64)
+binw = tf.constant(np.array([i['vol'] for i in gaussian_raw], dtype=np.float64), dtype=tf.float64)
 
 frac = tf.Variable(0.5, dtype=tf.float64, name="frac")
 
@@ -159,9 +159,9 @@ def run_scipy():
         print("Loop took %f seconds" % (end - start))
 
         """
-        N_loops = 1
+        N_loops = 1000
         timings = []
-        tf.logging.set_verbosity(tf.logging.INFO)
+        tf.logging.set_verbosity(tf.logging.ERROR)
 
         for i in range(N_loops):
             sess.run(init_op)
@@ -274,5 +274,5 @@ def run_adam():
 
 print("\nSCIPY RUN")
 run_scipy()
-print("\nADAM RUN")
-run_adam()
+# print("\nADAM RUN")
+# run_adam()
