@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-10-17 18:12:26
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-20 09:14:20
+# @Last Modified time: 2016-10-24 11:48:43
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -16,6 +16,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from timeit import default_timer as timer
 import os
+import time
 
 from histpdf_data import combined_raw, gaussian_raw, uniform_raw
 
@@ -98,89 +99,94 @@ max_steps = 1000
 status_every = 1
 
 
-def run_scipy():
-    # Create an optimizer with the desired parameters.
-    opt = tf.contrib.opt.ScipyOptimizerInterface(nll,
-                                                 options={'maxiter': max_steps,
-                                                          # 'maxls': 10,
-                                                          },
-                                                 bounds=bounds,
-                                                 var_list=variables,  # supply with bounds to match order!
-                                                 # tol=1e-14,
-                                                 )
+# def run_scipy():
+#     # Create an optimizer with the desired parameters.
+opt = tf.contrib.opt.ScipyOptimizerInterface(nll,
+                                             options={'maxiter': max_steps,
+                                                      # 'maxls': 10,
+                                                      },
+                                             bounds=bounds,
+                                             var_list=variables,  # supply with bounds to match order!
+                                             # tol=1e-14,
+                                             )
 
-    init_op = tf.initialize_all_variables()
+init_op = tf.initialize_all_variables()
 
-    # start session
-    with tf.Session() as sess:
-        sess.run(init_op)
+# start session
+with tf.Session() as sess:
+    summarize_merged = tf.merge_all_summaries()
+    summary_writer = tf.train.SummaryWriter('./train/%i' % int(time.time()), sess.graph)
 
-        true_vars = {}
-        for v in variables:
-            key = v.name[:v.name.find(':')]
-            true_vars[key] = v.eval()
+    sess.run(init_op)
 
-        print("name\t" + "\t".join([v.name.ljust(10) for v in variables]) + "\t | <nll>\t\t | step")
-        print("init\t" + "\t".join(["%6.4e" % v for v in sess.run(variables)]) + "\t | %f" % np.mean(sess.run(nll)))
+    true_vars = {}
+    for v in variables:
+        key = v.name[:v.name.find(':')]
+        true_vars[key] = v.eval()
+
+    print("name\t" + "\t".join([v.name.ljust(10) for v in variables]) + "\t | <nll>\t\t | step")
+    print("init\t" + "\t".join(["%6.4e" % v for v in sess.run(variables)]) + "\t | %f" % np.mean(sess.run(nll)))
+    print("")
+
+    step = 0
+
+    nll_value_opt = sess.run(nll)
+
+    def step_callback(*var_values_opt):
+        global step, sess
+        summary = sess.run(summarize_merged)
+        summary_writer.add_summary(summary, step)
+
+        # if step % status_every == 0:
+        #     print("opt\t" + "\t".join(["%6.4e" % v for v in var_values_opt]) + "\t | %f\t | %i" % (np.mean(nll_value_opt), step))
+
+        step += 1
+
+    def loss_callback(nll_value_opt_step, g1, *other_vars):
+        global nll_value_opt
+        nll_value_opt = nll_value_opt_step
+        print("loss_callback:")
+        print("nll:", nll_value_opt)
+        print("gradients:", g1)
+        ov = "\t".join([str(v) for v in other_vars])
+        if ov:
+            print("variables:", ov)
         print("")
 
-        step = 0
+    """
+    start = timer()
 
-        nll_value_opt = sess.run(nll)
+    opt.minimize(session=sess, step_callback=step_callback,
+                 loss_callback=loss_callback, fetches=[nll] + grads + variables)
+    # N.B.: callbacks not supported with SLSQP!
 
-        def step_callback(var_values_opt):
-            global step, sess
+    end = timer()
 
-            if step % status_every == 0:
-                print("opt\t" + "\t".join(["%6.4e" % v for v in var_values_opt]) + "\t | %f\t | %i" % (np.mean(nll_value_opt), step))
+    print("Loop took %f seconds" % (end - start))
 
-            step += 1
+    """
+    N_loops = 1
+    timings = []
+    tf.logging.set_verbosity(tf.logging.ERROR)
 
-        def loss_callback(nll_value_opt_step, g1, *other_vars):
-            global nll_value_opt
-            nll_value_opt = nll_value_opt_step
-            print("loss_callback:")
-            print("nll:", nll_value_opt)
-            print("gradients:", g1)
-            ov = "\t".join([str(v) for v in other_vars])
-            if ov:
-                print("variables:", ov)
-            print("")
-
-        """
+    for i in range(N_loops):
+        sess.run(init_op)
         start = timer()
-
-        opt.minimize(session=sess, step_callback=step_callback,
-                     loss_callback=loss_callback, fetches=[nll] + grads + variables)
-        # N.B.: callbacks not supported with SLSQP!
-
+        opt.minimize(session=sess, step_callback=step_callback)
         end = timer()
+        timings.append(end - start)
 
-        print("Loop took %f seconds" % (end - start))
+    tf.logging.set_verbosity(tf.logging.INFO)
 
-        """
-        N_loops = 1000
-        timings = []
-        tf.logging.set_verbosity(tf.logging.ERROR)
+    print("Timing total: %f s, average: %f s, minimum: %f s" % (np.sum(timings), np.mean(timings), np.min(timings)))
 
-        for i in range(N_loops):
-            sess.run(init_op)
-            start = timer()
-            opt.minimize(session=sess)
-            end = timer()
-            timings.append(end - start)
+    # logging.info("get fitted variables")
+    fit_vars = {}
+    for v in variables:
+        key = v.name[:v.name.find(':')]
+        fit_vars[key] = v.eval()
 
-        tf.logging.set_verbosity(tf.logging.INFO)
-
-        print("Timing total: %f s, average: %f s, minimum: %f s" % (np.sum(timings), np.mean(timings), np.min(timings)))
-
-        # logging.info("get fitted variables")
-        fit_vars = {}
-        for v in variables:
-            key = v.name[:v.name.find(':')]
-            fit_vars[key] = v.eval()
-
-        print("fit \t" + "\t".join(["%6.4e" % v for v in sess.run(variables)]) + "\t | %f" % np.mean(sess.run(nll)))
+    print("fit \t" + "\t".join(["%6.4e" % v for v in sess.run(variables)]) + "\t | %f" % np.mean(sess.run(nll)))
 
 
 def run_adam():
@@ -273,6 +279,6 @@ def run_adam():
         print("fit \t" + "\t".join(["%6.4e" % v for v in sess.run(variables)]) + "\t | %f" % np.mean(sess.run(nll)))
 
 print("\nSCIPY RUN")
-run_scipy()
+# run_scipy()
 # print("\nADAM RUN")
 # run_adam()

@@ -42,7 +42,7 @@ void roofit_demo_fitonly() {
   // m.setVerbose(1) ;
   m.setStrategy(0) ;
   m.setProfile(1) ;
-  m.optimizeConst(2) ;
+  m.optimizeConst(1) ;
 
   auto begin = std::chrono::high_resolution_clock::now();
   // m.hesse();

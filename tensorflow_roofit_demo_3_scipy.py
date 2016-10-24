@@ -2,7 +2,7 @@
 # @Author: patrick
 # @Date:   2016-09-01 17:04:53
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-10-17 17:13:54
+# @Last Modified time: 2016-10-24 11:14:15
 
 # as per tensorflow styleguide
 # https://www.tensorflow.org/versions/r0.11/how_tos/style_guide.html
@@ -265,9 +265,9 @@ with tf.Session() as sess:
     print("Loop took %f seconds" % (end - start))
 
     """
-    N_loops = 1000
+    N_loops = 1
     timings = []
-    tf.logging.set_verbosity(tf.logging.ERROR)
+    tf.logging.set_verbosity(tf.logging.INFO)
 
     for i in range(N_loops):
         sess.run(init_op)
