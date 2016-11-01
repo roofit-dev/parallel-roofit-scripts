@@ -1,3 +1,9 @@
 train*/*
 *.pdf
 *.pyc
+*.cg
+*.out
+*.log
+*.err
+*.pylog
+*.vglog
