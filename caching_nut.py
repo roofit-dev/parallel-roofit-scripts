@@ -7,6 +7,17 @@ import numpy as np
 import tqdm
 import sys
 
+# WAT ROOFIT NU DOET HEET
+# memoization
+# memoization
+# memoization
+# memoization
+# memoization
+# memoization
+# memoization
+# !
+# NOEM HET OOK ZO IN DE CODE
+
 dn = "/home/patrick/projects/apcocsm/lydia/"
 
 if sys.argv[1] == "lydia1":
