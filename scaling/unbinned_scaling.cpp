@@ -26,7 +26,7 @@ void unbinned_scaling(int N_gaussians, int N_observables, int N_parameters,
   // other stuff
   int printlevel(0);
   int optimizeConst(2);
-  // int N_timing_loops(1); // not used
+  int N_timing_loops(3); // not used
 
   // some sanity checks
   if (obs_plot_x * obs_plot_y < N_observables) {
@@ -141,24 +141,35 @@ void unbinned_scaling(int N_gaussians, int N_observables, int N_parameters,
   // sum.fitTo(*data,"Extended") ;
   // instead of full fitTo, only do the fit, leave out error matrix, using
   // run style of run_higgs.C
-  RooAbsReal* nll = sum.createNLL(*data, "Extended");
-  RooMinimizer m(*nll);
-  // m.setVerbose(1);
-  m.setStrategy(0);
-  m.setProfile(1);
-  m.setPrintLevel(printlevel);
-  m.optimizeConst(optimizeConst);
+  ofstream outfile("timings.json");
+  for (int it = 0; it < N_timing_loops; ++it) {
+    RooAbsReal* nll = sum.createNLL(*data, "Extended");
+    RooMinimizer m(*nll);
+    // m.setVerbose(1);
+    m.setStrategy(0);
+    m.setProfile(1);
+    m.setPrintLevel(printlevel);
+    m.optimizeConst(optimizeConst);
 
-  auto begin = std::chrono::high_resolution_clock::now();
-  // m.hesse();
+    auto begin = std::chrono::high_resolution_clock::now();
+    // m.hesse();
 
-  m.minimize("Minuit2", "migrad");
+    m.minimize("Minuit2", "migrad");
 
-  auto end = std::chrono::high_resolution_clock::now();
+    auto end = std::chrono::high_resolution_clock::now();
 
-  float timing_ns = std::chrono::duration_cast<std::chrono::nanoseconds>
-                    (end-begin).count();
-  std::cout << timing_ns / 1e9  << "s" << std::endl;
+    float timing_ns = std::chrono::duration_cast<std::chrono::nanoseconds>
+                      (end-begin).count();
+    std::cout << timing_ns / 1e9  << "s" << std::endl;
+
+    outfile << "{timing_ns: " << timing_ns
+            << ", N_gaussians: " << N_gaussians
+            << ", N_observables: " << N_observables
+            << ", N_parameters: " << N_parameters
+            << ", N_events: " << N_events
+            << "}," << std::endl;
+  }
+  outfile.close();
 
   // print the "true" values for comparison
   std::cout << "--- values of PDF parameters used for data generation:"
