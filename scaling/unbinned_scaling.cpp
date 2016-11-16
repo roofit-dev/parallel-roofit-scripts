@@ -141,7 +141,7 @@ void unbinned_scaling(int N_gaussians, int N_observables, int N_parameters,
   // sum.fitTo(*data,"Extended") ;
   // instead of full fitTo, only do the fit, leave out error matrix, using
   // run style of run_higgs.C
-  ofstream outfile("timings.json");
+  ofstream outfile("timings.json", ios::app);
   // for (int it = 0; it < N_timing_loops; ++it)
   {
     RooAbsReal* nll = sum.createNLL(*data, "Extended");
