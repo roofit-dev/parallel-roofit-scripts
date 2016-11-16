@@ -26,7 +26,7 @@ void unbinned_scaling(int N_gaussians, int N_observables, int N_parameters,
   // other stuff
   int printlevel(0);
   int optimizeConst(2);
-  int N_timing_loops(3); // not used
+  // int N_timing_loops(3); // not used
 
   // some sanity checks
   if (obs_plot_x * obs_plot_y < N_observables) {
@@ -142,7 +142,8 @@ void unbinned_scaling(int N_gaussians, int N_observables, int N_parameters,
   // instead of full fitTo, only do the fit, leave out error matrix, using
   // run style of run_higgs.C
   ofstream outfile("timings.json");
-  for (int it = 0; it < N_timing_loops; ++it) {
+  // for (int it = 0; it < N_timing_loops; ++it)
+  {
     RooAbsReal* nll = sum.createNLL(*data, "Extended");
     RooMinimizer m(*nll);
     // m.setVerbose(1);
