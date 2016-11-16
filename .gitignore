@@ -7,3 +7,4 @@ train*/*
 *.err
 *.pylog
 *.vglog
+timings.json

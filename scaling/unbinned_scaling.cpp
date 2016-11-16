@@ -10,7 +10,18 @@ using namespace RooFit;
 // root -l 'unbinned_scaling.cpp(20,5,8,1000)'
 
 void unbinned_scaling(int N_gaussians, int N_observables, int N_parameters,
-                      int N_events) {
+                      int N_events, int num_cpu, int parallel_interleave,
+                      int seed) {
+  // num_cpu: -1 is special option -> overhead communicatie protocol vergelijken (vgl met 1 cpu)
+  // parallel_interleave: 0 = blokken gelijke grootte, 1 = interleave
+  //                      
+  //             binned:         generateBinned ipv generate -> als je aantal events ongeveer even groot is als aantal bins krijg je load balancing problemen, dat zou interleave beetje moeten ondervangen
+  // verwachtingen
+  // - historisch: tot ~8 cpu gaat het goed
+  // - weinig data en veel parameters: comm overhead belangrijk (fit snel, veel tijd in oversturen params)
+  // - weinig parameters, veel data: scalability hoort beter te zijn (minder comm overhead) -> bottom line van wat de software kan
+  // - observables even op 1 houden, alles optellen klopt conceptueel-statistisch niet
+
   // scaling configuration
   // int N_gaussians(20);
   // int N_observables(5);
@@ -27,6 +38,8 @@ void unbinned_scaling(int N_gaussians, int N_observables, int N_parameters,
   int printlevel(0);
   int optimizeConst(2);
   // int N_timing_loops(3); // not used
+
+  gRandom->setSeed(seed);
 
   // some sanity checks
   if (obs_plot_x * obs_plot_y < N_observables) {
@@ -144,7 +157,7 @@ void unbinned_scaling(int N_gaussians, int N_observables, int N_parameters,
   ofstream outfile("timings.json", ios::app);
   // for (int it = 0; it < N_timing_loops; ++it)
   {
-    RooAbsReal* nll = sum.createNLL(*data, "Extended");
+    RooAbsReal* nll = sum.createNLL(*data, NumCPU(num_cpu, parallel_interleave));//, "Extended");
     RooMinimizer m(*nll);
     // m.setVerbose(1);
     m.setStrategy(0);
