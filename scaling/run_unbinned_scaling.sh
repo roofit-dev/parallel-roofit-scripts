@@ -4,6 +4,8 @@
 # @Last Modified by:   Patrick Bos
 # @Last Modified time: 2016-11-16 17:00:06
 
+$HOME/root6apcocsm.sh
+
 for g in 20; do
 for o in 1; do  # don't modify observables!
 for p in [1-20]; do
