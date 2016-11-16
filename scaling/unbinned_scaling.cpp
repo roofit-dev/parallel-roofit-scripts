@@ -39,7 +39,7 @@ void unbinned_scaling(int N_gaussians, int N_observables, int N_parameters,
   int optimizeConst(2);
   // int N_timing_loops(3); // not used
 
-  gRandom->setSeed(seed);
+  gRandom->SetSeed(seed);
 
   // some sanity checks
   if (obs_plot_x * obs_plot_y < N_observables) {
@@ -176,15 +176,15 @@ void unbinned_scaling(int N_gaussians, int N_observables, int N_parameters,
                       (end-begin).count();
     std::cout << timing_ns / 1e9  << "s" << std::endl;
 
-    outfile << "{timing_ns: " << timing_ns
-            << ", N_gaussians: " << N_gaussians
-            << ", N_observables: " << N_observables
-            << ", N_parameters: " << N_parameters
-            << ", N_events: " << N_events
-            << ", num_cpu: " << num_cpu
-            << ", parallel_interleave: " << parallel_interleave
-            << ", seed: " << seed
-            << "}," << std::endl;
+    outfile << "{\"timing_ns\": \"" << timing_ns
+            << "\", \"N_gaussians\": \"" << N_gaussians
+            << "\", \"N_observables\": \"" << N_observables
+            << "\", \"N_parameters\": \"" << N_parameters
+            << "\", \"N_events\": \"" << N_events
+            << "\", \"num_cpu\": \"" << num_cpu
+            << "\", \"parallel_interleave\": \"" << parallel_interleave
+            << "\", \"seed\": \"" << seed
+            << "\"}," << std::endl;
   }
   outfile.close();
 
