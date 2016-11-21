@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:23:55
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-11-21 11:08:03
+# @Last Modified time: 2016-11-21 18:10:00
 
 import pandas as pd
 
@@ -36,4 +36,13 @@ plt.show()
 
 
 df[df.N_events == 10000].groupby(['num_cpu']).mean().timing_ns.plot()
+plt.show()
+
+
+### MET WOUTER, 21 nov 2016
+t = np.array( [115.835, 67.6071, 51.3018, 44.8939, 31.6365, 33.413, 28.5969, 24.7553])
+t_ideal = 115.835 / np.arange(1,9)
+c = range(1,9)
+
+plt.plot(c,t,c,t_ideal)
 plt.show()
