@@ -11,7 +11,7 @@ using namespace RooFit;
 
 void unbinned_scaling(int N_gaussians, int N_observables, int N_parameters,
                       int N_events, int num_cpu, int parallel_interleave,
-                      int seed) {
+                      int seed, int print_level=0) {
   // num_cpu: -1 is special option -> overhead communicatie protocol vergelijken (vgl met 1 cpu)
   // parallel_interleave: 0 = blokken gelijke grootte, 1 = interleave
   //                      
@@ -35,7 +35,7 @@ void unbinned_scaling(int N_gaussians, int N_observables, int N_parameters,
   int obs_plot_y_px(800);
 
   // other stuff
-  int printlevel(0);
+  int printlevel(print_level);
   int optimizeConst(2);
   // int N_timing_loops(3); // not used
 

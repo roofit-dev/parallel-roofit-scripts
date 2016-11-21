@@ -2,13 +2,38 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:23:55
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-11-16 16:41:01
+# @Last Modified time: 2016-11-21 11:08:03
 
 import pandas as pd
 
-with open("timings.json", 'r') as fh:
+# fn = "timings.json"
+# fn = "timings_stbc_20161117.json"
+fn = "timings_stbc_20161121.json"
+
+with open(fn, 'r') as fh:
     json_array_inside_text = fh.read()
 
 json_array_text = "[" + json_array_inside_text[:-2] + "]"  # :-1 removes ,\n
 
 df = pd.read_json(json_array_text)
+
+df.groupby([u'N_events', u'N_gaussians', u'N_parameters', u'num_cpu', u'parallel_interleave']).mean().timing_ns/1e9
+
+# almost perfectly linear:
+df.groupby(['N_events']).mean().timing_ns.plot()
+plt.show()
+
+# 20161117: very strange, maxes out, then drops again
+# 20161121: strangeness gone, just goes up. Maybe faster than linear.
+df.groupby(['N_parameters']).mean().plot(y='timing_ns')
+plt.show()
+
+
+# moet hier iets met pivot doen ofzo...
+df.groupby(['N_events','N_parameters','num_cpu']).mean().timing_ns.plot()
+plt.show()
+# moet hier iets met pivot doen ofzo...
+
+
+df[df.N_events == 10000].groupby(['num_cpu']).mean().timing_ns.plot()
+plt.show()
