@@ -184,7 +184,7 @@ void unbinned_scaling(int N_gaussians, int N_observables, int N_parameters,
             << "\", \"num_cpu\": \"" << num_cpu
             << "\", \"parallel_interleave\": \"" << parallel_interleave
             << "\", \"seed\": \"" << seed
-            << "\", \"pid:\": \"" << getpid()
+            << "\", \"pid\": \"" << getpid()
             << "\"}," << std::endl;
   }
   outfile.close();

@@ -2,9 +2,12 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:23:55
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-11-24 08:32:00
+# @Last Modified time: 2016-11-24 13:22:12
 
 import pandas as pd
+import seaborn as sns
+
+pd.set_option("display.width", None)
 
 # PART 2:
 # including branching timings
@@ -20,42 +23,54 @@ def df_from_sloppy_json_list_file(fn):
     return df
 
 
-# fn = "timings.json"
-# fn = "timings_stbc_20161117.json"
+"""
+cd ~/projects/apcocsm/code/scaling
+scp stbc-i4:./project_atlas/apcocsm_code/scaling/timings.json ./timings_stbc_20161124.json
+scp stbc-i4:./project_atlas/apcocsm_code/scaling/RATS_timings.json ./RATS_timings_stbc_20161124.json
+scp stbc-i4:./project_atlas/apcocsm_code/scaling/RRMPFE_timings.json ./RRMPFE_timings_stbc_20161124.json
+"""
 fn_totals = "timings_stbc_20161124.json"
 fn_RATS = "RATS_timings_stbc_20161124.json"
-fn_RRMPFE = "RRMPFE-timings_stbc_20161124.json"
+fn_RRMPFE = "RRMPFE_timings_stbc_20161124.json"
 
 df_totals = df_from_sloppy_json_list_file(fn_totals)
+df_totals = df_totals.dropna()
+df_totals['pid:'] = df_totals['pid:'].astype(int)
+
+single_core = df_totals[df_totals.num_cpu == 1]
+
 df_RATS = df_from_sloppy_json_list_file(fn_RATS)
 df_RRMPFE = df_from_sloppy_json_list_file(fn_RRMPFE)
 
-df.groupby([u'N_events', u'N_gaussians', u'N_parameters', u'num_cpu', u'parallel_interleave']).mean().timing_ns/1e9
+df = pd.merge(pd.merge(df_totals,
+                       df_RATS.groupby('pid:', as_index=False).sum()),
+              df_RRMPFE.groupby(['pid:', 'tid:'], as_index=False).max())
 
-# almost perfectly linear:
-df.groupby(['N_events']).mean().timing_ns.plot()
-plt.show()
+# add single core back in (removed when merging with multi-core RATS and RRMPFE rows):
+df = df.append(single_core)
 
-# 20161117: very strange, maxes out, then drops again
-# 20161121: strangeness gone, just goes up. Maybe faster than linear.
-df.groupby(['N_parameters']).mean().plot(y='timing_ns')
-plt.show()
+# remove useless stuff (for this script)
+df = df.drop(['N_gaussians', 'N_observables', 'N_parameters',
+              'parallel_interleave', 'seed'], axis=1)
 
+# estimate ideal curve from fastest single_core run:
+single_core_fastest = single_core.groupby('N_events', as_index=False).min()
+df_ideal = single_core_fastest.copy()
+for num_cpu in df.num_cpu.unique():
+    if num_cpu != 1:
+        ideal_num_cpu_i = single_core_fastest.copy()
+        ideal_num_cpu_i.timing_ns /= num_cpu
+        ideal_num_cpu_i.num_cpu = num_cpu
+        df_ideal = df_ideal.append(ideal_num_cpu_i)
 
-# moet hier iets met pivot doen ofzo...
-df.groupby(['N_events','N_parameters','num_cpu']).mean().timing_ns.plot()
-plt.show()
-# moet hier iets met pivot doen ofzo...
+df['timing_type'] = pd.Series(len(df) * ('real',), index=df.index)
+df_ideal['timing_type'] = pd.Series(len(df_ideal) * ('ideal',), index=df_ideal.index)
 
+df_ext = df.append(df_ideal)
+df_ext['N_events/timing_type'] = df_ext.N_events.astype(str) + '/' + df_ext.timing_type.astype(str)
 
-df[df.N_events == 10000].groupby(['num_cpu']).mean().timing_ns.plot()
-plt.show()
-
-
-### MET WOUTER, 21 nov 2016
-t = np.array( [115.835, 67.6071, 51.3018, 44.8939, 31.6365, 33.413, 28.5969, 24.7553])
-t_ideal = 115.835 / np.arange(1,9)
-c = range(1,9)
-
-plt.plot(c,t,c,t_ideal)
+g = sns.factorplot(x='num_cpu', y='timing_ns', hue='N_events/timing_type', estimator=np.min, data=df_ext, legend_out=False)
+g.ax.set_yscale('log')
+ 
+g = sns.factorplot(x='num_cpu', y='timing_ns', hue='timing_type', col='N_events', estimator=np.min, data=df.append(df_ideal), legend_out=False, sharey=False)
 plt.show()
