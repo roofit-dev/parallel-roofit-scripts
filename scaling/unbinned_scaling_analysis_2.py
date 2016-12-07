@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:23:55
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-11-24 13:22:12
+# @Last Modified time: 2016-12-07 11:01:43
 
 import pandas as pd
 import seaborn as sns
@@ -35,23 +35,34 @@ fn_RRMPFE = "RRMPFE_timings_stbc_20161124.json"
 
 df_totals = df_from_sloppy_json_list_file(fn_totals)
 df_totals = df_totals.dropna()
-df_totals['pid:'] = df_totals['pid:'].astype(int)
+df_totals.pid = df_totals.pid.astype(int)
+# remove useless stuff (for this script)
+df_totals = df_totals.drop(['N_gaussians', 'N_observables', 'N_parameters',
+                            'parallel_interleave', 'seed'], axis=1)
 
 single_core = df_totals[df_totals.num_cpu == 1]
 
 df_RATS = df_from_sloppy_json_list_file(fn_RATS)
 df_RRMPFE = df_from_sloppy_json_list_file(fn_RRMPFE)
 
+df_RRMPFE_by_pid_tid = df_RRMPFE.groupby(['pid', 'tid'], as_index=False)
+
+df_RRMPFE_median_dispatch = df_RRMPFE_by_pid_tid.median()
+df_RRMPFE_median_dispatch.rename(columns={'calculate_dispatch_timing_ns': 'dispatch_median_ns'}, inplace=True)
+df_RRMPFE_total_dispatch = df_RRMPFE_by_pid_tid.sum()
+df_RRMPFE_total_dispatch.rename(columns={'calculate_dispatch_timing_ns': 'dispatch_total_ns'}, inplace=True)
+df_RRMPFE_stats = pd.merge(df_RRMPFE_median_dispatch, df_RRMPFE_total_dispatch)
+
+
 df = pd.merge(pd.merge(df_totals,
-                       df_RATS.groupby('pid:', as_index=False).sum()),
-              df_RRMPFE.groupby(['pid:', 'tid:'], as_index=False).max())
+                       df_RATS.groupby('pid', as_index=False).sum()),
+              df_RRMPFE_stats)
+
+# add mean_per_cpu dispatch time to approximate wallclock time for dispatch
+df['dispatch_mean_per_cpu_ns'] = df.dispatch_total_ns / df.num_cpu
 
 # add single core back in (removed when merging with multi-core RATS and RRMPFE rows):
 df = df.append(single_core)
-
-# remove useless stuff (for this script)
-df = df.drop(['N_gaussians', 'N_observables', 'N_parameters',
-              'parallel_interleave', 'seed'], axis=1)
 
 # estimate ideal curve from fastest single_core run:
 single_core_fastest = single_core.groupby('N_events', as_index=False).min()
@@ -69,8 +80,31 @@ df_ideal['timing_type'] = pd.Series(len(df_ideal) * ('ideal',), index=df_ideal.i
 df_ext = df.append(df_ideal)
 df_ext['N_events/timing_type'] = df_ext.N_events.astype(str) + '/' + df_ext.timing_type.astype(str)
 
+df_ext['timing_C_ns'] = df_ext.timing_ns - df_ext.dispatch_mean_per_cpu_ns - df_ext.evaluate_mpmaster_collect_timing_ns
+df_ext.loc[df_ext.timing_type == 'ideal', 'timing_C_ns'] = df_ext[df_ext.timing_type == 'ideal'].timing_ns
+
+
+# show timings
+
 g = sns.factorplot(x='num_cpu', y='timing_ns', hue='N_events/timing_type', estimator=np.min, data=df_ext, legend_out=False)
 g.ax.set_yscale('log')
  
-g = sns.factorplot(x='num_cpu', y='timing_ns', hue='timing_type', col='N_events', estimator=np.min, data=df.append(df_ideal), legend_out=False, sharey=False)
+# plt.show()
+
+
+# compare difference between real and ideal to distribute and collect timings
+
+g = sns.factorplot(x='num_cpu', y='timing_ns', hue='timing_type', col='N_events', estimator=np.min, data=df_ext, legend_out=False, sharey=False)
+g = sns.factorplot(x='num_cpu', y='evaluate_mpmaster_collect_timing_ns', hue='timing_type', col='N_events', estimator=np.min, data=df_ext, legend_out=False, sharey=False)
+# g = sns.factorplot(x='num_cpu', y='calculate_dispatch_timing_ns', hue='timing_type', col='N_events', estimator=np.min, data=df_ext, legend_out=False, sharey=False)
+g = sns.factorplot(x='num_cpu', y='dispatch_median_ns', hue='timing_type', col='N_events', estimator=np.min, data=df_ext, legend_out=False)
+g = sns.factorplot(x='num_cpu', y='dispatch_mean_per_cpu_ns', hue='timing_type', col='N_events', estimator=np.min, data=df_ext, legend_out=False)
+
+# plt.show()
+
+
+g = sns.factorplot(x='num_cpu', y='timing_C_ns', hue='timing_type', col='N_events', estimator=np.min, data=df_ext, legend_out=False, sharey=False)
+
+g = sns.factorplot(x='num_cpu', y='timing_C_ns', hue='N_events', estimator=np.min, data=df_ext[df_ext.timing_type == 'real'], legend_out=False, sharey=False)
+
 plt.show()
