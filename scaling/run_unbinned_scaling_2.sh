@@ -27,9 +27,9 @@ for e in 100000 1000000 10000000; do
 for cpu in 1 2 3 4 5 6 7 8; do
 
 # do it three times and only use the minimum runtime
-root -b -q -l "unbinned_scaling.cpp(${g},${o},${p},${e},${cpu},${ileave},${seed})"
-root -b -q -l "unbinned_scaling.cpp(${g},${o},${p},${e},${cpu},${ileave},${seed})"
-root -b -q -l "unbinned_scaling.cpp(${g},${o},${p},${e},${cpu},${ileave},${seed})"
+root -b -q -l "../unbinned_scaling.cpp(${g},${o},${p},${e},${cpu},${ileave},${seed})"
+root -b -q -l "../unbinned_scaling.cpp(${g},${o},${p},${e},${cpu},${ileave},${seed})"
+root -b -q -l "../unbinned_scaling.cpp(${g},${o},${p},${e},${cpu},${ileave},${seed})"
 
 done; done
 
