@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:23:55
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-12-13 07:37:23
+# @Last Modified time: 2016-12-13 07:55:04
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -111,7 +111,7 @@ g = sns.factorplot(x='num_cpu', y='dispatch_total_s', col='N_events', estimator=
 
 
 # maak andere dataframe, eentje met versch. itX timings per rij en een klasse kolom die het itX X nummer bevat
-df_collect = pd.DataFrame(columns=['N_events', 'num_cpu', 'collect it walltime s', 'it_nr'], dtype=[int, int, float, int])
+df_collect = pd.DataFrame(columns=['N_events', 'num_cpu', 'collect it walltime s', 'it_nr'])
 
 itX_cols = [(ix, 'evaluate_mpmaster_collect_it%i_timing_s' % ix)
             for ix in range(max(df_ext.num_cpu))]
@@ -126,7 +126,11 @@ for index, series in df_ext.iterrows():
             new_row['it_nr'] = X
             df_collect = df_collect.append(new_row, ignore_index=True)
 
-g = sns.factorplot(x='num_cpu', y='evaluate_mpmaster_collect_it0_timing_s', col='N_events', estimator=np.min, data=df_ext, legend_out=False, sharey=False)
-g = sns.factorplot(x='num_cpu', y='evaluate_mpmaster_collect_it1_timing_s', col='N_events', estimator=np.min, data=df_ext, legend_out=False, sharey=False, axes=g.axes)
+# correct types
+df_collect.N_events = df_collect.N_events.astype(np.int)
+df_collect.num_cpu = df_collect.num_cpu.astype(np.int)
+df_collect.it_nr = df_collect.it_nr.astype(np.int)
+
+g = sns.factorplot(x='num_cpu', y='collect it walltime s', hue='it_nr', col='N_events', estimator=np.min, data=df_collect, legend_out=False, sharey=False)
 
 plt.show()
