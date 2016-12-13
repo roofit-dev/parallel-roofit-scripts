@@ -2,8 +2,10 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:23:55
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-12-12 08:22:32
+# @Last Modified time: 2016-12-13 07:37:23
 
+import numpy as np
+import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 
@@ -11,6 +13,7 @@ pd.set_option("display.width", None)
 
 # v3
 # including branching timings in more detail
+
 
 def df_from_sloppy_json_list_file(fn):
     with open(fn, 'r') as fh:
@@ -66,7 +69,7 @@ df_RRMPFE_total_dispatch.rename(columns={'calculate_dispatch_walltime_s': 'dispa
 
 #### MERGE DATA BY PROCESS ####
 
-df = pd.merge(pd.merge(df_totals, df_RATS_by_pid.sum())
+df = pd.merge(pd.merge(df_totals, df_RATS_by_pid.sum()),
               df_RRMPFE_total_dispatch)
 
 # add single core back in (removed when merging with multi-core RATS and RRMPFE rows):
@@ -103,9 +106,27 @@ g.ax.set_yscale('log')
 # compare difference between real and ideal to distribute and collect timings
 
 g = sns.factorplot(x='num_cpu', y='timing_s', hue='timing_type', col='N_events', estimator=np.min, data=df_ext, legend_out=False, sharey=False)
-g = sns.factorplot(x='num_cpu', y='evaluate_mpmaster_collect_walltime_s', hue='timing_type', col='N_events', estimator=np.min, data=df_ext, legend_out=False, sharey=False)
-g = sns.factorplot(x='num_cpu', y='dispatch_total_s', hue='timing_type', col='N_events', estimator=np.min, data=df_ext, legend_out=False)
+g = sns.factorplot(x='num_cpu', y='evaluate_mpmaster_collect_walltime_s', col='N_events', estimator=np.min, data=df_ext, legend_out=False, sharey=False)
+g = sns.factorplot(x='num_cpu', y='dispatch_total_s', col='N_events', estimator=np.min, data=df_ext, legend_out=False)
 
-g = sns.factorplot(x='num_cpu', y='evaluate_mpmaster_collect_walltime_s', hue='timing_type', col='N_events', estimator=np.min, data=df_ext, legend_out=False, sharey=False)
+
+# maak andere dataframe, eentje met versch. itX timings per rij en een klasse kolom die het itX X nummer bevat
+df_collect = pd.DataFrame(columns=['N_events', 'num_cpu', 'collect it walltime s', 'it_nr'], dtype=[int, int, float, int])
+
+itX_cols = [(ix, 'evaluate_mpmaster_collect_it%i_timing_s' % ix)
+            for ix in range(max(df_ext.num_cpu))]
+
+for index, series in df_ext.iterrows():
+    for X, itX in itX_cols:
+        if pd.notnull(series[itX]):
+            new_row = {}
+            new_row['N_events'] = series.N_events
+            new_row['num_cpu'] = series.num_cpu
+            new_row['collect it walltime s'] = series[itX]
+            new_row['it_nr'] = X
+            df_collect = df_collect.append(new_row, ignore_index=True)
+
+g = sns.factorplot(x='num_cpu', y='evaluate_mpmaster_collect_it0_timing_s', col='N_events', estimator=np.min, data=df_ext, legend_out=False, sharey=False)
+g = sns.factorplot(x='num_cpu', y='evaluate_mpmaster_collect_it1_timing_s', col='N_events', estimator=np.min, data=df_ext, legend_out=False, sharey=False, axes=g.axes)
 
 plt.show()
