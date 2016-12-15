@@ -4,14 +4,21 @@
 #include <fstream>
 #include <string>
 
+class Global {
+public:
+  static int timing_flag;
+}
+
 using namespace RooFit;
 
 // call from command line like, for instance:
 // root -l 'unbinned_scaling.cpp(20,5,8,1000)'
 
+// timing_flag is used to activate only selected timing statements [1-7]
+
 void unbinned_scaling(int N_gaussians, int N_observables, int N_parameters,
                       int N_events, int num_cpu, int parallel_interleave,
-                      int seed, int print_level=0) {
+                      int seed, int print_level=0, int timing_flag=1) {
   // num_cpu: -1 is special option -> overhead communicatie protocol vergelijken (vgl met 1 cpu)
   // parallel_interleave: 0 = blokken gelijke grootte, 1 = interleave
   //                      
@@ -27,6 +34,8 @@ void unbinned_scaling(int N_gaussians, int N_observables, int N_parameters,
   // int N_observables(5);
   // int N_parameters(8);  // must be even, means and sigmas have diff ranges
   // int N_events(1000);
+
+  int Global::timing_flag = timing_flag;
 
   // plotting configuration
   int obs_plot_x(3);
@@ -154,7 +163,13 @@ void unbinned_scaling(int N_gaussians, int N_observables, int N_parameters,
   // sum.fitTo(*data,"Extended") ;
   // instead of full fitTo, only do the fit, leave out error matrix, using
   // run style of run_higgs.C
-  ofstream outfile("timings.json", ios::app);
+  ofstream outfile;
+  std::chrono::time_point<std::chrono::system_clock> begin, end;
+
+  if (Global::timing_flag == 1) {
+    outfile.open("timing_full_minimize.json", ios::app);
+  }
+
   // for (int it = 0; it < N_timing_loops; ++it)
   {
     RooAbsReal* nll = sum.createNLL(*data, NumCPU(num_cpu, parallel_interleave));//, "Extended");
@@ -165,29 +180,35 @@ void unbinned_scaling(int N_gaussians, int N_observables, int N_parameters,
     m.setPrintLevel(printlevel);
     m.optimizeConst(optimizeConst);
 
-    auto begin = std::chrono::high_resolution_clock::now();
+    if (Global::timing_flag == 1) {
+      begin = std::chrono::high_resolution_clock::now();
+    }
     // m.hesse();
 
     m.minimize("Minuit2", "migrad");
 
-    auto end = std::chrono::high_resolution_clock::now();
+    if (Global::timing_flag == 1) {
+      end = std::chrono::high_resolution_clock::now();
 
-    float timing_ns = std::chrono::duration_cast<std::chrono::nanoseconds>
-                      (end-begin).count();
-    std::cout << timing_ns / 1e9  << "s" << std::endl;
+      float timing_s = std::chrono::duration_cast<std::chrono::nanoseconds>
+                       (end-begin).count() / static_cast<float>(1e9);
+      std::cout << timing_s << "s" << std::endl;
 
-    outfile << "{\"timing_ns\": \"" << timing_ns
-            << "\", \"N_gaussians\": \"" << N_gaussians
-            << "\", \"N_observables\": \"" << N_observables
-            << "\", \"N_parameters\": \"" << N_parameters
-            << "\", \"N_events\": \"" << N_events
-            << "\", \"num_cpu\": \"" << num_cpu
-            << "\", \"parallel_interleave\": \"" << parallel_interleave
-            << "\", \"seed\": \"" << seed
-            << "\", \"pid\": \"" << getpid()
-            << "\"}," << std::endl;
+      outfile << "{\"full_minimize_wall_s\": \"" << timing_s
+              << "\", \"N_gaussians\": \"" << N_gaussians
+              << "\", \"N_observables\": \"" << N_observables
+              << "\", \"N_parameters\": \"" << N_parameters
+              << "\", \"N_events\": \"" << N_events
+              << "\", \"num_cpu\": \"" << num_cpu
+              << "\", \"parallel_interleave\": \"" << parallel_interleave
+              << "\", \"seed\": \"" << seed
+              << "\", \"pid\": \"" << getpid()
+              << "\"}," << std::endl;
+    }
   }
-  outfile.close();
+  if (Global::timing_flag == 1) {
+    outfile.close();
+  }
 
   // print the "true" values for comparison
   std::cout << "--- values of PDF parameters used for data generation:"
