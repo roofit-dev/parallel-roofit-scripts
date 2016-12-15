@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:23:55
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-12-15 07:50:38
+# @Last Modified time: 2016-12-15 09:47:45
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -66,11 +66,23 @@ df_RRMPFE_eval_by_pid = df_RRMPFE_eval.groupby(['pid'], as_index=False)
 df_RRMPFE_total_dispatch = df_RRMPFE_by_pid.sum()
 df_RRMPFE_total_dispatch.rename(columns={'calculate_dispatch_walltime_s': 'dispatch_total_s'}, inplace=True)
 
+# ... total MPFE eval times
+df_RRMPFE_eval_total = df_RRMPFE_eval_by_pid.sum()
+column_renames = {c: c.replace('_s', '_total_s')
+                  for c in df_RRMPFE_eval_total.columns}
+df_RRMPFE_eval_total.rename(columns=column_renames, inplace=True)
+# ... manually add after retrieve
+df_RRMPFE_eval_total['evaluate_MPFE_client_after_retrieve_walltime_total_s'] = df_RRMPFE_eval_total['evaluate_MPFE_client_walltime_total_s'] - df_RRMPFE_eval_total['evaluate_MPFE_client_before_retrieve_walltime_total_s'] - df_RRMPFE_eval_total['evaluate_MPFE_client_retrieve_walltime_total_s']
+df_RRMPFE_eval_total['evaluate_MPFE_client_after_retrieve_cputime_total_s'] = df_RRMPFE_eval_total['evaluate_MPFE_client_cputime_total_s'] - df_RRMPFE_eval_total['evaluate_MPFE_client_before_retrieve_cputime_total_s'] - df_RRMPFE_eval_total['evaluate_MPFE_client_retrieve_cputime_total_s']
+
 
 #### MERGE DATA BY PROCESS ####
+def merge_dataframes(*dataframes):
+    return reduce(pd.merge, dataframes)
 
-df = pd.merge(pd.merge(df_totals, df_RATS_by_pid.sum()),
-              df_RRMPFE_total_dispatch)
+
+df = merge_dataframes(df_totals, df_RATS_by_pid.sum(), df_RRMPFE_total_dispatch,
+                      df_RRMPFE_eval_total)
 
 # add single core back in (removed when merging with multi-core RATS and RRMPFE rows):
 df = df.append(single_core)
@@ -97,20 +109,10 @@ df_ext = df.append(df_ideal)
 df_ext['N_events/timing_type'] = df_ext.N_events.astype(str) + '/' + df_ext.timing_type.astype(str)
 
 
-# show timings
-# NOTE:
-# the full timings (timing_s) in this run do not seem to be representative
-# probably the extra itX and other fine-grained timings caused so much overhead
-# that the total timing took way longer than it should
-# Compare to the timing_s from the previous benchmarks if necessary.
-
-# compare difference between real and ideal to distribute and collect timings
-
-g = sns.factorplot(x='num_cpu', y='evaluate_mpmaster_collect_walltime_s', col='N_events', estimator=np.min, data=df_ext, legend_out=False, sharey=False)
-g = sns.factorplot(x='num_cpu', y='dispatch_total_s', col='N_events', estimator=np.min, data=df_ext, legend_out=False)
+### EXTRA DATA ###
 
 
-# maak andere dataframe, eentje met versch. itX timings per rij en een klasse kolom die het itX X nummer bevat
+## dataframe met versch. itX timings per rij en een klasse kolom die het itX X nummer bevat
 df_collect = pd.DataFrame(columns=['N_events', 'num_cpu', 'collect it walltime s', 'it_nr'])
 
 itX_cols = [(ix, 'evaluate_mpmaster_collect_it%i_timing_s' % ix)
@@ -131,6 +133,50 @@ df_collect.N_events = df_collect.N_events.astype(np.int)
 df_collect.num_cpu = df_collect.num_cpu.astype(np.int)
 df_collect.it_nr = df_collect.it_nr.astype(np.int)
 
+
+## df_RRMPFE_eval_total refactored for nice factorplotting
+df_RRMPFE_eval_total_ref = pd.DataFrame(columns=['N_events', 'num_cpu', 'time s', 'cpu/wall', 'segment'])
+
+cols = [('wall', 'all', 'evaluate_MPFE_client_walltime_total_s'),
+        ('wall', 'before_retrieve', 'evaluate_MPFE_client_before_retrieve_walltime_total_s'),
+        ('wall', 'retrieve', 'evaluate_MPFE_client_retrieve_walltime_total_s'),
+        ('wall', 'after_retrieve', 'evaluate_MPFE_client_after_retrieve_walltime_total_s'),
+        ('cpu', 'all', 'evaluate_MPFE_client_cputime_total_s'),
+        ('cpu', 'before_retrieve', 'evaluate_MPFE_client_before_retrieve_cputime_total_s'),
+        ('cpu', 'retrieve', 'evaluate_MPFE_client_retrieve_cputime_total_s'),
+        ('cpu', 'after_retrieve', 'evaluate_MPFE_client_after_retrieve_cputime_total_s')]
+
+for index, series in df_ext.iterrows():
+    for cpu_wall, segment, col in cols:
+        if pd.notnull(series[col]):
+            new_row = {}
+            new_row['N_events'] = series.N_events
+            new_row['num_cpu'] = series.num_cpu
+            new_row['time s'] = series[col]
+            new_row['cpu/wall'] = cpu_wall
+            new_row['segment'] = segment
+            df_RRMPFE_eval_total_ref = df_RRMPFE_eval_total_ref.append(new_row, ignore_index=True)
+
+# correct types
+df_RRMPFE_eval_total_ref.N_events = df_RRMPFE_eval_total_ref.N_events.astype(np.int)
+df_RRMPFE_eval_total_ref.num_cpu = df_RRMPFE_eval_total_ref.num_cpu.astype(np.int)
+
+
+# show timings
+# NOTE:
+# the full timings (timing_s) in this run do not seem to be representative
+# probably the extra itX and other fine-grained timings caused so much overhead
+# that the total timing took way longer than it should
+# Compare to the timing_s from the previous benchmarks if necessary.
+
+# compare difference between real and ideal to distribute and collect timings
+g = sns.factorplot(x='num_cpu', y='evaluate_mpmaster_collect_walltime_s', col='N_events', estimator=np.min, data=df_ext, legend_out=False, sharey=False)
+g = sns.factorplot(x='num_cpu', y='dispatch_total_s', col='N_events', estimator=np.min, data=df_ext, legend_out=False)
+
+# itX times
 g = sns.factorplot(x='num_cpu', y='collect it walltime s', hue='it_nr', col='N_events', estimator=np.min, data=df_collect, legend_out=False, sharey=False)
+
+# MPFE evaluate timings
+g = sns.factorplot(x='num_cpu', y='time s', hue='cpu/wall', col='N_events', row='segment', sharey='row', estimator=np.min, data=df_RRMPFE_eval_total_ref, legend_out=False)
 
 plt.show()
