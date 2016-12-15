@@ -2,8 +2,10 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:23:55
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-12-07 11:01:43
+# @Last Modified time: 2016-12-15 07:51:32
 
+import numpy as np
+import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 
@@ -11,6 +13,7 @@ pd.set_option("display.width", None)
 
 # PART 2:
 # including branching timings
+
 
 def df_from_sloppy_json_list_file(fn):
     with open(fn, 'r') as fh:
@@ -86,9 +89,11 @@ df_ext.loc[df_ext.timing_type == 'ideal', 'timing_C_ns'] = df_ext[df_ext.timing_
 
 # show timings
 
+# df_ext['timing_s'] = df_ext.timing_ns / 1.e9
+
 g = sns.factorplot(x='num_cpu', y='timing_ns', hue='N_events/timing_type', estimator=np.min, data=df_ext, legend_out=False)
 g.ax.set_yscale('log')
- 
+
 # plt.show()
 
 

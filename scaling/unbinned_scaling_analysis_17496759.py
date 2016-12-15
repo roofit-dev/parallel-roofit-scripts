@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:23:55
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-12-13 07:55:04
+# @Last Modified time: 2016-12-15 07:50:38
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -98,14 +98,14 @@ df_ext['N_events/timing_type'] = df_ext.N_events.astype(str) + '/' + df_ext.timi
 
 
 # show timings
-
-g = sns.factorplot(x='num_cpu', y='timing_s', hue='N_events/timing_type', estimator=np.min, data=df_ext, legend_out=False)
-g.ax.set_yscale('log')
-
+# NOTE:
+# the full timings (timing_s) in this run do not seem to be representative
+# probably the extra itX and other fine-grained timings caused so much overhead
+# that the total timing took way longer than it should
+# Compare to the timing_s from the previous benchmarks if necessary.
 
 # compare difference between real and ideal to distribute and collect timings
 
-g = sns.factorplot(x='num_cpu', y='timing_s', hue='timing_type', col='N_events', estimator=np.min, data=df_ext, legend_out=False, sharey=False)
 g = sns.factorplot(x='num_cpu', y='evaluate_mpmaster_collect_walltime_s', col='N_events', estimator=np.min, data=df_ext, legend_out=False, sharey=False)
 g = sns.factorplot(x='num_cpu', y='dispatch_total_s', col='N_events', estimator=np.min, data=df_ext, legend_out=False)
 
