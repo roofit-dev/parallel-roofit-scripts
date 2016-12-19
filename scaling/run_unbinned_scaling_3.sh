@@ -2,10 +2,9 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-12-19 10:47:43
+# @Last Modified time: 2016-12-19 10:57:47
 # PBS -l nodes=1:ppn=8
 
-timing_flag=$1
 if [[ -z "$timing_flag" ]]; then
     echo "Error: must give a timing_flag as argument!"
     exit 1
