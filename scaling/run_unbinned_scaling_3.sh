@@ -2,8 +2,14 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-12-19 10:40:20
+# @Last Modified time: 2016-12-19 10:47:43
 # PBS -l nodes=1:ppn=8
+
+timing_flag=$1
+if [[ -z "$timing_flag" ]]; then
+    echo "Error: must give a timing_flag as argument!"
+    exit 1
+fi
 
 #set -e
 # Any subsequent(*) commands which fail will cause the shell script to exit immediately
@@ -27,7 +33,7 @@ printlevel=0
 
 for e in 100000 1000000 10000000; do
 for cpu in {1..8}; do
-for timing_flag in {1..7}; do
+# for timing_flag in {1..7}; do
 
 # do it three times and only use the minimum runtime
 for repeat_nr in {1..3}; do
@@ -35,6 +41,6 @@ for repeat_nr in {1..3}; do
 echo "Repeat number $repeat_nr"
 root -b -q -l "../unbinned_scaling.cpp(${g},${o},${p},${e},${cpu},${ileave},${seed},${printlevel},${timing_flag})"
 
-done; done; done; done
+done; done; done #; done
 
 cd -
