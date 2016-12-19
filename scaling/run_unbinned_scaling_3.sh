@@ -2,11 +2,15 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-12-19 10:57:47
+# @Last Modified time: 2016-12-19 11:03:30
 # PBS -l nodes=1:ppn=8
 
 if [[ -z "$timing_flag" ]]; then
-    echo "Error: must give a timing_flag as argument!"
+    echo "Error: must set timing_flag as environment variable!"
+    exit 1
+fi
+if [[ -z "$repeat_nr" ]]; then
+    echo "Error: must set repeat_nr as environment variable!"
     exit 1
 fi
 
@@ -35,11 +39,11 @@ for cpu in {1..8}; do
 # for timing_flag in {1..7}; do
 
 # do it three times and only use the minimum runtime
-for repeat_nr in {1..3}; do
+# for repeat_nr in {1..3}; do
 
 echo "Repeat number $repeat_nr"
 root -b -q -l "../unbinned_scaling.cpp(${g},${o},${p},${e},${cpu},${ileave},${seed},${printlevel},${timing_flag})"
 
-done; done; done #; done
+done; done #; done #; done
 
 cd -
