@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:23:55
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-12-19 15:55:16
+# @Last Modified time: 2016-12-19 16:29:08
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -33,15 +33,27 @@ def merge_dataframes(*dataframes):
     return reduce(pd.merge, dataframes)
 
 
-def df_from_json_incl_meta(fn, fn_meta=None):
+def df_from_json_incl_meta(fn, fn_meta=None,
+                           drop_meta=['N_gaussians', 'N_observables',
+                                      'N_parameters', 'parallel_interleave',
+                                      'seed']):
     if fn_meta is None:
         fn_meta = os.path.join(os.path.dirname(fn), 'timing_meta.json')
     main_df = df_from_sloppy_json_list_file(fn)
-    meta_df = df_from_sloppy_json_list_file(fn_meta)
+    meta_df = df_from_sloppy_json_list_file(fn_meta).drop(drop_meta, axis=1)
+    # not just single process runs, also master processes in multi-process runs:
+    single_process = pd.merge(main_df, meta_df, how='left', on='pid')
     if 'ppid' in main_df.columns:
-        pass
+        single_process = single_process.drop('ppid', axis=1)\
+                                       .dropna()
+        multi_process = pd.merge(main_df, meta_df, how='left',
+                                 left_on='ppid', right_on='pid').dropna()\
+                                                                .drop(['pid_x',
+                                                                       'pid_y'],
+                                                                      axis=1)
+        return [single_process, multi_process]
     else:
-        return pd.merge(main_df, meta_df, how='left', on='pid')
+        return [single_process]
 
 """
 cd ~/projects/apcocsm/code/scaling
@@ -52,12 +64,28 @@ dnlist = sorted(glob.glob("17510*.allier.nikhef.nl"))
 dnlist = [dn for dn in dnlist if len(glob.glob(dn + '/*.json')) > 1]
 
 fnlist = reduce(lambda x, y: x + y, [glob.glob(dn + '/*.json') for dn in dnlist])
+fnlist = [fn for fn in fnlist if 'timing_meta.json' not in fn]
 uniquefns = np.unique([fn.split('/')[1] for fn in fnlist]).tolist()
-uniquefns.remove('timing_meta.json')
+
+dfs = {fn: df_from_json_incl_meta(fn) for fn in fnlist}
+
+### HIER GEBLEVEN
+# ValueError bij laden van 17510312.allier.nikhef.nl/timing_RATS_evaluate_mpmaster_perCPU.json
+# 
 
 
-dfs = {}
 
+
+
+
+
+
+
+
+
+
+
+# oud:
 
 fn_totals = "timings.json"
 fn_RATS = "RATS_timings.json"
