@@ -4,11 +4,6 @@
 #include <fstream>
 #include <string>
 
-class Global {
-public:
-  static int timing_flag;
-}
-
 using namespace RooFit;
 
 // call from command line like, for instance:
@@ -35,7 +30,8 @@ void unbinned_scaling(int N_gaussians, int N_observables, int N_parameters,
   // int N_parameters(8);  // must be even, means and sigmas have diff ranges
   // int N_events(1000);
 
-  int Global::timing_flag = timing_flag;
+  RooConstVar roo_timing_flag("timing_flag", "timing_flag", timing_flag);
+  gROOT->GetListOfSpecials()->Add(&roo_timing_flag);
 
   // plotting configuration
   int obs_plot_x(3);
@@ -166,7 +162,7 @@ void unbinned_scaling(int N_gaussians, int N_observables, int N_parameters,
   ofstream outfile;
   std::chrono::time_point<std::chrono::system_clock> begin, end;
 
-  if (Global::timing_flag == 1) {
+  if (timing_flag == 1) {
     outfile.open("timing_full_minimize.json", ios::app);
   }
 
@@ -180,14 +176,14 @@ void unbinned_scaling(int N_gaussians, int N_observables, int N_parameters,
     m.setPrintLevel(printlevel);
     m.optimizeConst(optimizeConst);
 
-    if (Global::timing_flag == 1) {
+    if (timing_flag == 1) {
       begin = std::chrono::high_resolution_clock::now();
     }
     // m.hesse();
 
     m.minimize("Minuit2", "migrad");
 
-    if (Global::timing_flag == 1) {
+    if (timing_flag == 1) {
       end = std::chrono::high_resolution_clock::now();
 
       float timing_s = std::chrono::duration_cast<std::chrono::nanoseconds>
@@ -206,7 +202,7 @@ void unbinned_scaling(int N_gaussians, int N_observables, int N_parameters,
               << "\"}," << std::endl;
     }
   }
-  if (Global::timing_flag == 1) {
+  if (timing_flag == 1) {
     outfile.close();
   }
 
