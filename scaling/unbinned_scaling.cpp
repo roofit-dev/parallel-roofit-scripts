@@ -29,6 +29,23 @@ void unbinned_scaling(int N_gaussians, int N_observables, int N_parameters,
   // int N_observables(5);
   // int N_parameters(8);  // must be even, means and sigmas have diff ranges
   // int N_events(1000);
+  ofstream outfile;
+
+  if (timing_flag > 0) {
+    outfile.open("timing_meta.json", ios::app);
+
+    outfile << "{\"N_gaussians\": \"" << N_gaussians
+            << "\", \"N_observables\": \"" << N_observables
+            << "\", \"N_parameters\": \"" << N_parameters
+            << "\", \"N_events\": \"" << N_events
+            << "\", \"num_cpu\": \"" << num_cpu
+            << "\", \"parallel_interleave\": \"" << parallel_interleave
+            << "\", \"seed\": \"" << seed
+            << "\", \"pid\": \"" << getpid()
+            << "\"}," << std::endl;
+
+    outfile.close();
+  }
 
   RooConstVar roo_timing_flag("timing_flag", "timing_flag", timing_flag);
   gROOT->GetListOfSpecials()->Add(&roo_timing_flag);
@@ -159,7 +176,6 @@ void unbinned_scaling(int N_gaussians, int N_observables, int N_parameters,
   // sum.fitTo(*data,"Extended") ;
   // instead of full fitTo, only do the fit, leave out error matrix, using
   // run style of run_higgs.C
-  ofstream outfile;
   std::chrono::time_point<std::chrono::system_clock> begin, end;
 
   if (timing_flag == 1) {
@@ -191,13 +207,6 @@ void unbinned_scaling(int N_gaussians, int N_observables, int N_parameters,
       std::cout << timing_s << "s" << std::endl;
 
       outfile << "{\"full_minimize_wall_s\": \"" << timing_s
-              << "\", \"N_gaussians\": \"" << N_gaussians
-              << "\", \"N_observables\": \"" << N_observables
-              << "\", \"N_parameters\": \"" << N_parameters
-              << "\", \"N_events\": \"" << N_events
-              << "\", \"num_cpu\": \"" << num_cpu
-              << "\", \"parallel_interleave\": \"" << parallel_interleave
-              << "\", \"seed\": \"" << seed
               << "\", \"pid\": \"" << getpid()
               << "\"}," << std::endl;
     }
