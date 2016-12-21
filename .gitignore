@@ -8,4 +8,5 @@ train*/*
 *.pylog
 *.vglog
 *timings.json
+timing*.json
 run_unbinned_scaling.sh.[eo][0-9]+
