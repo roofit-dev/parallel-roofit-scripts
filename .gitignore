@@ -7,5 +7,5 @@ train*/*
 *.err
 *.pylog
 *.vglog
-timings.json
+*timings.json
 run_unbinned_scaling.sh.[eo][0-9]+
