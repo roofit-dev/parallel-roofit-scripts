@@ -2,9 +2,10 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-12-21 15:14:41
+# @Last Modified time: 2016-12-21 15:23:46
 
 #PBS -l nodes=1:ppn=8
+#PBS -o pbs_log/run_unbinned_scaling_4
 
 run_id=unbinned_scaling_4
 
