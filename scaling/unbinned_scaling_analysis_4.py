@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:23:55
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-12-21 14:30:52
+# @Last Modified time: 2016-12-21 16:28:16
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -68,7 +68,7 @@ rsync -av --progress nikhef:"/user/pbos/project_atlas/apcocsm_code/scaling/*.all
 """
 
 #### LOAD DATA FROM FILES
-# dnlist = sorted(glob.glob("17510*.allier.nikhef.nl"))  # run_unbinned_scaling_3.sh
+# dnlist = sorted(glob.glob("unbinned_scaling_4_orig/17510*.allier.nikhef.nl"))  # run_unbinned_scaling_3.sh
 dnlist = sorted(glob.glob("unbinned_scaling_4/*.allier.nikhef.nl"))  # run_unbinned_scaling_4.sh
 dnlist = [dn for dn in dnlist if len(glob.glob(dn + '/*.json')) > 1]
 
@@ -241,7 +241,7 @@ g = sns.factorplot(x='num_cpu', y='full_minimize_wall_s', col='N_events', hue='N
 # RATS evaluate full times
 g = sns.factorplot(x='num_cpu', y='RATS_evaluate_wall_s', col='N_events', hue='mode', estimator=np.min, data=pd.concat([rats_eval_sp_total, rats_eval_mp_total]), legend_out=False, sharey=False)
 g = sns.factorplot(x='num_cpu', y='ppid-max wall s', col='N_events', hue='mode', estimator=np.min, data=rats_eval_mp_maxppid, legend_out=False, sharey=False)
-
+g = sns.factorplot(x='num_cpu', y='ppid-min wall s', col='N_events', hue='mode', estimator=np.min, data=rats_eval_mp_minppid, legend_out=False, sharey=False)
 
 
 # RATS evaluate itX times
