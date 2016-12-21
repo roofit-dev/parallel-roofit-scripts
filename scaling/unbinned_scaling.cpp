@@ -131,7 +131,7 @@ void unbinned_scaling(int N_gaussians, int N_observables, int N_parameters,
     std::string s = os.str();
     os2 << "#signal events comp " << ix;
     std::string s2 = os2.str();
-    RooRealVar a(s.c_str(), s2.c_str(), 100, 0., 10000);
+    RooRealVar a(s.c_str(), s2.c_str(), 100, 0., 10*N_events);
     w.import(a);
   }
   // gather them in count_set
@@ -148,7 +148,7 @@ void unbinned_scaling(int N_gaussians, int N_observables, int N_parameters,
     std::string s = os.str();
     os2 << "#background events comp " << ix;
     std::string s2 = os2.str();
-    RooRealVar a(s.c_str(), s2.c_str(), 100, 0., 10000);
+    RooRealVar a(s.c_str(), s2.c_str(), 100, 0., 10*N_events);
     w.import(a);
   }
   // gather them in count_set

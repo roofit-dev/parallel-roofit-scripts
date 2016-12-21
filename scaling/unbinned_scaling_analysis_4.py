@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:23:55
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-12-19 16:29:08
+# @Last Modified time: 2016-12-21 13:18:16
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -33,10 +33,15 @@ def merge_dataframes(*dataframes):
     return reduce(pd.merge, dataframes)
 
 
+def concat_dataframes(*dataframes):
+    return reduce(pd.concat, dataframes)
+
+
 def df_from_json_incl_meta(fn, fn_meta=None,
                            drop_meta=['N_gaussians', 'N_observables',
                                       'N_parameters', 'parallel_interleave',
-                                      'seed']):
+                                      'seed'],
+                           drop_nan=False):
     if fn_meta is None:
         fn_meta = os.path.join(os.path.dirname(fn), 'timing_meta.json')
     main_df = df_from_sloppy_json_list_file(fn)
@@ -44,121 +49,162 @@ def df_from_json_incl_meta(fn, fn_meta=None,
     # not just single process runs, also master processes in multi-process runs:
     single_process = pd.merge(main_df, meta_df, how='left', on='pid')
     if 'ppid' in main_df.columns:
-        single_process = single_process.drop('ppid', axis=1)\
-                                       .dropna()
+        single_process = single_process.drop('ppid', axis=1)
         multi_process = pd.merge(main_df, meta_df, how='left',
-                                 left_on='ppid', right_on='pid').dropna()\
-                                                                .drop(['pid_x',
-                                                                       'pid_y'],
-                                                                      axis=1)
-        return [single_process, multi_process]
+                                 left_on='ppid', right_on='pid').drop('pid_y', axis=1)
+        multi_process.rename(columns={'pid_x': 'pid'}, inplace=True)
+        result = [single_process, multi_process]
     else:
-        return [single_process]
+        result = [single_process]
+
+    if drop_nan:
+        result = [df.dropna() for df in result]
+
+    return result
 
 """
 cd ~/projects/apcocsm/code/scaling
 rsync -av --progress nikhef:"/user/pbos/project_atlas/apcocsm_code/scaling/*.allier.nikhef.nl" ./
 """
 
-dnlist = sorted(glob.glob("17510*.allier.nikhef.nl"))
+#### LOAD DATA FROM FILES
+# dnlist = sorted(glob.glob("17510*.allier.nikhef.nl"))  # run_unbinned_scaling_3.sh
+dnlist = sorted(glob.glob("unbinned_scaling_4/*.allier.nikhef.nl"))  # run_unbinned_scaling_4.sh
 dnlist = [dn for dn in dnlist if len(glob.glob(dn + '/*.json')) > 1]
 
 fnlist = reduce(lambda x, y: x + y, [glob.glob(dn + '/*.json') for dn in dnlist])
 fnlist = [fn for fn in fnlist if 'timing_meta.json' not in fn]
-uniquefns = np.unique([fn.split('/')[1] for fn in fnlist]).tolist()
+uniquefns = np.unique([fn.split('/')[-1] for fn in fnlist]).tolist()
+dfkeys = [u[7:-5] for u in uniquefns]
 
-dfs = {fn: df_from_json_incl_meta(fn) for fn in fnlist}
-
-### HIER GEBLEVEN
-# ValueError bij laden van 17510312.allier.nikhef.nl/timing_RATS_evaluate_mpmaster_perCPU.json
-# 
-
-
-
+dfs_split = {fn: df_from_json_incl_meta(fn) for fn in fnlist}
+dfs_split_sp = {fn: dflist[0] for fn, dflist in dfs_split.iteritems()}
+dfs_split_mp = {fn: dflist[1] for fn, dflist in dfs_split.iteritems() if len(dflist) > 1}
+dfs_sp = {k: pd.concat([df for fn, df in dfs_split_sp.iteritems() if k in fn]) for k in dfkeys}
+dfs_mp = {k: pd.concat([df for fn, df in dfs_split_mp.iteritems() if k in fn]) for k in dfkeys if k in "".join(dfs_split_mp.keys())}
 
 
 
+#### AGGREGATE AND ANNOTATE ROWS AND RENAME COLUMNS FOR EASY ANALYSIS
 
 
+#### refactor and combine MPFE_evaluate_client timings
+mpfe_eval_wall = dfs_sp['wall_RRMPFE_evaluate_client']
+mpfe_eval_cpu = dfs_sp['cpu_RRMPFE_evaluate_client']
+# add after_retrieve columns
+mpfe_eval_wall['RRMPFE_evaluate_client_after_retrieve_wall_s'] = mpfe_eval_wall['RRMPFE_evaluate_client_wall_s'] - mpfe_eval_wall['RRMPFE_evaluate_client_before_retrieve_wall_s'] - mpfe_eval_wall['RRMPFE_evaluate_client_retrieve_wall_s']
+mpfe_eval_cpu['RRMPFE_evaluate_client_after_retrieve_cpu_s'] = mpfe_eval_cpu['RRMPFE_evaluate_client_cpu_s'] - mpfe_eval_cpu['RRMPFE_evaluate_client_before_retrieve_cpu_s'] - mpfe_eval_cpu['RRMPFE_evaluate_client_retrieve_cpu_s']
+# refactor for nice factorplotting; rename columns and add timing type column
+# ... cpu/wall column
+mpfe_eval_wall['cpu/wall'] = 'wall'
+mpfe_eval_cpu['cpu/wall'] = 'cpu'
+# ... give each timing column its own row
+mpfe_eval = pd.DataFrame(columns=['pid', 'N_events', 'num_cpu', 'time s', 'cpu/wall', 'segment'])
+cols_base = ['pid', 'N_events', 'num_cpu', 'cpu/wall']
+
+cols_wall = [('all', 'RRMPFE_evaluate_client_wall_s'),
+             ('before_retrieve', 'RRMPFE_evaluate_client_before_retrieve_wall_s'),
+             ('retrieve', 'RRMPFE_evaluate_client_retrieve_wall_s'),
+             ('after_retrieve', 'RRMPFE_evaluate_client_after_retrieve_wall_s')]
+cols_cpu = [('all', 'RRMPFE_evaluate_client_cpu_s'),
+            ('before_retrieve', 'RRMPFE_evaluate_client_before_retrieve_cpu_s'),
+            ('retrieve', 'RRMPFE_evaluate_client_retrieve_cpu_s'),
+            ('after_retrieve', 'RRMPFE_evaluate_client_after_retrieve_cpu_s')]
+
+for segment_id, col in cols_wall:
+    segment_timings = mpfe_eval_wall[cols_base + [col]].copy()
+    segment_timings['segment'] = segment_id
+    segment_timings.rename(columns={col: 'time s'}, inplace=True)
+    mpfe_eval = mpfe_eval.append(segment_timings, ignore_index=True)
+
+for segment_id, col in cols_cpu:
+    segment_timings = mpfe_eval_cpu[cols_base + [col]].copy()
+    segment_timings['segment'] = segment_id
+    segment_timings.rename(columns={col: 'time s'}, inplace=True)
+    mpfe_eval = mpfe_eval.append(segment_timings, ignore_index=True)
+
+# correct types
+mpfe_eval.N_events = mpfe_eval.N_events.astype(np.int)
+mpfe_eval.num_cpu = mpfe_eval.num_cpu.astype(np.int)
+mpfe_eval.pid = mpfe_eval.pid.astype(np.int)
 
 
+#### add MPFE evaluate full timings
+mpfe_eval_full = dfs_sp['RRMPFE_evaluate_full']
+mpfe_eval_full.rename(columns={'RRMPFE_evaluate_wall_s': 'time s'}, inplace=True)
+mpfe_eval_full['cpu/wall'] = 'wall+INLINE'
+mpfe_eval_full['segment'] = 'all'
+
+mpfe_eval = mpfe_eval.append(mpfe_eval_full)
 
 
+#### total time per run (== per pid, but the other columns are also grouped-by to prevent from summing over them)
+mpfe_eval_total = mpfe_eval.groupby(['pid', 'N_events', 'num_cpu', 'cpu/wall', 'segment'], as_index=False).sum()
 
-# oud:
 
-fn_totals = "timings.json"
-fn_RATS = "RATS_timings.json"
-fn_RRMPFE = "RRMPFE_timings.json"
-fn_RRMPFE_eval = "RRMPFE_eval_timings.json"
+#### MPFE calculate
+mpfe_calc = dfs_sp['RRMPFE_calculate_client']
+mpfe_calc.rename(columns={'RRMPFE_calculate_client_wall_s': 'walltime s'}, inplace=True)
+mpfe_calc_total = mpfe_calc.groupby(['pid', 'N_events', 'num_cpu'], as_index=False).sum()
 
-df_totals = df_from_sloppy_json_list_file(fn_totals)
-df_totals['timing_s'] = df_totals.timing_ns / 1.e9
 
-# remove useless stuff (for this script)
-df_totals.drop(['N_gaussians', 'N_observables', 'N_parameters',
-                'parallel_interleave', 'seed'], axis=1, inplace=True)
+#### full minimize
+df_totals = dfs_sp['full_minimize']
 
+### ADD IDEAL TIMING BASED ON SINGLE CORE RUNS
 single_core = df_totals[df_totals.num_cpu == 1]
-
-df_RATS = df_from_sloppy_json_list_file(fn_RATS)
-df_RRMPFE = df_from_sloppy_json_list_file(fn_RRMPFE)
-df_RRMPFE_eval = df_from_sloppy_json_list_file(fn_RRMPFE_eval)
-
-# threadid is not determined correctly for some reason, so leave it out
-df_RRMPFE.drop(['tid'], axis=1, inplace=True)
-df_RRMPFE_eval.drop(['tid'], axis=1, inplace=True)
-
-
-#### AGGREGATE DATA BY PROCESS ####
-
-# group by pid for aggregation
-df_RATS_by_pid = df_RATS.groupby('pid', as_index=False)
-df_RRMPFE_by_pid = df_RRMPFE.groupby(['pid'], as_index=False)
-df_RRMPFE_eval_by_pid = df_RRMPFE_eval.groupby(['pid'], as_index=False)
-
-# aggregate
-# ... total dispatch times
-df_RRMPFE_total_dispatch = df_RRMPFE_by_pid.sum()
-df_RRMPFE_total_dispatch.rename(columns={'calculate_dispatch_walltime_s': 'dispatch_total_s'}, inplace=True)
-
-# ... total MPFE eval times
-df_RRMPFE_eval_total = df_RRMPFE_eval_by_pid.sum()
-column_renames = {c: c.replace('_s', '_total_s')
-                  for c in df_RRMPFE_eval_total.columns}
-df_RRMPFE_eval_total.rename(columns=column_renames, inplace=True)
-# ... manually add after retrieve
-df_RRMPFE_eval_total['evaluate_MPFE_client_after_retrieve_walltime_total_s'] = df_RRMPFE_eval_total['evaluate_MPFE_client_walltime_total_s'] - df_RRMPFE_eval_total['evaluate_MPFE_client_before_retrieve_walltime_total_s'] - df_RRMPFE_eval_total['evaluate_MPFE_client_retrieve_walltime_total_s']
-df_RRMPFE_eval_total['evaluate_MPFE_client_after_retrieve_cputime_total_s'] = df_RRMPFE_eval_total['evaluate_MPFE_client_cputime_total_s'] - df_RRMPFE_eval_total['evaluate_MPFE_client_before_retrieve_cputime_total_s'] - df_RRMPFE_eval_total['evaluate_MPFE_client_retrieve_cputime_total_s']
-
-
-#### MERGE DATA BY PROCESS ####
-df = merge_dataframes(df_totals, df_RATS_by_pid.sum(), df_RRMPFE_total_dispatch,
-                      df_RRMPFE_eval_total)
-
-# add single core back in (removed when merging with multi-core RATS and RRMPFE rows):
-df = df.append(single_core)
-
-
-#### ADD ESTIMATED IDEAL SCALING CURVE ####
 
 # estimate ideal curve from fastest single_core run:
 single_core_fastest = single_core.groupby('N_events', as_index=False).min()
 df_ideal = single_core_fastest.copy()
-for num_cpu in df.num_cpu.unique():
+for num_cpu in df_totals.num_cpu.unique():
     if num_cpu != 1:
         ideal_num_cpu_i = single_core_fastest.copy()
-        ideal_num_cpu_i.timing_s /= num_cpu
+        ideal_num_cpu_i.full_minimize_wall_s /= num_cpu
         ideal_num_cpu_i.num_cpu = num_cpu
         df_ideal = df_ideal.append(ideal_num_cpu_i)
 
-df['timing_type'] = pd.Series(len(df) * ('real',), index=df.index)
+df_totals['timing_type'] = pd.Series(len(df_totals) * ('real',), index=df_totals.index)
 df_ideal['timing_type'] = pd.Series(len(df_ideal) * ('ideal',), index=df_ideal.index)
 
-df_ext = df.append(df_ideal)
+df_totals = df_totals.append(df_ideal)
 
 # add combination of two categories
-df_ext['N_events/timing_type'] = df_ext.N_events.astype(str) + '/' + df_ext.timing_type.astype(str)
+df_totals['N_events/timing_type'] = df_totals.N_events.astype(str) + '/' + df_totals.timing_type.astype(str)
+
+
+#### RATS evaluate full
+rats_eval_sp = dfs_sp['RATS_evaluate_full'].dropna()
+rats_eval_mp = dfs_mp['RATS_evaluate_full'].dropna()
+rats_eval_sp_total = rats_eval_sp.groupby(['pid', 'N_events', 'num_cpu', 'mode'], as_index=False).sum()
+rats_eval_mp_total = rats_eval_mp.groupby(['ppid', 'N_events', 'num_cpu', 'mode'], as_index=False).sum()\
+                                 .drop('pid', axis=1)
+
+rats_eval_mp_by_ppid = rats_eval_mp.groupby(['pid', 'ppid', 'N_events', 'num_cpu', 'mode'], as_index=False)\
+                                   .sum()\
+                                   .groupby('ppid')
+
+rats_eval_mp_maxppid = rats_eval_mp_by_ppid.max()\
+                                           .rename(columns={'RATS_evaluate_wall_s': 'ppid-max wall s'})
+rats_eval_mp_minppid = rats_eval_mp_by_ppid.min()\
+                                           .rename(columns={'RATS_evaluate_wall_s': 'ppid-min wall s'})
+
+
+#### RATS evaluate per CPU iteration
+rats_eval_itcpu_sp = dfs_sp['RATS_evaluate_mpmaster_perCPU']
+rats_eval_itcpu_mp = dfs_mp['RATS_evaluate_mpmaster_perCPU']
+
+
+
+
+
+
+
+
+
+
+
+# oud
 
 
 ### EXTRA DATA ###
@@ -186,49 +232,25 @@ df_collect.num_cpu = df_collect.num_cpu.astype(np.int)
 df_collect.it_nr = df_collect.it_nr.astype(np.int)
 
 
-## df_RRMPFE_eval_total refactored for nice factorplotting
-df_RRMPFE_eval_total_ref = pd.DataFrame(columns=['N_events', 'num_cpu', 'time s', 'cpu/wall', 'segment'])
 
-cols = [('wall', 'all', 'evaluate_MPFE_client_walltime_total_s'),
-        ('wall', 'before_retrieve', 'evaluate_MPFE_client_before_retrieve_walltime_total_s'),
-        ('wall', 'retrieve', 'evaluate_MPFE_client_retrieve_walltime_total_s'),
-        ('wall', 'after_retrieve', 'evaluate_MPFE_client_after_retrieve_walltime_total_s'),
-        ('cpu', 'all', 'evaluate_MPFE_client_cputime_total_s'),
-        ('cpu', 'before_retrieve', 'evaluate_MPFE_client_before_retrieve_cputime_total_s'),
-        ('cpu', 'retrieve', 'evaluate_MPFE_client_retrieve_cputime_total_s'),
-        ('cpu', 'after_retrieve', 'evaluate_MPFE_client_after_retrieve_cputime_total_s')]
+#### SHOW RESULTS
 
-for index, series in df_ext.iterrows():
-    for cpu_wall, segment, col in cols:
-        if pd.notnull(series[col]):
-            new_row = {}
-            new_row['N_events'] = series.N_events
-            new_row['num_cpu'] = series.num_cpu
-            new_row['time s'] = series[col]
-            new_row['cpu/wall'] = cpu_wall
-            new_row['segment'] = segment
-            df_RRMPFE_eval_total_ref = df_RRMPFE_eval_total_ref.append(new_row, ignore_index=True)
+# full timings
+g = sns.factorplot(x='num_cpu', y='full_minimize_wall_s', col='N_events', hue='N_events/timing_type', estimator=np.min, data=df_totals, legend_out=False, sharey=False)
 
-# correct types
-df_RRMPFE_eval_total_ref.N_events = df_RRMPFE_eval_total_ref.N_events.astype(np.int)
-df_RRMPFE_eval_total_ref.num_cpu = df_RRMPFE_eval_total_ref.num_cpu.astype(np.int)
+# RATS evaluate full times
+g = sns.factorplot(x='num_cpu', y='RATS_evaluate_wall_s', col='N_events', hue='mode', estimator=np.min, data=pd.concat([rats_eval_sp_total, rats_eval_mp_total]), legend_out=False, sharey=False)
+g = sns.factorplot(x='num_cpu', y='ppid-max wall s', col='N_events', hue='mode', estimator=np.min, data=rats_eval_mp_maxppid, legend_out=False, sharey=False)
 
 
-# show timings
-# NOTE:
-# the full timings (timing_s) in this run do not seem to be representative
-# probably the extra itX and other fine-grained timings caused so much overhead
-# that the total timing took way longer than it should
-# Compare to the timing_s from the previous benchmarks if necessary.
 
-# compare difference between real and ideal to distribute and collect timings
-g = sns.factorplot(x='num_cpu', y='evaluate_mpmaster_collect_walltime_s', col='N_events', estimator=np.min, data=df_ext, legend_out=False, sharey=False)
-g = sns.factorplot(x='num_cpu', y='dispatch_total_s', col='N_events', estimator=np.min, data=df_ext, legend_out=False)
-
-# itX times
+# RATS evaluate itX times
 g = sns.factorplot(x='num_cpu', y='collect it walltime s', hue='it_nr', col='N_events', estimator=np.min, data=df_collect, legend_out=False, sharey=False)
 
-# MPFE evaluate timings
-g = sns.factorplot(x='num_cpu', y='time s', hue='cpu/wall', col='N_events', row='segment', sharey='row', estimator=np.min, data=df_RRMPFE_eval_total_ref, legend_out=False)
+# MPFE evaluate timings (including "collect" time)
+g = sns.factorplot(x='num_cpu', y='time s', hue='cpu/wall', col='N_events', row='segment', sharey='row', estimator=np.min, data=mpfe_eval_total, legend_out=False)
+
+# MPFE calculate timings ("dispatch" time)
+g = sns.factorplot(x='num_cpu', y='walltime s', col='N_events', sharey='row', estimator=np.min, data=mpfe_calc_total, legend_out=False)
 
 plt.show()
