@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:23:55
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-12-21 13:18:16
+# @Last Modified time: 2016-12-21 14:30:52
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -245,7 +245,7 @@ g = sns.factorplot(x='num_cpu', y='ppid-max wall s', col='N_events', hue='mode',
 
 
 # RATS evaluate itX times
-g = sns.factorplot(x='num_cpu', y='collect it walltime s', hue='it_nr', col='N_events', estimator=np.min, data=df_collect, legend_out=False, sharey=False)
+# g = sns.factorplot(x='num_cpu', y='collect it walltime s', hue='it_nr', col='N_events', estimator=np.min, data=df_collect, legend_out=False, sharey=False)
 
 # MPFE evaluate timings (including "collect" time)
 g = sns.factorplot(x='num_cpu', y='time s', hue='cpu/wall', col='N_events', row='segment', sharey='row', estimator=np.min, data=mpfe_eval_total, legend_out=False)
