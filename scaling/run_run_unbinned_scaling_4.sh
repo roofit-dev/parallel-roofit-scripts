@@ -6,7 +6,7 @@
 
 # do it a few times and only use the minimum runtime
 for repeat_nr in {1..5}; do
-for timing_flag in {1..7}; do
+for timing_flag in 1 2 3 4 5 6 7 9; do
 
 qsub -v "timing_flag=$timing_flag,repeat_nr=$repeat_nr" run_unbinned_scaling_4.sh
 

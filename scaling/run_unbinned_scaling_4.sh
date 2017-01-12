@@ -39,7 +39,8 @@ seed=1
 
 printlevel=0
 
-for e in 100000 1000000 10000000; do
+#for e in 100000 1000000 10000000; do
+for e in 100000000; do
 for cpu in {1..8}; do
 # for timing_flag in {1..7}; do
 
