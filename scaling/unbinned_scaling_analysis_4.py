@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:23:55
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-12-21 14:30:52
+# @Last Modified time: 2016-12-22 15:01:18
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -67,8 +67,10 @@ cd ~/projects/apcocsm/code/scaling
 rsync -av --progress nikhef:"/user/pbos/project_atlas/apcocsm_code/scaling/*.allier.nikhef.nl" ./
 """
 
+savefig_dn = '/home/patrick/projects/apcocsm/code/scaling/unbinned_scaling_4/analysis/'
+
 #### LOAD DATA FROM FILES
-# dnlist = sorted(glob.glob("17510*.allier.nikhef.nl"))  # run_unbinned_scaling_3.sh
+# dnlist = sorted(glob.glob("unbinned_scaling_4_orig/17510*.allier.nikhef.nl"))  # run_unbinned_scaling_3.sh
 dnlist = sorted(glob.glob("unbinned_scaling_4/*.allier.nikhef.nl"))  # run_unbinned_scaling_4.sh
 dnlist = [dn for dn in dnlist if len(glob.glob(dn + '/*.json')) > 1]
 
@@ -82,7 +84,6 @@ dfs_split_sp = {fn: dflist[0] for fn, dflist in dfs_split.iteritems()}
 dfs_split_mp = {fn: dflist[1] for fn, dflist in dfs_split.iteritems() if len(dflist) > 1}
 dfs_sp = {k: pd.concat([df for fn, df in dfs_split_sp.iteritems() if k in fn]) for k in dfkeys}
 dfs_mp = {k: pd.concat([df for fn, df in dfs_split_mp.iteritems() if k in fn]) for k in dfkeys if k in "".join(dfs_split_mp.keys())}
-
 
 
 #### AGGREGATE AND ANNOTATE ROWS AND RENAME COLUMNS FOR EASY ANALYSIS
@@ -194,63 +195,94 @@ rats_eval_mp_minppid = rats_eval_mp_by_ppid.min()\
 rats_eval_itcpu_sp = dfs_sp['RATS_evaluate_mpmaster_perCPU']
 rats_eval_itcpu_mp = dfs_mp['RATS_evaluate_mpmaster_perCPU']
 
-
-
-
-
-
-
-
-
-
-
-# oud
-
-
-### EXTRA DATA ###
-
+rats_eval_itcpu_sp['sp/mp'] = 'sp'
+rats_eval_itcpu_mp['sp/mp'] = 'mp'
 
 ## dataframe met versch. itX timings per rij en een klasse kolom die het itX X nummer bevat
-df_collect = pd.DataFrame(columns=['N_events', 'num_cpu', 'collect it walltime s', 'it_nr'])
+rats_eval_itcpu = pd.DataFrame(columns=['pid', 'N_events', 'num_cpu', 'walltime s', 'it_nr', 'sp/mp'])
 
-itX_cols = [(ix, 'evaluate_mpmaster_collect_it%i_timing_s' % ix)
-            for ix in range(max(df_ext.num_cpu))]
+itX_cols = [(ix, 'RATS_evaluate_mpmaster_it%i_wall_s' % ix)
+            for ix in range(max(rats_eval_itcpu_sp.num_cpu))]
 
-for index, series in df_ext.iterrows():
-    for X, itX in itX_cols:
-        if pd.notnull(series[itX]):
-            new_row = {}
-            new_row['N_events'] = series.N_events
-            new_row['num_cpu'] = series.num_cpu
-            new_row['collect it walltime s'] = series[itX]
-            new_row['it_nr'] = X
-            df_collect = df_collect.append(new_row, ignore_index=True)
+cols_base = ['pid', 'N_events', 'num_cpu', 'sp/mp']
+
+for X, col in itX_cols:
+    itX_timings = rats_eval_itcpu_sp[cols_base + [col]].copy().dropna()
+    itX_timings['it_nr'] = X
+    itX_timings.rename(columns={col: 'walltime s'}, inplace=True)
+    rats_eval_itcpu = rats_eval_itcpu.append(itX_timings, ignore_index=True)
+    itX_timings = rats_eval_itcpu_mp[cols_base + [col]].copy().dropna()
+    itX_timings['it_nr'] = X
+    itX_timings.rename(columns={col: 'walltime s'}, inplace=True)
+    rats_eval_itcpu = rats_eval_itcpu.append(itX_timings, ignore_index=True)
 
 # correct types
-df_collect.N_events = df_collect.N_events.astype(np.int)
-df_collect.num_cpu = df_collect.num_cpu.astype(np.int)
-df_collect.it_nr = df_collect.it_nr.astype(np.int)
+rats_eval_itcpu.pid = rats_eval_itcpu.pid.astype(np.int)
+rats_eval_itcpu.N_events = rats_eval_itcpu.N_events.astype(np.int)
+rats_eval_itcpu.num_cpu = rats_eval_itcpu.num_cpu.astype(np.int)
+rats_eval_itcpu.it_nr = rats_eval_itcpu.it_nr.astype(np.int)
+
+rats_eval_itcpu_total = rats_eval_itcpu.groupby(['pid', 'N_events', 'num_cpu', 'it_nr', 'sp/mp'], as_index=False).sum()
 
 
+#### ADD mpfe_eval COLUMN OF CPU_ID, ***PROBABLY***, WHICH SEEMS TO EXPLAIN DIFFERENT TIMINGS QUITE WELL
+mpfe_eval_cpu_split = pd.DataFrame(columns=mpfe_eval.columns)
+
+for num_cpu in range(2, 9):
+    mpfe_eval_num_cpu = mpfe_eval[(mpfe_eval.segment == 'all') * (mpfe_eval.num_cpu == num_cpu)]
+    mpfe_eval_num_cpu['cpu_id'] = None
+    for cpu_id in range(num_cpu):
+        mpfe_eval_num_cpu.iloc[cpu_id::num_cpu, mpfe_eval_num_cpu.columns.get_loc('cpu_id')] = cpu_id
+    mpfe_eval_cpu_split = mpfe_eval_cpu_split.append(mpfe_eval_num_cpu)
+
+mpfe_eval_cpu_split_total = mpfe_eval_cpu_split.groupby(['pid', 'N_events', 'num_cpu', 'cpu/wall', 'segment', 'cpu_id'], as_index=False).sum()
 
 #### SHOW RESULTS
 
 # full timings
 g = sns.factorplot(x='num_cpu', y='full_minimize_wall_s', col='N_events', hue='N_events/timing_type', estimator=np.min, data=df_totals, legend_out=False, sharey=False)
+plt.subplots_adjust(top=0.85)
+g.fig.suptitle('total wallclock timing of minimize("Minuit2", "migrad")')
+g.savefig(savefig_dn + 'total_timing.png')
 
 # RATS evaluate full times
 g = sns.factorplot(x='num_cpu', y='RATS_evaluate_wall_s', col='N_events', hue='mode', estimator=np.min, data=pd.concat([rats_eval_sp_total, rats_eval_mp_total]), legend_out=False, sharey=False)
+plt.subplots_adjust(top=0.85)
+g.fig.suptitle('total wallclock timing of all calls to RATS::evaluate()')
+g.savefig(savefig_dn + 'rats_eval.png')
+
 g = sns.factorplot(x='num_cpu', y='ppid-max wall s', col='N_events', hue='mode', estimator=np.min, data=rats_eval_mp_maxppid, legend_out=False, sharey=False)
+plt.subplots_adjust(top=0.85)
+g.fig.suptitle('total wallclock timing of the SLOWEST slave thread in the parallel run of RATS::evaluate()')
+g.savefig(savefig_dn + 'rats_eval_maxppid.png')
 
-
+g = sns.factorplot(x='num_cpu', y='ppid-min wall s', col='N_events', hue='mode', estimator=np.min, data=rats_eval_mp_minppid, legend_out=False, sharey=False)
+plt.subplots_adjust(top=0.85)
+g.fig.suptitle('total wallclock timing of the FASTEST slave thread in the parallel run of RATS::evaluate()')
+g.savefig(savefig_dn + 'rats_eval_minppid.png')
 
 # RATS evaluate itX times
-# g = sns.factorplot(x='num_cpu', y='collect it walltime s', hue='it_nr', col='N_events', estimator=np.min, data=df_collect, legend_out=False, sharey=False)
+g = sns.factorplot(x='num_cpu', y='walltime s', hue='it_nr', col='N_events', row='sp/mp', estimator=np.min, data=rats_eval_itcpu_total, legend_out=False, sharey=False)
+plt.subplots_adjust(top=0.85)
+g.fig.suptitle('total wallclock timing of the iterations of the main for-loop in RATS::evaluate()')
+g.savefig(savefig_dn + 'rats_eval_itcpu.png')
 
 # MPFE evaluate timings (including "collect" time)
-g = sns.factorplot(x='num_cpu', y='time s', hue='cpu/wall', col='N_events', row='segment', sharey='row', estimator=np.min, data=mpfe_eval_total, legend_out=False)
+g = sns.factorplot(x='num_cpu', y='time s', hue='cpu/wall', col='N_events', row='segment', estimator=np.min, data=mpfe_eval_total, legend_out=False, sharey=False)
+plt.subplots_adjust(top=0.95)
+g.fig.suptitle('total timings of all calls to RRMPFE::evaluate(); "COLLECT"')
+g.savefig(savefig_dn + 'mpfe_eval.png')
+
+# ... split by cpu id
+g = sns.factorplot(x='num_cpu', y='time s', hue='cpu_id', col='N_events', row='segment', estimator=np.min, data=mpfe_eval_cpu_split_total[mpfe_eval_cpu_split_total['cpu/wall'] == 'wall'], legend_out=False, sharey=False)
+plt.subplots_adjust(top=0.85)
+g.fig.suptitle('total wallclock timing of all calls to RRMPFE::evaluate(); only wallclock, excluding the wall+INLINE timings')
+g.savefig(savefig_dn + 'mpfe_eval_cpu_split.png')
 
 # MPFE calculate timings ("dispatch" time)
 g = sns.factorplot(x='num_cpu', y='walltime s', col='N_events', sharey='row', estimator=np.min, data=mpfe_calc_total, legend_out=False)
+plt.subplots_adjust(top=0.85)
+g.fig.suptitle('total wallclock timing of all calls to RRMPFE::calculate(); "DISPATCH"')
+g.savefig(savefig_dn + 'mpfe_calc.png')
 
 plt.show()
