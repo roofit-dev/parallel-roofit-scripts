@@ -9,10 +9,10 @@
 
 run_id=unbinned_scaling_4
 
-if [[ -z "$timing_flag" ]]; then
-    echo "Error: must set timing_flag as environment variable!"
-    exit 1
-fi
+#if [[ -z "$timing_flag" ]]; then
+#    echo "Error: must set timing_flag as environment variable!"
+#    exit 1
+#fi
 if [[ -z "$repeat_nr" ]]; then
     echo "Error: must set repeat_nr as environment variable!"
     exit 1
@@ -39,17 +39,17 @@ seed=1
 
 printlevel=0
 
-#for e in 100000 1000000 10000000; do
-for e in 100000000; do
+for e in 100000 1000000 10000000 100000000; do
 for cpu in {1..8}; do
 # for timing_flag in {1..7}; do
+timing_flag=1
 
 # do it three times and only use the minimum runtime
-# for repeat_nr in {1..3}; do
+#for repeat_nr in {1..3}; do
 
 echo "Repeat number $repeat_nr"
 root -b -q -l "../../unbinned_scaling.cpp(${g},${o},${p},${e},${cpu},${ileave},${seed},${printlevel},${timing_flag})"
 
-done; done #; done #; done
+done; done; done #; done
 
 cd -
