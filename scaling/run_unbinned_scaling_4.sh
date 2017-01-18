@@ -50,6 +50,6 @@ timing_flag=1
 echo "Repeat number $repeat_nr"
 root -b -q -l "../../unbinned_scaling.cpp(${g},${o},${p},${e},${cpu},${ileave},${seed},${printlevel},${timing_flag})"
 
-done; done; done #; done
+done; done; # done #; done
 
 cd -
