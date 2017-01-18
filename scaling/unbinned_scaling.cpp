@@ -14,7 +14,7 @@ using namespace RooFit;
 void unbinned_scaling(int N_gaussians, int N_observables, int N_parameters,
                       int N_events, int num_cpu, int parallel_interleave,
                       int seed, int print_level=0, int timing_flag=1) {
-  gSystem->Exec("top -n1 -b");
+  //gSystem->Exec("top -n1 -b");
   // num_cpu: -1 is special option -> overhead communicatie protocol vergelijken (vgl met 1 cpu)
   // parallel_interleave: 0 = blokken gelijke grootte, 1 = interleave
   //                      
