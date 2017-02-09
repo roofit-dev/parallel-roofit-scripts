@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:23:55
 # @Last Modified by:   Patrick Bos
-# @Last Modified time: 2016-12-22 15:01:18
+# @Last Modified time: 2017-01-17 15:11:17
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -71,7 +71,9 @@ savefig_dn = '/home/patrick/projects/apcocsm/code/scaling/unbinned_scaling_4/ana
 
 #### LOAD DATA FROM FILES
 # dnlist = sorted(glob.glob("unbinned_scaling_4_orig/17510*.allier.nikhef.nl"))  # run_unbinned_scaling_3.sh
-dnlist = sorted(glob.glob("unbinned_scaling_4/*.allier.nikhef.nl"))  # run_unbinned_scaling_4.sh
+# dnlist = sorted(glob.glob("unbinned_scaling_4/*.allier.nikhef.nl"))  # run_unbinned_scaling_4.sh
+dnlist = sorted(glob.glob("unbinned_scaling_4/17513*.allier.nikhef.nl"))  # run_unbinned_scaling_4.sh after later additional runs
+
 dnlist = [dn for dn in dnlist if len(glob.glob(dn + '/*.json')) > 1]
 
 fnlist = reduce(lambda x, y: x + y, [glob.glob(dn + '/*.json') for dn in dnlist])
