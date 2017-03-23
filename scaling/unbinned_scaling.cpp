@@ -48,8 +48,10 @@ void unbinned_scaling(int N_gaussians, int N_observables, int N_parameters,
     outfile.close();
   }
 
-  RooConstVar roo_timing_flag("timing_flag", "timing_flag", timing_flag);
-  gROOT->GetListOfSpecials()->Add(&roo_timing_flag);
+  // RooConstVar roo_timing_flag("timing_flag", "timing_flag", timing_flag);
+  // gROOT->GetListOfSpecials()->Add(&roo_timing_flag);
+
+  RooTrace::timing_flag = timing_flag;
 
   // plotting configuration
   int obs_plot_x(3);
