@@ -1,7 +1,7 @@
 void numint_diag()
 {
   // Create dummy pdf
-  RooWorkspace w("w",1) ;
+  RooWorkspace w("w") ;
   // x*x dwingt af dat analytische uniform integral niet meer werkt
 w.factory("SUM::model(fsig[0,1]*Gaussian::sig(x[-10,10],0,3),Uniform::bkg(expr::xprime('x*x',x)))") ;
   RooAbsPdf* pdf = w.pdf("model") ;
