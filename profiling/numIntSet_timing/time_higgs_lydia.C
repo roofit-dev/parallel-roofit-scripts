@@ -10,7 +10,7 @@ using namespace HistFactory;
 const char* project_dir = "/home/patrick/projects/apcocsm";
 const char* run_subdir = "code/profiling/numIntSet_timing/run_time_higgs_lydia1";
 
-void time_higgs_lydia(int dataset, int num_cpu, bool debug=false, int parallel_interleave=0,
+void time_higgs_lydia(int dataset, int num_cpu, int debug=0, int parallel_interleave=0,
                        int seed=1, int print_level=0) 
 {  
   gSystem->ChangeDirectory(project_dir);
@@ -33,6 +33,7 @@ void time_higgs_lydia(int dataset, int num_cpu, bool debug=false, int parallel_i
     }
 
     case 2: {
+      std::cout << "WARNING: this dataset only works with HiggsComb ROOT (on stoomboot: lsetup \"root 5.34.32-HiggsComb-x86_64-slc6-gcc48-opt\")" << std::endl;
       _file0 = TFile::Open("lydia/9channel_20150304_incl_tH_couplings_7TeV_8TeV_test_full_fixed_theory_asimov_7TeV_8TeV_THDMII.root");
       workspace_name = "combined";
       obsdata_name = "combData";
@@ -47,7 +48,7 @@ void time_higgs_lydia(int dataset, int num_cpu, bool debug=false, int parallel_i
   gRandom->SetSeed(seed);
 
   // activate debugging output
-  if (debug) {
+  if (debug == 1) {
     RooMsgService::instance().addStream(DEBUG);  // all DEBUG messages
     // RooMsgService::instance().addStream(DEBUG, Topic(RooFit::Eval), ClassName("RooAbsTestStatistic"));
   }
@@ -90,6 +91,12 @@ void time_higgs_lydia(int dataset, int num_cpu, bool debug=false, int parallel_i
     while ((arg=(RooAbsRealLValue*)iter.next())) {
       arg->setVal(arg->getVal()+gRandom->Gaus(0,0.3));
     }
+  }
+
+  // activate debugging output
+  if (debug == 2) {
+    RooMsgService::instance().addStream(DEBUG);  // all DEBUG messages
+    // RooMsgService::instance().addStream(DEBUG, Topic(RooFit::Eval), ClassName("RooAbsTestStatistic"));
   }
 
   RooAbsReal* nll = pdf->createNLL(*obsData,
