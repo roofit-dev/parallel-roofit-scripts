@@ -15,15 +15,28 @@ void time_higgs_lydia(int dataset, int num_cpu, bool debug=false, int parallel_i
 {  
   gSystem->ChangeDirectory(project_dir);
 
+  const char* workspace_name;
+  const char* obsdata_name;
+  bool set_muGGF;
+  bool perturb_parameters_randomly;
+
   // load dataset file and settings
   switch (dataset) {
     case 1: {
       TFile *_file0 = TFile::Open("lydia/workspace-run2-ggf.root");
+      workspace_name = "Run2GGF";
+      obsdata_name = "asimovData";
+      set_muGGF = true;
+      perturb_parameters_randomly = true;
       break;
     }
 
     case 2: {
-      TFile *_file0 = TFile::Open("lydia/workspace-run2-ggf.root");
+      TFile *_file0 = TFile::Open("lydia/9channel_20150304_incl_tH_couplings_7TeV_8TeV_test_full_fixed_theory_asimov_7TeV_8TeV_THDMII.root");
+      workspace_name = "combined";
+      obsdata_name = "combData";
+      set_muGGF = false;
+      perturb_parameters_randomly = false;
       break;
     }
   }
@@ -60,27 +73,23 @@ void time_higgs_lydia(int dataset, int num_cpu, bool debug=false, int parallel_i
     }
   }
 
-  w->var("muGGF")->setVal(3);
+  if (set_muGGF) {
+    w->var("muGGF")->setVal(3);
+  }
   //w->loadSnapshot("NominalParamValues");
 
-  //RooAbsData* obsData = w->data("combData");
-  RooAbsData* obsData = w->data("asimovData");
+  RooAbsData* obsData = w->data(obsdata_name);
   RooAbsPdf* pdf = w->pdf(mc->GetPdf()->GetName());
 
-  //
-  //
-  // THIS PART NOT REALLY NECESSARY FOR TESTING, IT MAKES THE FIT A BIT HARDER
-  //
-  RooArgSet* params = static_cast<RooArgSet*>(pdf->getParameters(obsData)->selectByAttrib("Constant",kFALSE));
-  RooFIter iter = params->fwdIterator();
-  RooAbsRealLValue* arg;
-  while ((arg=(RooAbsRealLValue*)iter.next())) {
-    arg->setVal(arg->getVal()+gRandom->Gaus(0,0.3));
+  if (perturb_parameters_randomly) {
+    // NOT REALLY NECESSARY FOR TESTING, IT MAKES THE FIT A BIT HARDER
+    RooArgSet* params = static_cast<RooArgSet*>(pdf->getParameters(obsData)->selectByAttrib("Constant",kFALSE));
+    RooFIter iter = params->fwdIterator();
+    RooAbsRealLValue* arg;
+    while ((arg=(RooAbsRealLValue*)iter.next())) {
+      arg->setVal(arg->getVal()+gRandom->Gaus(0,0.3));
+    }
   }
-  //
-  // ABOVE PART NOT REALLY NECESSARY FOR TESTING, IT MAKES THE FIT A BIT HARDER
-  //
-  //
 
   RooAbsReal* nll = pdf->createNLL(*obsData,
                                    Constrain(*w->set("ModelConfig_NuisParams")),
@@ -91,13 +100,9 @@ void time_higgs_lydia(int dataset, int num_cpu, bool debug=false, int parallel_i
 
   RooMinimizer m(*nll);
   m.setVerbose(print_level);
-  // std::cout << "\n\n\n\nHERE? 1\n\n\n\n" << std::endl;
   m.setStrategy(0);  // this sets the minuit strategy to optimal for "fast functions" (2 is for slow, 1 for intermediate)
-  // std::cout << "\n\n\n\nHERE? 2\n\n\n\n" << std::endl;
   // m.setProfile(1);  // this is for activating profiling of the minimizer
-  // std::cout << "\n\n\n\nHERE? 3\n\n\n\n" << std::endl;
   m.optimizeConst(2);
-  // std::cout << "\n\n\n\nHERE? 4\n\n\n\n" << std::endl;
 
   std::cout << "\n\n\n\nSTART MINIMIZE\n\n\n\n" << std::endl;
   
