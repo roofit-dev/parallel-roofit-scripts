@@ -15,6 +15,7 @@ void time_higgs_lydia(int dataset, int num_cpu, bool debug=false, int parallel_i
 {  
   gSystem->ChangeDirectory(project_dir);
 
+  TFile *_file0;
   const char* workspace_name;
   const char* obsdata_name;
   bool set_muGGF;
@@ -23,7 +24,7 @@ void time_higgs_lydia(int dataset, int num_cpu, bool debug=false, int parallel_i
   // load dataset file and settings
   switch (dataset) {
     case 1: {
-      TFile *_file0 = TFile::Open("lydia/workspace-run2-ggf.root");
+      _file0 = TFile::Open("lydia/workspace-run2-ggf.root");
       workspace_name = "Run2GGF";
       obsdata_name = "asimovData";
       set_muGGF = true;
@@ -32,7 +33,7 @@ void time_higgs_lydia(int dataset, int num_cpu, bool debug=false, int parallel_i
     }
 
     case 2: {
-      TFile *_file0 = TFile::Open("lydia/9channel_20150304_incl_tH_couplings_7TeV_8TeV_test_full_fixed_theory_asimov_7TeV_8TeV_THDMII.root");
+      _file0 = TFile::Open("lydia/9channel_20150304_incl_tH_couplings_7TeV_8TeV_test_full_fixed_theory_asimov_7TeV_8TeV_THDMII.root");
       workspace_name = "combined";
       obsdata_name = "combData";
       set_muGGF = false;
@@ -54,7 +55,7 @@ void time_higgs_lydia(int dataset, int num_cpu, bool debug=false, int parallel_i
   // TStopwatch t;
   // t.Start();
 
-  RooWorkspace* w = static_cast<RooWorkspace*>(gDirectory->Get("Run2GGF"));
+  RooWorkspace* w = static_cast<RooWorkspace*>(gDirectory->Get(workspace_name));
   RooStats::ModelConfig* mc = static_cast<RooStats::ModelConfig*>(w->genobj("ModelConfig"));
 
   // Activate binned likelihood calculation for binned models
