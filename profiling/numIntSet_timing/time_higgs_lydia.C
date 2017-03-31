@@ -1,19 +1,34 @@
 // run in subdir as
-// root -b -q -l ../../../../lydia/workspace-run2-ggf.root '../time_higgs_lydia1.C(1)'
+// root -b -q -l ../../../../lydia/workspace-run2-ggf.root '../time_higgs_lydia.C(1,1)'
 
 using namespace RooFit;
+
+// only used for dataset Lydia 2:
+using namespace RooStats;
+using namespace HistFactory;
 
 const char* project_dir = "/home/patrick/projects/apcocsm";
 const char* run_subdir = "code/profiling/numIntSet_timing/run_time_higgs_lydia1";
 
-void time_higgs_lydia1(int num_cpu, bool debug=false, int parallel_interleave=0,
+void time_higgs_lydia(int dataset, int num_cpu, bool debug=false, int parallel_interleave=0,
                        int seed=1, int print_level=0) 
 {  
   gSystem->ChangeDirectory(project_dir);
 
-  // load data file
-  TFile *_file0 = TFile::Open("lydia/workspace-run2-ggf.root");
-  gSystem->ChangeDirectory(run_subdir)
+  // load dataset file and settings
+  switch (dataset) {
+    case 1: {
+      TFile *_file0 = TFile::Open("lydia/workspace-run2-ggf.root");
+      break;
+    }
+
+    case 2: {
+      TFile *_file0 = TFile::Open("lydia/workspace-run2-ggf.root");
+      break;
+    }
+  }
+  
+  gSystem->ChangeDirectory(run_subdir);
 
   gRandom->SetSeed(seed);
 
