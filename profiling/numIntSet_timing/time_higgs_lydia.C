@@ -7,12 +7,18 @@ using namespace RooFit;
 using namespace RooStats;
 using namespace HistFactory;
 
-const char* project_dir = "/Users/pbos/projects/apcocsm";
 const char* run_subdir = "code/profiling/numIntSet_timing/run_time_higgs_lydia1";
 
-void time_higgs_lydia(int dataset, int num_cpu, int debug=0, int parallel_interleave=0,
-                       int seed=1, int print_level=0) 
-{  
+void time_higgs_lydia(int dataset, int num_cpu, std::string host="eslt0072",
+		int debug=0, int parallel_interleave=0,
+		int seed=1, int print_level=0) 
+{ 
+  const char* project_dir;
+  if (host == "eslt0072") {
+    project_dir="/Users/pbos/projects/apcocsm";
+  } else if (host == "stbc") {
+    project_dir="/user/pbos/project_atlas";
+  }
   gSystem->ChangeDirectory(project_dir);
 
   TFile *_file0;
