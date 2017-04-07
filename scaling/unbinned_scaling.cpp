@@ -179,7 +179,7 @@ void unbinned_scaling(int N_gaussians, int N_observables, int N_parameters,
   // sum.fitTo(*data,"Extended") ;
   // instead of full fitTo, only do the fit, leave out error matrix, using
   // run style of run_higgs.C
-  std::chrono::time_point<std::chrono::system_clock> begin, end;
+  std::chrono::time_point<std::chrono::high_resolution_clock> begin, end;
 
   if (timing_flag == 1) {
     outfile.open("timing_full_minimize.json", ios::app);
