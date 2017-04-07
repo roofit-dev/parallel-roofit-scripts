@@ -7,8 +7,8 @@ using namespace RooFit ;
 void lydia2_print_params_observs()
 {
 
-        TFile *_file0 = TFile::Open("/user/pbos/lydia/lydia2.root");
-        // TFile *_file0 = TFile::Open("/home/patrick/projects/apcocsm/lydia/lydia2.root");
+        // TFile *_file0 = TFile::Open("/user/pbos/lydia/lydia2.root");
+        TFile *_file0 = TFile::Open("/Users/pbos/projects/apcocsm/lydia/lydia2.root");
         RooWorkspace* w = static_cast<RooWorkspace*>(gDirectory->Get("combined"));
         RooStats::ModelConfig* mc = static_cast<RooStats::ModelConfig*>(w->genobj("ModelConfig"));
         RooAbsPdf* pdf = w->pdf(mc->GetPdf()->GetName()) ;
