@@ -1,0 +1,634 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+<head>
+<script type="text/javascript" src="/twiki/pub/TWiki/JQueryPlugin/jquery.js"></script>
+<script type="text/javascript" src="/twiki/pub/TWiki/JQueryPlugin/jquery-migrate.js"></script>
+<link rel="stylesheet" href="/twiki/pub/TWiki/JQueryPlugin/jquery-all.css" type="text/css" media="all" />
+<script type="text/javascript" src="/twiki/pub/TWiki/JQueryPlugin/jquery-all.js"></script>
+<link rel="stylesheet" href="https://twiki.cern.ch/twiki/pub/TWiki/ImagePlugin/style.css" type="text/css" media="all" />
+<link rel="stylesheet" href="https://twiki.cern.ch/twiki/pub/TWiki/ImageGalleryPlugin/style.css" type="text/css" media="all" />
+<title> HSG7RootBuild &lt; AtlasProtected &lt; TWiki</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<link rel="icon" href="/twiki/pub/AtlasProtected/WebPreferences/favicon_new.ico" type="image/x-icon" />
+<link rel="shortcut icon" href="/twiki/pub/AtlasProtected/WebPreferences/favicon_new.ico" type="image/x-icon" />
+<link rel="alternate" href="https://twiki.cern.ch/twiki/bin/edit/AtlasProtected/HSG7RootBuild?t=1490961851" type="application/x-wiki" title="Edit HSG7RootBuild" />
+<link rel="edit" href="https://twiki.cern.ch/twiki/bin/edit/AtlasProtected/HSG7RootBuild?t=1490961851" title="Edit HSG7RootBuild" />
+<meta name="SCRIPTURLPATH" content="/twiki/bin" />
+<meta name="SCRIPTSUFFIX" content="" />
+<meta name="TEXT_JUMP" content="Jump" />
+<meta name="TEXT_SEARCH" content="Search" />
+<meta name="TEXT_NUM_TOPICS" content="Number of topics:" />
+<meta name="TEXT_MODIFY_SEARCH" content="Modify search" />
+<link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/twiki/bin/view/AtlasProtected/WebRss" />
+<base href="https://twiki.cern.ch/twiki/bin/view/AtlasProtected/HSG7RootBuild"></base>
+<!--BEHAVIOURCONTRIB--><script type="text/javascript" src="/twiki/pub/TWiki/BehaviourContrib/behaviour.compressed.js"></script>
+<script type="text/javascript" src="/twiki/pub/TWiki/TWikiJavascripts/twikilib.js"></script>
+<script type="text/javascript" src="/twiki/pub/TWiki/TWikiJavascripts/twikiWindow.js"></script>
+<script type="text/javascript" src="/twiki/pub/TWiki/TWikiJavascripts/twikiEvent.js"></script>
+<script type="text/javascript" src="/twiki/pub/TWiki/TWikiJavascripts/twikiHTML.js"></script>
+<script type="text/javascript" src="/twiki/pub/TWiki/TWikiJavascripts/twikiCSS.js"></script>
+<script type="text/javascript" src="/twiki/pub/TWiki/TWikiJavascripts/twikiForm.js"></script>
+<script type="text/javascript" src="/twiki/pub/TWiki/PatternSkin/pattern.js"></script><style type="text/css" media="all">
+@import url('/twiki/pub/TWiki/TWikiTemplates/base.css');
+</style>
+<style type="text/css" media="all">
+#patternTopBar,
+#patternClearHeaderCenter,
+#patternClearHeaderLeft,
+#patternClearHeaderRight,
+#patternTopBarContentsOuter,
+#patternTopBarContents {
+	height:64px; /* top bar height; make room for header columns */
+	overflow:hidden;
+}
+#patternOuter {
+	margin-left:14em;
+}
+#patternLeftBar {
+	width:14em;
+	margin-left:-14em;
+}
+</style>
+<style type="text/css" media="all">
+@import url('/twiki/pub/TWiki/PatternSkin/layout.css');
+@import url('/twiki/pub/TWiki/PatternSkin/style.css');
+@import url('/twiki/pub/TWiki/PatternSkin/colors.css');
+</style>
+<style type="text/css" media="all">
+	/* Styles that are set using variables */
+	.patternBookView .twikiTopRow,
+	.patternWebIndicator a img,
+	.patternWebIndicator a:hover img {
+		background-color:#0b048c ;
+	}
+	#patternTopBarContents { background-image:url(/twiki/pub/TWiki/PatternSkin/TWiki_header.gif); background-repeat:no-repeat;}
+	
+	.patternBookView {
+		border-color:#0b048c ;
+	}
+	.patternPreviewPage #patternMain {
+		/* uncomment to set the preview image */
+		/*background-image:url("/twiki/pub/TWiki/PreviewBackground/preview2bg.gif");*/
+	}
+	
+</style><style type="text/css" media="all">
+
+
+
+</style>
+<style type="text/css" media="all">
+	@import url("/twiki/pub/TWiki/PatternSkin/print.css");
+</style>
+<!--[if IE]><style type="text/css" media="screen">
+pre {
+	overflow-x:auto;
+	padding-bottom:expression(this.scrollWidth > this.offsetWidth ? 16 : 0);
+}
+</style>
+<![endif]-->
+<!--[if lte IE 6]> 
+<style type="text/css">
+#patternLeftBar {
+	position:relative; /* IE 5.5 needs this or the contents won't show outside the parent container on print. IE 6.0 needs it only during printable copy! */
+}
+</style><![endif]-->
+<script type="text/javascript" src="/twiki/pub/TWiki/TWikiJavascripts/twikiStyles.js"></script>
+<script src="https://twiki.cern.ch/twiki/pub/TWiki/ChecklistPlugin/itemstatechange.js" language="javascript" type="text/javascript"></script><script src="https://twiki.cern.ch/twiki/pub/TWiki/TimeTablePlugin/timetabletooltips.js" language="javascript" type="text/javascript"></script><!--GENERATED_HEADERS--><!-- CERNSEARCHBAR_CSS --> <link rel='stylesheet' href='/twiki/pub/TWiki/CernSearchBar/CernSearchBar.css' type='text/css' media='all' />
+<!-- LDAPNGPLUGIN_DYNAMICWIKINAMES --> <script src='/twiki/pub/TWiki/LdapNgPlugin/DynamicWikiNames.js'></script><link rel='stylesheet' href='/twiki/pub/TWiki/LdapNgPlugin/DynamicWikiNames.css' type='text/css' media='all' /></head>
+<body class="patternViewPage">
+<a name="PageTop"></a>
+<div id="patternScreen">
+<div id="patternPageShadow">
+<div id="patternPage">
+<div id="patternWrapper"><div id="patternOuter">
+<div id="patternFloatWrap">
+<div id="patternMain"><div id="patternClearHeaderCenter"></div>
+<div id="patternMainContents"><div class="patternTop"><span class="patternHomePath twikiLeft"><a href="/twiki/bin/view/Main/WebHome" class="twikiLink">TWiki</a><span class='twikiSeparator'>&gt;</span><img src="/twiki/pub/TWiki/TWikiDocGraphics/web-bg-small.gif" border="0" alt="" width="13" height="13" style="background-color:#0b048c " />&nbsp;<a href="/twiki/bin/view/AtlasProtected/WebHome">AtlasProtected Web</a><span class='twikiSeparator'>&gt;</span><a href="/twiki/bin/view/AtlasProtected/AtlasPhysics" class="twikiLink">AtlasPhysics</a><span class='twikiSeparator'>&gt;</span><a href="/twiki/bin/view/AtlasProtected/HiggsWorkingGroup" class="twikiLink">HiggsWorkingGroup</a><span class='twikiSeparator'>&gt;</span><a href="/twiki/bin/view/AtlasProtected/HiggsProperties" class="twikiLink">HiggsProperties</a><span class='twikiSeparator'>&gt;</span><a href="https://twiki.cern.ch/twiki/bin/view/AtlasProtected/HSG7RootBuild" title='Topic revision: 32 (2017-01-23 - 17:41:30)'>HSG7RootBuild</a> <span class='patternRevInfo'>(2017-01-23, <a href="/twiki/bin/view/Main/TimAdye" class="twikiLink"><span class='wikiUser TimAdye'>TimAdye</span></a>)</span></span><!-- /patternHomePath--><span class="patternToolBar twikiRight"><span><a href='https://twiki.cern.ch/twiki/bin/edit/AtlasProtected/HSG7RootBuild?t=1490961851;nowysiwyg=1' rel='nofollow' title='Edit this topic text' accesskey='e'><img src='/twiki/pub/TWiki/TWikiDocGraphics/uweb-o14.gif' width='14' height='14' border='0' alt='' /> <span class='twikiAccessKey'>E</span>dit</a></span><span><a href='/twiki/bin/attach/AtlasProtected/HSG7RootBuild' rel='nofollow' title='Attach an image or document to this topic' accesskey='a'><span class='twikiAccessKey'>A</span>ttach</a></span><span><a href='/twiki/bin/genpdf/AtlasProtected/HSG7RootBuild' rel='nofollow' title='Create a PDF file for the topic' accesskey='f'><span class='twikiAccessKey'>P</span>DF</a></span></span><!-- /patternToolBar--><br class="twikiClear" /></div><!--/patternTop--><div class="twikiContentHeader"></div><div class="patternContent"><div class="patternTopic"> <a border=0 href="https://www.cern.ch/atlas-computing/projects/webCertify/certinfo.php?ref=https://twiki.cern.ch/twiki/bin/view/AtlasProtected/HSG7RootBuild"><img align="right" src="https://www.cern.ch/atlas-computing/projects/webCertify/certlogo.php?ref=https://twiki.cern.ch/twiki/bin/view/AtlasProtected/HSG7RootBuild"></a>
+<h1><a name="HSG7RootBuild"></a> HSG7RootBuild </h1>
+<div class="twikiToc"> <ul>
+<li> <a href="#Introduction">Introduction</a>
+</li> <li> <a href="#Using_the_HSG7_ROOT_build">Using the HSG7 ROOT build</a> <ul>
+<li> <a href="#Latest_version"> Latest version</a>
+</li> <li> <a href="#Use_CVMFS_to_access_elsewhere"> Use CVMFS to access elsewhere</a>
+</li></ul> 
+</li> <li> <a href="#Details_about_the_build"> Details about the build</a>
+</li> <li> <a href="#Compilation_Notes"> Compilation Notes</a>
+</li> <li> <a href="#History"> History</a>
+</li></ul> 
+</div>     <!-- this line is optional -->
+<p />
+<p />
+<h1><a name="Introduction"></a> Introduction </h1>
+<p />
+This describes the build on AFS of ROOT for workspaces going into the combination and gives instructions for users wanting to do the same build for themselves.
+<p />
+<h1><a name="Using_the_HSG7_ROOT_build"></a> Using the HSG7 ROOT build </h1>
+The current builds are based on the ROOT 6.04.16 (v6-04-00-patches branch of 17th March 2016, git tag v6-04-16), and are located here:
+<p />
+<pre>
+/afs/cern.ch/atlas/project/HSG7/root/root&#95;v6-04-16
+</pre>
+<p />
+To set up this version of ROOT in a Bourne-style shell (eg. bash), do the following:
+<p />
+<pre>
+. /afs/cern.ch/atlas/project/HSG7/root/root&#95;v6-04-16/setup.sh
+</pre>
+<p />
+(for 64-bit default) or
+<p />
+<pre>
+. /afs/cern.ch/atlas/project/HSG7/root/root&#95;v6-04-16/x86&#95;64-slc6-gcc49-dbg/setup.sh
+</pre>
+<p />
+(for 64-bit, with debug information, but still optimised).
+<p />
+The setup scripts will also define appropriate installations of GCC 4.9 and Python 2.7. It will only work on an SLC6 (or RHEL6 or SL6) machine like lxplus.cern.ch or later OS version (eg. CentOS7 on lxplus7.cern.ch). SLC5 support has now been removed.
+<p />
+<em>(The previous <a href="https://twiki.cern.ch/twiki/bin/view/AtlasProtected/HSG7RootBuild?rev=28" target="_top">5.34.32 release</a> also included a 32-bit build, which uses less memory, and in some cases may be faster, but is limited to 4GB RAM. A 32-bit build is so-far not available for ROOT6.)</em>
+<p />
+<h2><a name="Latest_version"></a> Latest version </h2>
+<p />
+Those paths will change as new versions of ROOT are built, so the libraries you set up won't change "under your feet". You can setup always the latest 64-bit version with:
+<p />
+<pre>
+. /afs/cern.ch/atlas/project/HSG7/root/current/setup.sh
+</pre>
+<p />
+That will work for interactive ROOT, but if you compile and link against the "current" version, you may have to recompile your code when the HSG7 ROOT is updated.
+<p />
+<h2><a name="Use_CVMFS_to_access_elsewhere"></a> Use CVMFS to access elsewhere </h2>
+<p />
+The 64-bit non-debug build is available in CVMFS, under the root version name 6.04.16-HiggsComb-x86_64-slc6-gcc49-opt. This can be used from most sites or any Grid job. For local use, it can be setup using
+<p />
+<pre>
+lsetup &#34;root 6.04.16-HiggsComb-x86&#95;64-slc6-gcc49-opt&#34;
+</pre>
+<p />
+or accessed directly from /cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/root/6.04.16-HiggsComb-x86_64-slc6-gcc49-opt (lsetup also sets up GCC 4.9 and Python 2.7). For Grid submission, include the following options when submitting:
+<p />
+<pre>
+prun --rootVer&#61;6.04.16-HiggsComb --cmtConfig&#61;x86&#95;64-slc6-gcc49-opt
+</pre>
+<p />
+<h1><a name="Details_about_the_build"></a> Details about the build </h1>
+The ROOT source code for this version is in /afs/cern.ch/atlas/project/HSG7/root/root_v6-04-16/src which was checked out of the <a href="http://root.cern.ch/gitweb?p=root.git;a=tree;h=refs/heads/v6-04-00-patches;hb=refs/heads/v6-04-00-patches" target="_blank">git v6-04-00-patches branch<img width="13" alt="" src="/twiki/pub/TWiki/TWikiDocGraphics/external-link.gif" height="12" border="0" /></a> of <a href="http://root.cern.ch/gitweb?p=root.git;a=tree;hb=v6-04-16" target="_blank">17th March 2016 (v6-04-16 tag)<img width="13" alt="" src="/twiki/pub/TWiki/TWikiDocGraphics/external-link.gif" height="12" border="0" /></a>.
+<p />
+Several classes have been added or modified.  If you are doing your own build, you can copy them from the code in the HSG7 build area (also available as patch+tarball in the source_files subdirectory).  The following are the classes with descriptions:
+<p /> <ul>
+<li> Additional classes used for  H&rightarrow;ZZ signal and background models <ul>
+<li> roofit/roofitcore/src/RooRealSumFunc.cxx
+</li> <li> roofit/roofitcore/inc/RooRealSumFunc.h
+</li> <li> roofit/roofit/src/ABWxG.cxx
+</li> <li> roofit/roofit/inc/ABWxG.h
+</li> <li> roofit/roofit/src/ABWxG_VBF.cxx
+</li> <li> roofit/roofit/inc/ABWxG_VBF.h
+</li> <li> roofit/roofit/src/ABWxGWithGamma.cxx
+</li> <li> roofit/roofit/inc/ABWxGWithGamma.h
+</li> <li> roofit/roofit/src/AsymmBreitWigner.cxx
+</li> <li> roofit/roofit/inc/AsymmBreitWigner.h
+</li> <li> roofit/roofit/src/PearsonTypeIV.cxx
+</li> <li> roofit/roofit/inc/PearsonTypeIV.h
+</li> <li> roofit/roofit/src/RooAbsListContainer.cxx
+</li> <li> roofit/roofit/inc/RooAbsListContainer.h
+</li> <li> roofit/roofit/src/RooExpandedDataHist.cxx
+</li> <li> roofit/roofit/inc/RooExpandedDataHist.h
+</li> <li> roofit/roofit/src/RooExpandedHistPdf.cxx
+</li> <li> roofit/roofit/inc/RooExpandedHistPdf.h
+</li> <li> roofit/roofit/src/RooMCHistConstraint.cxx
+</li> <li> roofit/roofit/inc/RooMCHistConstraint.h
+</li> <li> roofit/roofit/src/RooMomentMorphFunc.cxx
+</li> <li> roofit/roofit/inc/RooMomentMorphFunc.h
+</li> <li> roofit/roofit/src/RooMomentMorphFuncND.cxx
+</li> <li> roofit/roofit/inc/RooMomentMorphFuncND.h
+</li> <li> roofit/roofit/src/RooParamHistPdf.cxx
+</li> <li> roofit/roofit/inc/RooParamHistPdf.h
+</li> <li> roofit/roofit/src/RooParamKeysPdf.cxx
+</li> <li> roofit/roofit/src/RooParamKeysPdfDev.cxx
+</li> <li> roofit/roofit/inc/RooParamKeysPdfDev.h
+</li> <li> roofit/roofit/inc/RooParamKeysPdf.h
+</li> <li> roofit/roofit/src/RooStarMomentMorph.cxx
+</li> <li> roofit/roofit/inc/RooStarMomentMorph.h
+</li> <li> roofit/histfactory/src/RooBSplineBases.cxx
+</li> <li> roofit/histfactory/inc/RooStats/HistFactory/RooBSplineBases.h
+</li> <li> roofit/histfactory/src/RooBSpline.cxx
+</li> <li> roofit/histfactory/inc/RooStats/HistFactory/RooBSpline.h
+</li></ul> 
+</li></ul> 
+<p /> <ul>
+<li> Additional RooDataHist accessors, required by RooExpandedDataHist (patch from Max Baak) <ul>
+<li> roofit/roofitcore/inc/RooDataHist.h
+</li> <li> roofit/roofitcore/src/RooDataHist.cxx
+</li></ul> 
+</li></ul> 
+<p /> <ul>
+<li> Improved keys PDF classes (patch from Max Baak) <ul>
+<li> roofit/roofit/src/RooNDKeysPdf.cxx
+</li> <li> roofit/roofit/inc/RooNDKeysPdf.h
+</li> <li> roofit/roofit/src/Roo1DMomentMorphFunction.cxx
+</li> <li> roofit/roofit/inc/Roo1DMomentMorphFunction.h
+</li></ul> 
+</li></ul> 
+<p /> <ul>
+<li> nD morphing class from Wouter Verkerke <ul>
+<li> roofit/roofit/src/RooMomentMorphND.cxx
+</li> <li> roofit/roofit/inc/RooMomentMorphND.h
+</li></ul> 
+</li></ul> 
+<p /> <ul>
+<li> Gives access to Minuit2's internal Hessian matrix (patch from Wouter Verkerke) <ul>
+<li> math/minuit2/inc/Minuit2/MnHesse.h
+</li> <li> math/minuit2/src/MnHesse.cxx
+</li></ul> 
+</li></ul> 
+<p /> <ul>
+<li> Show covariance matrix quality, Dcovar, during minimisation (patch from Wouter Verkerke) <ul>
+<li> math/minuit2/src/MnPrint.cxx
+</li></ul> 
+</li></ul> 
+<p /> <ul>
+<li> Fix writing RooFit argument proxy list <ul>
+<li> roofit/roofitcore/src/RooAbsArg.cxx
+</li> <li> core/cont/src/TRefArray.cxx
+</li></ul> 
+</li></ul> 
+<p /> <ul>
+<li> Increase string buffer sizes: required for large combination and workspace editing (patch from Stefan Gadatsch) <ul>
+<li> roofit/roofitcore/src/RooDataSet.cxx
+</li> <li> roofit/roofitcore/src/RooMinuit.cxx
+</li> <li> roofit/roofitcore/src/RooStreamParser.cxx
+</li> <li> roofit/roofitcore/src/RooWorkspace.cxx
+</li></ul> 
+</li></ul> 
+<p /> <ul>
+<li> Optimise multiple createNLL calls by caching parameter and constraint term definitions in workspace (patch from Wouter Verkerke) <ul>
+<li> roofit/roofitcore/src/RooAbsArg.cxx
+</li> <li> roofit/roofitcore/inc/RooAbsArg.h
+</li> <li> roofit/roofitcore/src/RooAbsPdf.cxx
+</li> <li> roofit/roofitcore/src/RooAbsTestStatistic.cxx
+</li> <li> roofit/roofitcore/src/RooWorkspace.cxx
+</li> <li> roofit/roofitcore/inc/RooWorkspace.h
+</li></ul> 
+</li></ul> 
+<p /> <ul>
+<li> Fix RooMomentMorph to properly refresh cache, eg. when morphing parameter is zero (patch from Robert Harrington) <ul>
+<li> roofit/roofit/src/RooMomentMorph.cxx
+</li></ul> 
+</li></ul> 
+<p /> <ul>
+<li> Additional double Crystall Ball pdf used in H&rightarrow;&gamma;&gamma; signal models (renamed from HggTwoSidedCBPdf; by Nicolas Berger, Jared Vasquez, and Hongtao Yang) <ul>
+<li> roofit/roofit/src/RooTwoSidedCBShape.cxx
+</li> <li> roofit/roofit/inc/RooTwoSidedCBShape.h
+</li></ul> 
+</li></ul> 
+<p /> <ul>
+<li> EFT morphing classes from Lydia Brenner and Carsten Burgard (renamed from earlier RooEFTMorphFunc to RooLagrangianMorphFunc). RooLagrangianMorphFunc.cxx was compiled with the Boost multiprecision option (enabled by specifying BOOSTDIR environment variable during ROOT build). This is a compile-time dependence: the Boost libraries are not required to use this class. <ul>
+<li> roofit/roofit/src/RooLagrangianMorphFunc.cxx
+</li> <li> roofit/roofit/inc/RooLagrangianMorphFunc.h
+</li> <li> roofit/roofit/src/RooLagrangianMorphOptimizer.cxx
+</li> <li> roofit/roofit/inc/RooLagrangianMorphOptimizer.h
+</li></ul> 
+</li></ul> 
+<p /> <ul>
+<li> Changes to core RooFit required for EFT morphing (patch from Wouter Verkerke). Extend functionality of the workspace factory, add RooFitResult::prefitResult(), and allow subset of variables in RooAbsReal::getPropagatedError(). <ul>
+<li> roofit/roofitcore/src/RooAbsCollection.cxx
+</li> <li> roofit/roofitcore/src/RooAbsReal.cxx
+</li> <li> roofi/roofitcore/inc/RooAbsReal.h
+</li> <li> roofit/roofitcore/src/RooFactoryWSTool.cxx
+</li> <li> roofit/roofitcore/src/RooFitResult.cxx
+</li> <li> roofit/roofitcore/inc/RooFitResult.h
+</li> <li> roofit/roofit/src/RooParamHistFunc.cxx
+</li></ul> 
+</li></ul> 
+<p />
+<h1><a name="Compilation_Notes"></a> Compilation Notes </h1>
+<p />
+To compile your own version, download the ROOT source code or check out from Git (you need to use Git instead of SVN to pick up the latest ROOT version), and apply the above patches:
+<pre>
+git clone -n http://root.cern.ch/git/root.git root-v6-04
+cd root-v6-04
+git checkout -b v6-04-00-patches v6-04-16
+cat /afs/cern.ch/atlas/project/HSG7/root/root&#95;v6-04-16/source&#95;files/&#42;.patch &#124; patch -p1
+tar zxf /afs/cern.ch/atlas/project/HSG7/root/root&#95;v6-04-16/source&#95;files/hsg7&#95;extra&#95;161220.tar.gz
+</pre>
+Alternatively, you can copy the source tree from /afs/cern.ch/atlas/project/HSG7/root/root_v6-04-16/src .
+<p />
+Then, on an SLC6 machine (or equivalent, SL6 or RHEL6), eg. lxplus.cern.ch, do the following to configure and compile for 64-bit:
+<pre>
+. /afs/cern.ch/atlas/project/HSG7/root/root_v6-04-16/x86_64-slc6-gcc49/setup_build.sh
+GVIZ=/afs/cern.ch/sw/lcg/external/graphviz/2.28.0/x86_64-slc6-gcc48-opt \
+  FFTW3=/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/fftw/3.1.2-x86_64-slc6-gcc49-opt \
+  GSL=/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/gsl/1.10-x86_64-slc6-gcc49-opt \
+  DAVIX=/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/davix/0.6.4-x86_64-slc6 \
+  GFAL=/afs/cern.ch/sw/lcg/external/Grid/gfal/1.13.0-0/x86_64-slc6-gcc48-opt \
+  BOOSTDIR=/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/boost/boost-1.55.0-python2.7-x86_64-slc6-gcc48/boost-1.55.0-python2.7-x86_64-slc6-gcc48/include \
+  ./configure --fail-on-missing --enable-builtin-pcre --enable-explicitlink --enable-minuit2 --enable-roofit \
+  --enable-table --enable-unuran --disable-castor --disable-oracle --disable-rfio --enable-builtin-lzma --enable-xrootd \
+  --with-xrootd=/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/xrootd/4.2.3-x86_64-slc6/v4.2.3 \
+  --with-srm-ifce-incdir=/afs/cern.ch/sw/lcg/external/Grid/srm-ifce/1.13.0-0/x86_64-slc6-gcc48-opt/include
+make
+</pre>
+<p />
+(Note the continuations: there is one long line which runs configure, preceded by locally setting the GVIZ, FFTW3, etc. environment variables.)
+<p />
+32-bit ROOT6 doesn't seem work at the moment. The test setup was:
+<pre>
+. /afs/cern.ch/atlas/project/HSG7/root/root_v6-04-16/i686-slc6-gcc49/setup_build.sh
+GVIZ=/afs/cern.ch/sw/lcg/external/graphviz/2.28.0/i686-slc6-gcc47-opt \
+  FFTW3=/afs/cern.ch/sw/lcg/external/fftw3/3.1.2/i686-slc6-gcc47-opt \
+  GSL=/afs/cern.ch/sw/lcg/external/GSL/1.10/i686-slc6-gcc47-opt \
+  GFAL=/afs/cern.ch/sw/lcg/external/Grid/gfal/1.13.0-0/i686-slc5-gcc47-opt \
+  BOOSTDIR=/afs/cern.ch/sw/lcg/external/Boost/1.53.0_python2.7/i686-slc6-gcc47-opt/include/boost-1_53 \
+  ./configure <strong>linux</strong> --fail-on-missing --enable-builtin-pcre --enable-explicitlink --enable-minuit2 --enable-roofit \
+  --enable-table --enable-unuran --disable-castor --disable-oracle --disable-rfio --enable-builtin-lzma --enable-xrootd \
+  --with-xrootd=/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/xrootd/4.2.3-i686-slc5/v4.2.3 \
+  --with-srm-ifce-incdir=/afs/cern.ch/sw/lcg/external/Grid/srm-ifce/1.13.0-0/i686-slc5-gcc47-opt/include
+make
+</pre>
+<p />
+(Note that many 32-bit libraries are only available in AFS for GCC 4.7 or SLC5. This should be fine.)
+<p />
+For a 64-bit debug build, use:
+<pre>
+. /afs/cern.ch/atlas/project/HSG7/root/root_v6-04-16/x86_64-slc6-gcc49-dbg/setup_build.sh
+GVIZ=/afs/cern.ch/sw/lcg/external/graphviz/2.28.0/x86_64-slc6-gcc48-opt \
+  FFTW3=/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/fftw/3.1.2-x86_64-slc6-gcc49-opt \
+  GSL=/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/gsl/1.10-x86_64-slc6-gcc49-opt \
+  DAVIX=/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/davix/0.6.4-x86_64-slc6 \
+  GFAL=/afs/cern.ch/sw/lcg/external/Grid/gfal/1.13.0-0/x86_64-slc6-gcc48-opt \
+  BOOSTDIR=/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/boost/boost-1.55.0-python2.7-x86_64-slc6-gcc48/boost-1.55.0-python2.7-x86_64-slc6-gcc48/include \
+  ./configure <strong>--build=debug</strong> --fail-on-missing --enable-builtin-pcre --enable-explicitlink --enable-minuit2 --enable-roofit \
+  --enable-table --enable-unuran --disable-castor --disable-oracle --disable-rfio --enable-builtin-lzma --enable-xrootd \
+  --with-xrootd=/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/xrootd/4.2.3-x86_64-slc6/v4.2.3 \
+  --with-srm-ifce-incdir=/afs/cern.ch/sw/lcg/external/Grid/srm-ifce/1.13.0-0/x86_64-slc6-gcc48-opt/include
+<strong>echo "CXXFLAGS += -O2" > MyConfig.mk</strong>
+make
+</pre>
+<p />
+<h1><a name="History"></a> History </h1>
+<p /> <ul>
+<li> 23/12/2016: <a href="http://root.cern.ch/gitweb?p=root.git;a=tree;hb=v6-04-16" target="_blank">v6-04-16<img width="13" alt="" src="/twiki/pub/TWiki/TWikiDocGraphics/external-link.gif" height="12" border="0" /></a>: First full ROOT6 version (<a href="https://indico.cern.ch/event/581526/" target="_blank">slides+minutes<img width="13" alt="" src="/twiki/pub/TWiki/TWikiDocGraphics/external-link.gif" height="12" border="0" /></a>). Fixes for RooMomentMorph, RooMomentMorphFuncND, and RooStarMomentMorph to properly refresh cache, eg. with zero morphing parameter. New classes RooLagrangianMorphFunc, RooLagrangianMorphOptimizer, and RooTwoSidedCBShape.
+</li> <li> 14/06/2016: <a href="http://root.cern.ch/gitweb?p=root.git;a=tree;hb=v6-04-02" target="_blank">v6-04-02<img width="13" alt="" src="/twiki/pub/TWiki/TWikiDocGraphics/external-link.gif" height="12" border="0" /></a>: Test ROOT6 build. Increased a few more string buffers. Small fixes to NLL constraints caching. Changes required for EFT morphing: extend functionality of the workspace factory, add RooFitResult::prefitResult(), and allow subset of variables in RooAbsReal::getPropagatedError().
+</li> <li> 29/07/2015: <a href="http://root.cern.ch/gitweb?p=root.git;a=tree;hb=v5-34-32" target="_blank">v5-34-32<img width="13" alt="" src="/twiki/pub/TWiki/TWikiDocGraphics/external-link.gif" height="12" border="0" /></a>: Added to CVMFS. Optimised RooHashTable lookups now in ROOT 5.34.32. Reduced memory use for very large workspaces also in ROOT 5.34.32 - not forward compatible with previous releases. Increased string buffers for combination code. Cache NLL constraints in workspace. Updated HZZ classes for the high-mass analysis.
+</li> <li> 08/12/2014: <a href="http://root.cern.ch/gitweb?p=root.git;a=tree;hb=v5-34-23" target="_blank">v5-34-23<img width="13" alt="" src="/twiki/pub/TWiki/TWikiDocGraphics/external-link.gif" height="12" border="0" /></a>: Optimise RooHashTable lookups. RooStarMomentMorph improved error handling. Improved keys PDF and new RooHistPdf with variable bins and interpolation from Max Baak (for H4l high mass analysis). There are no significant core RooFit changes from ROOT 5.34.19 to 5.34.23.
+</li> <li> 30/07/2014: <a href="http://root.cern.ch/gitweb?p=root.git;a=tree;hb=v5-34-19" target="_blank">v5-34-19<img width="13" alt="" src="/twiki/pub/TWiki/TWikiDocGraphics/external-link.gif" height="12" border="0" /></a>: Overhaul of moment calculation, tuning of integration strategies for binned models. Restore ABWxG classes used in H&rightarrow;ZZ*&rightarrow;4l event error model. RooParamKeysPdf optimisation and variable number of points. Fix RooHashTable lookups for renamed variables in a collection. Add ND morphing classes.
+</li> <li> 13/03/2014: Fix writing RooFit argument proxy list
+</li> <li> 06/03/2014, <a href="http://root.cern.ch/gitweb?p=root.git;a=tree;hb=v5-34-17-107-g0ad6203" target="_blank">v5-34-17-107-g0ad6203<img width="13" alt="" src="/twiki/pub/TWiki/TWikiDocGraphics/external-link.gif" height="12" border="0" /></a>: FlexibleInterpVar optimisation. Remove HistoToWorkspaceFactoryFast patch from Swagato (fixed in git). Update RooStarMomentMorph to save cache manager settings (new dict version).
+</li> <li> 04/02/2014, <a href="http://root.cern.ch/gitweb?p=root.git;a=tree;hb=v5-34-14-174-ga142403" target="_blank">v5-34-14-174-ga142403<img width="13" alt="" src="/twiki/pub/TWiki/TWikiDocGraphics/external-link.gif" height="12" border="0" /></a>: New optimizeConst=2 steering, with huge improvement for HSG2's RooStarMomentMorph optimisation. Remove HSG2-specific RooMomentMorph (cubic morphing). setup scripts use GCC 4.7 on SLC6.
+</li> <li> 29/01/2014, <a href="http://root.cern.ch/gitweb?p=root.git;a=tree;hb=v5-34-14-161-g566e0ea" target="_blank">v5-34-14-161-g566e0ea<img width="13" alt="" src="/twiki/pub/TWiki/TWikiDocGraphics/external-link.gif" height="12" border="0" /></a>: RooFit cache renewal cleanup from Wouter. Compile with xrootd for EOS access.
+</li> <li> 09/01/2013: remove ABWxG class so an analysis-specific version can be linked instead.
+</li> <li> 03/12/2013, <a href="http://root.cern.ch/gitweb?p=root.git;a=tree;hb=v5-34-13-14-g9736519" target="_blank">v5-34-13-14-g9736519<img width="13" alt="" src="/twiki/pub/TWiki/TWikiDocGraphics/external-link.gif" height="12" border="0" /></a>: Asimov dataset generation and BinnedLikelihood optimization fixes from Wouter.
+</li></ul> 
+<p />
+<!-- Add the main topic here. i.e. create some new headings as follows: -->
+<p />
+<p />
+<!-- <strong>*********************************************************</strong> -->
+<!-- Do NOT remove the remaining lines, but add requested info as appropriate -->
+<!-- <strong>*********************************************************</strong> -->
+<p />
+<hr />
+<!-- For significant updates to the topic, consider adding your 'signature' (beneath this editing box) -->
+<strong>Major updates</strong>:<br />
+-- <a href="/twiki/bin/view/Main/RobertHarrington" class="twikiLink"><span class='wikiUser RobertHarrington'>RobertHarrington</span></a> - 26-Jun-2013
+-- <a href="/twiki/bin/view/Main/TimAdye" class="twikiLink"><span class='wikiUser TimAdye'>TimAdye</span></a> - 1-Jul-2013
+-- <a href="/twiki/bin/view/Main/TimAdye" class="twikiLink"><span class='wikiUser TimAdye'>TimAdye</span></a> - 3-Oct-2013
+-- <a href="/twiki/bin/view/Main/TimAdye" class="twikiLink"><span class='wikiUser TimAdye'>TimAdye</span></a> - 4-Nov-2013
+-- <a href="/twiki/bin/view/Main/TimAdye" class="twikiLink"><span class='wikiUser TimAdye'>TimAdye</span></a> - 4-Jan-2017
+<p />
+<!-- Person responsible for the page: 
+Either leave as is - the creator's name will be inserted; 
+Or replace the complete REVINFO tag (including percentages symbols) with a name in the form <span class="twikiNewLink"><a href="/twiki/bin/edit/Main/TwikiUsersName?topicparent=AtlasProtected.HSG7RootBuild;nowysiwyg=1"    rel="nofollow" title="this topic does not yet exist; you can create it.">TwikiUsersName</a></span> -->
+Responsible: <a href="/twiki/bin/view/Main/TimAdye" class="twikiLink"><span class='wikiUser TimAdye'>TimAdye</span></a> <br />
+<!-- Once this page has been reviewed, please add the name and the date e.g. <a href="/twiki/bin/view/Main/StephenHaywood" class="twikiLink"><span class='wikiUser StephenHaywood'>StephenHaywood</span></a> - 31 Oct 2006 -->
+Last reviewed by: <strong>Never reviewed</strong> </div><!-- /patternTopic-->
+<div class="twikiContentFooter"></div></div><!-- /patternContent-->
+<div class="clear"></div>
+<a name="topic-actions"></a><div class="patternTopicActions"><div class="patternTopicAction"><span class="patternActionButtons"><span style=''><span><a href='https://twiki.cern.ch/twiki/bin/edit/AtlasProtected/HSG7RootBuild?t=1490961851;nowysiwyg=1' rel='nofollow' title='Edit this topic text' accesskey='e'><img src='/twiki/pub/TWiki/TWikiDocGraphics/uweb-o14.gif' width='14' height='14' border='0' alt='' /> <span class='twikiAccessKey'>E</span>dit</a></span><span class='twikiSeparator'>&nbsp;|&nbsp;</span></span><span style=''><span><a href='/twiki/bin/attach/AtlasProtected/HSG7RootBuild' rel='nofollow' title='Attach an image or document to this topic' accesskey='a'><span class='twikiAccessKey'>A</span>ttach</a></span><span class='twikiSeparator'>&nbsp;|&nbsp;</span></span><span><a href="https://twiki.cern.ch/twiki/bin/viewauth/AtlasProtected/HSG7RootBuild?watchlist_action=togglewatch;watchlist_topic=AtlasProtected.HSG7RootBuild" target="_top">Watch</a></span><span class='twikiSeparator'>&nbsp;|&nbsp;</span><span><a href='/twiki/bin/view/AtlasProtected/HSG7RootBuild?cover=print' rel='nofollow' title='Printable version of this topic' accesskey='p'><span class='twikiAccessKey'>P</span>rint version</a></span><span class='twikiSeparator'>&nbsp;|&nbsp;</span><span><span><a href='/twiki/bin/oops/AtlasProtected/HSG7RootBuild?template=oopshistory' rel='nofollow' title='View total topic history' accesskey='h'><span class='twikiAccessKey'>H</span>istory</a></span>: r32&nbsp;<a rel="nofollow" href="/twiki/bin/rdiff/AtlasProtected/HSG7RootBuild?rev1=32;rev2=31">&lt;</a>&nbsp;<a rel="nofollow" href="/twiki/bin/view/AtlasProtected/HSG7RootBuild?rev=31">r31</a>&nbsp;<a rel="nofollow" href="/twiki/bin/rdiff/AtlasProtected/HSG7RootBuild?rev1=31;rev2=30">&lt;</a>&nbsp;<a rel="nofollow" href="/twiki/bin/view/AtlasProtected/HSG7RootBuild?rev=30">r30</a>&nbsp;<a rel="nofollow" href="/twiki/bin/rdiff/AtlasProtected/HSG7RootBuild?rev1=30;rev2=29">&lt;</a>&nbsp;<a rel="nofollow" href="/twiki/bin/view/AtlasProtected/HSG7RootBuild?rev=29">r29</a>&nbsp;<a rel="nofollow" href="/twiki/bin/rdiff/AtlasProtected/HSG7RootBuild?rev1=29;rev2=28">&lt;</a>&nbsp;<a rel="nofollow" href="/twiki/bin/view/AtlasProtected/HSG7RootBuild?rev=28">r28</a></span><span class='twikiSeparator'>&nbsp;|&nbsp;</span><span><a href='/twiki/bin/oops/AtlasProtected/HSG7RootBuild?template=backlinksweb' rel='nofollow' title='Search the AtlasProtected Web for topics that link to here' accesskey='b'><span class='twikiAccessKey'>B</span>acklinks</a></span><span class='twikiSeparator'>&nbsp;|&nbsp;</span><span><a href='/twiki/bin/view/AtlasProtected/HSG7RootBuild?raw=on' rel='nofollow' title='View raw text without formatting' accesskey='r'><span class='twikiAccessKey'>R</span>aw View</a></span><span class='twikiSeparator'>&nbsp;|&nbsp;</span><span style=''><span><a href='https://twiki.cern.ch/twiki/bin/edit/AtlasProtected/HSG7RootBuild?t=1490961851;nowysiwyg=0' rel='nofollow' title='WYSIWYG editor' accesskey='w'>WYSIWYG</a></span><span class='twikiSeparator'>&nbsp;|&nbsp;</span></span><span><a href='/twiki/bin/oops/AtlasProtected/HSG7RootBuild?template=oopsmore&amp;param1=32&amp;param2=32' rel='nofollow' title='Delete or rename this topic; set parent topic; view and compare revisions' accesskey='m'><span class='twikiAccessKey'>M</span>ore topic actions</a></span></span></div><!--/patternTopicAction--></div><!--/patternTopicActions-->
+<div class="patternInfo twikiGrayText"><div class="patternRevInfo">Topic revision: r32 - 2017-01-23 <a href="https://twiki.cern.ch/twiki/bin/edit/AtlasProtected/HSG7RootBuild?t=1490961851;nowysiwyg=1" target="_top">-</a> <a href="/twiki/bin/view/Main/TimAdye" class="twikiLink"><span class='wikiUser TimAdye'>TimAdye</span></a></div><!-- /patternRevInfo--></div><!-- /patternInfo-->
+</div><!-- /patternMainContents-->
+</div><!-- /patternMain--><div id="patternLeftBar"><div id="patternClearHeaderLeft"></div>
+<div id="patternLeftBarContents"><div class="patternLoginActions"><span style="padding: 0 0 0 20px; word-wrap:break-word; display:block;"><img src="https://twiki.cern.ch/twiki/pub/TWiki/TWikiDocGraphics/person.gif" style="position:absolute; margin: 0 0 0 -20px;" /> <a href="/twiki/bin/view/Main/WouterVerkerke" class="twikiLink"><span class='wikiUser WouterVerkerke'>WouterVerkerke</span></a></span>  <img src="/twiki/pub/TWiki/TWikiDocGraphics/lock.gif" width="16" height="16" alt="Lock" title="Lock" border="0" /> <a href="https://twiki.cern.ch/twiki/bin/view/AtlasProtected/HSG7RootBuild?logout=1">Log Out</a></div><div class="patternWebIndicator"> <ul>
+<li> <a href="/twiki/bin/view/AtlasProtected/WebHome" class="twikiCurrentWebHomeLink twikiLink"><img src="/twiki/pub/TWiki/TWikiDocGraphics/web-bg-small.gif" width="13" height="13" alt="Web background" title="Web background" border="0" /> AtlasProtected</a>
+</li></ul> 
+</div> <ul>
+<li> <strong><a href="http://atlas.web.cern.ch/Atlas/Collaboration" target="_blank"><span style="color: blue">ATLAS Collaboration</span><img width="13" alt="" src="/twiki/pub/TWiki/TWikiDocGraphics/external-link.gif" height="12" border="0" /></a></strong>
+</li></ul> 
+<hr /> <ul>
+<li> <strong><a href="/twiki/bin/view/Atlas/WebHome" class="twikiLink"><span style="color: #0000ff"> ATLAS TWiki</span></verbatim></a></strong>
+</li> <li> <strong><a href="/twiki/bin/view/AtlasProtected/WebHome" class="twikiCurrentWebHomeLink twikiLink"><span style="color: #0000ff"> ATLAS Protected</span></verbatim></a></strong>
+</li> <li> <strong><a href="/twiki/bin/view/AtlasComputing/WebHome" class="twikiLink"><span style="color: #0000ff"> ATLAS Computing </span></verbatim></a></strong>
+</li> <li> <strong><a href="/twiki/bin/view/AtlasPublic/WebHome" class="twikiLink"><span style="color: #0000ff"> Public Results </span></verbatim></a></strong>
+</li></ul> 
+<p /> <ul>
+ <li>
+ <ul>
+<li> <strong><a href="https://twiki.cern.ch/twiki/bin/view/AtlasPublic" target="_top"><span style="color: navy;"> Public Results </span></a></strong>
+</li> <li> <strong><a href="/twiki/bin/view/AtlasProtected/AtlasPhysics" class="twikiLink"><span style="color: navy;"> Physics </span></a></strong>
+</li> <li> <strong><a href="/twiki/bin/view/Atlas/AtlasDetectors" class="twikiLink"><span style="color: navy;"> Detectors </span></a></strong>
+</li> <li> <strong><a href="/twiki/bin/view/Atlas/AtlasTrigger" class="twikiLink"><span style="color: navy;"> Trigger </span></a></strong>
+</li> <li> <strong><a href="/twiki/bin/view/AtlasComputing/WebHome" class="twikiLink"><span style="color: navy;"> Computing </span></a></strong>
+</li> <li> <strong><a href="/twiki/bin/view/Atlas/DataPreparation" class="twikiLink"><span style="color: navy;"> Data Preparation </span></a></strong>
+</li> <li> <a href="/twiki/bin/view/Atlas/DocumentationManagement" class="twikiLink">Documentation Help</a>
+</li> <li> <a href="/twiki/bin/view/Atlas/AtlasHelp" class="twikiLink">Help</a>
+</li> <li> <a href="/twiki/bin/view/Atlas/AtlasGlossary" class="twikiLink">Glossary</a>
+</li></ul> 
+</li></ul> 
+<p />
+<div class="twikiLeftBarBase">
+  <a href="/twiki/bin/edit/AtlasProtected/HSG7RootBuildLeftBar?templatetopic=AtlasProtected.WebLeftBarTemplate">Create</a> a LeftBar for this page
+</div>
+<p />
+<hr />
+<span style="color: #008000"> <img src='https://twiki.cern.ch/twiki/pub/TWiki/TWikiDocGraphics/searchtopic.gif'> <strong><a href="https://search.cern.ch/Pages/TwikiResults.aspx?k=generic2%3AATLAS" target="_blank">TWiki Search<img width="13" alt="" src="/twiki/pub/TWiki/TWikiDocGraphics/external-link.gif" height="12" border="0" /></a></strong> </span></verbatim>
+<hr />
+<p />
+<!-- <ul>
+ <li>
+ <ul>
+<li> <a href="/twiki/bin/view/AtlasProtected/WebHome" class="twikiCurrentWebHomeLink twikiLink">AtlasProtected Wiki</a>
+</li></ul> 
+</li></ul> 
+-->
+</div><!-- /patternLeftBarContents--></div><!-- /patternLeftBar-->
+</div><!-- /patternFloatWrap-->
+<div class="clear">&nbsp;</div>
+</div><!-- /patternOuter--></div><!-- /patternWrapper--><div id="patternTopBar"><div id="patternTopBarContents"><table border="0" cellpadding="0" cellspacing="0" style="width:100%; margin-top:12px;">
+<tr><td valign="middle"><span id="twikiLogo" class="twikiImage"><a href="http://twiki.cern.ch/twiki/bin/view/AtlasProtected/WebHome"><img src="http://twiki.cern.ch/twiki/pub/AtlasPublic/AtlasTWikiLogos/AtlasTwikiProtectedLogo.png" border="0" alt="CERN" style="border:none;" /></a></span></td>
+<td align="right" valign="top" class="patternMetaMenu">
+ <ul>
+<li> <form name="jumpForm" action="/twiki/bin/view/AtlasProtected/HSG7RootBuild"><input id="jumpFormField" type="text" class="twikiInputField" name="topic" value="" size="18" /><noscript>&nbsp;<input type="submit" class="twikiButton" size="5" name="submit" value="Jump" />&nbsp;</noscript>   </form>
+</li> <li> <form name="quickSearchForm" action="https://search.cern.ch/Pages/TwikiResults.aspx" target="search" class="cernTWikiSearch">    <ul class="engineList" style="background-image: url('https://twiki.cern.ch/twiki/pub/TWiki/CernSearchBar/arrow.png');">        <li class="active" id="cernsearch">            <img src="https://twiki.cern.ch/twiki/pub/TWiki/CernSearchBar/cernsearchicon.png" alt="Cern Search Icon" />            <span class="engineDescription">Cern Search</span>        </li>        <li id="twikisearch">            <img src="https://twiki.cern.ch/twiki/pub/TWiki/CernSearchBar/twikisearchicon.gif" alt="TWiki Search Icon" />            <span class="engineDescription">TWiki Search</span>        </li>        <li id="googlesearch">            <img class="engine" src="https://twiki.cern.ch/twiki/pub/TWiki/CernSearchBar/googlesearchicon.png" alt="Google Search Icon" />            <span class="engineDescription">Google Search</span>        </li>    </ul>    <input type="text" class="twikiInputField" id="quickSearchBox" name="k" value="" size="18" /> <br />    <input type="radio" name="scope" value=Atlas checked />     <span class="webScopeDescription">Atlas</span>    <input type="radio" name="scope" value="AllWebs" />    <span class="allWebsScopeDescription">All webs</span>    <input type='hidden' name='autologin' value='1'/>     <noscript>        &nbsp; <input type="submit" size="5" class="twikiButton" name="submit" value="Search"/>&nbsp;    </noscript>
+</li></ul> 
+</form>
+<p />
+<p />
+<!-- <pre> -->
+<script language="javascript">
+<!--
+$(function() {
+    // We use the current web name to form the redirect in the TWiki search
+    var currentWeb = undefined; 
+    // If the web starts with alice* atlas* cms* or lhcb* (case-insensitive), 
+    // the "Web search" should be altered so that AtlasFoo => Atlas
+    var specialWeb = undefined; 
+    // Remembering what the user have entered into the searchbox to after 
+    // he has selected a new search engine from the dropdown
+    var searchPhrase = ''; 
+
+    // We want to store the current web for later use.
+    var currentWebSearch = window.location.pathname.match(/\/([A-Z][^\/]+)/);
+    if (currentWebSearch != null) {
+        currentWeb = currentWebSearch[1];
+
+        // Do we have a special kind of web? If so, the web search should be altered a little to fetch more broader results.
+        var specialWebSearch = currentWeb.match(/^(alice|atlas|cms|lhcb)/i);
+        if (specialWebSearch != null) {
+            var lowercaseToCorrect = {
+                'alice' : 'Alice',
+                'atlas' : 'Atlas',
+                'cms'   : 'CMS',
+                'lhcb'  : 'LHCb'
+            };
+            specialWeb = lowercaseToCorrect[specialWebSearch[1].toLowerCase()];
+            $('span.webScopeDescription').text(specialWeb);
+        }
+    } else {
+        currentWeb = 'DefaultWeb';
+    }
+
+    // Do we have a favourite search engine in localStorage?
+    if (window.localStorage) {
+        var storedEngine = localStorage.getItem('defaultSearchEngine');
+        console.log('stored engine preference: ' + storedEngine);
+        var storedEngineLi = $('.cernTWikiSearch li#' + storedEngine);
+        if (!storedEngineLi.hasClass('active')) {
+            changeActiveSearchEngine(storedEngineLi);
+        }
+        if (storedEngine == 'twikisearch') {
+            $('input[name=scope][value=AllWebs]').attr('disabled','disabled');
+            $('.allWebsScopeDescription').addClass('disabled');
+        }
+    }
+    
+    // Toggle the searchEngines list on and off on click
+    $('.cernTWikiSearch ul.engineList').click(function(e) {
+        e.stopPropagation();
+        if ($(this).hasClass('open')) {
+            $(this).removeClass('open');
+        } else {
+            $(this).addClass('open');
+        }
+    });
+
+    // Stupid IE8 hack because the click handler on ul.engineList does not work properly there.
+    if ($.browser.msie && document.documentMode && document.documentMode < 9) {
+        $('.cernTWikiSearch #quickSearchBox').focus(function(e) {
+            $('.cernTWikiSearch ul.engineList').removeClass('open');
+        });
+    }
+    
+    // Handle clicks on one of the search engines
+    $('.cernTWikiSearch ul.engineList li').click(function(e) {
+        // If we clicked on a <li> that does not has class 'active', it means this should become active and swap places with this.
+        if (!$(this).hasClass('active')) {
+            changeActiveSearchEngine($(this));
+        }  
+        if ($(this).parent().hasClass('open')) {
+            $('.cernTWikiSearch #quickSearchBox').val(searchPhrase);
+            $('.cernTWikiSearch #quickSearchBox').focus();                          
+        }
+        if ($(this).attr('id') == 'twikisearch') {
+            var allWebsRadio = $('input[name=scope][value=AllWebs]');
+            allWebsRadio.attr('disabled','disabled');
+            allWebsRadio.siblings('input[type=radio]').attr('checked',true)
+            $('.allWebsScopeDescription').addClass('disabled');
+        } else {
+            $('input[name=scope][value=AllWebs]').attr('disabled','');
+            $('.allWebsScopeDescription').removeClass('disabled');
+        }
+    });
+    
+    // Show the engine description text on hover
+    $('.engineList.open li').live('hover',function() {
+        var displayText = $(this).find('span.engineDescription').text();
+        $('.cernTWikiSearch #quickSearchBox').val(displayText);
+    });
+
+
+    // The form is submitted, now let's do the search.
+    $('.cernTWikiSearch').submit(function(e) {
+        e.preventDefault();
+
+        var scope = $('input[name=scope]:checked', $(this)).val();
+        if (scope != 'AllWebs' && specialWeb !== undefined) {
+            scope = specialWeb;
+        }
+        var val = $('.cernTWikiSearch #quickSearchBox').val();
+        var engine = $('.engineList li.active').attr('id')
+        
+        switch (engine) {
+            case 'googlesearch':
+                window.open('https://google.com/search?q=site:' + encodeURIComponent('https://twiki.cern.ch') + (scope != 'AllWebs' ? ' ' + scope : '') + ' ' + val);
+                break;
+            case 'cernsearch':
+                window.open('https://search.cern.ch/Pages/TwikiResults.aspx?k=' + val + (scope != 'AllWebs' ? ' cernscope:' + scope : '') + '&autologin=1');
+                break;
+            case 'twikisearch':
+                window.open(window.location.pathname.replace(/\/[A-Z].+$/,'') + '/' + currentWeb + '/WebSearch?search=' + val + '&scope=all');
+                break;
+        default:
+            break;
+        }
+        
+        // Save the search engine. If the user reloads the page he should get the last one used.
+        if (window.localStorage) { 
+            console.log('store engine preference: ' + engine);
+            localStorage.setItem('defaultSearchEngine',engine);
+        }
+    });
+    
+    // Save the search phrase on every key up
+    $('.cernTWikiSearch #quickSearchBox').keyup(function() {
+        searchPhrase = $(this).val();
+    });
+    
+    // If a user clicks outside the search engine list, the search engine list should be closed.
+    $('html').click(function() {
+        if ($('.engineList').hasClass('open')) {
+            $('.engineList').removeClass('open');
+            $('.cernTWikiSearch #quickSearchBox').val(searchPhrase);
+        }
+    });
+});
+
+// We want to change the active search engine
+function changeActiveSearchEngine(engineLi) {
+    var activeEngine = engineLi.siblings(':first');
+    engineLi.detach().insertBefore(activeEngine);
+    activeEngine.removeClass('active');
+    engineLi.addClass('active');
+    if (engineLi.attr('id') == 'twikiSearch') {
+        deactivateAllWebsOption();
+    }
+}
+
+// The user has chosen twiki search (or the preference was stored in localStorage). 
+// We will then disable the 'All Webs' option since this will time out.
+function deactivateAllWebsOption() {
+}
+
+// Helper method to check input attribute browser compability
+function checkInputAttributeSupport(attribute) {
+    var i = document.createElement("input");
+    return typeof i.placeholder !== 'undefined';
+}
+//-->
+</script>
+<!-- </pre> --> <ul>
+<li> 
+</li></ul> 
+</td></tr></table></div></div><!-- /patternTopBar--><div id="patternBottomBar"><div id="patternBottomBarContents"><div id="patternWebBottomBar"><div class="twikiCopyright"><span class="twikiRight"> <a href="http://twiki.org/"><img src="/twiki/pub/TWiki/TWikiLogos/T-badge-88x31.gif" alt="This site is powered by the TWiki collaboration platform" width="88" height="31" title="This site is powered by the TWiki collaboration platform" border="0" /></a></span><span class="twikiRight" style="padding:0 10px 0 10px"> <a href="http://www.perl.org/"><img src="/twiki/pub/TWiki/TWikiLogos/perl-logo-88x31.gif" alt="Powered by Perl" width="88" height="31" title="Powered by Perl" border="0" /></a></span>Copyright &amp;© 2008-2017 by the contributing authors. All material on this collaboration platform is the property of the contributing authors. <br /> Ideas, requests, problems regarding TWiki? <a href='https://cern.service-now.com/service-portal/search.do?q=twiki'>Send feedback</a> </div><!--/twikiCopyright--></div><!--/patternWebBottomBar--></div><!-- /patternBottomBarContents--></div><!-- /patternBottomBar-->
+</div><!-- /patternPage-->
+</div><!-- /patternPageShadow-->
+</div><!-- /patternScreen-->
+</body></html>
