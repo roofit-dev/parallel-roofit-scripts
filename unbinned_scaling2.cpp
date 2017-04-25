@@ -11,7 +11,7 @@ using namespace RooFit;
 
 // timing_flag is used to activate only selected timing statements [1-7]
 
-void unbinned_scaling2(int num_cpu=1, bool force_num_int=false,
+void unbinned_scaling2(int num_cpu=1, bool force_num_int=false, int optConst=2,
                        int N_gaussians=1, int N_observables=1, int N_parameters=2,
                        int N_events=100000,
                        int parallel_interleave=0,
@@ -61,7 +61,7 @@ void unbinned_scaling2(int num_cpu=1, bool force_num_int=false,
 
   // other stuff
   int printlevel(print_level);
-  int optimizeConst(2);
+  int optimizeConst(optConst);
   // int N_timing_loops(3); // not used
 
   gRandom->SetSeed(seed);
