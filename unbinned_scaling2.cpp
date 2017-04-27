@@ -11,7 +11,8 @@ using namespace RooFit;
 
 // timing_flag is used to activate only selected timing statements [1-7]
 
-void unbinned_scaling2(int num_cpu=1, bool force_num_int=false, int optConst=2,
+void unbinned_scaling2(int num_cpu=1, bool force_num_int=false,
+                       bool time_num_ints=false, int optConst=2,
                        int N_gaussians=1, int N_observables=1, int N_parameters=2,
                        int N_events=100000,
                        int parallel_interleave=0,
@@ -52,6 +53,9 @@ void unbinned_scaling2(int num_cpu=1, bool force_num_int=false, int optConst=2,
   }
 
   RooTrace::timing_flag = timing_flag;
+  if (time_num_ints) {
+    RooTrace::set_time_numInts(kTRUE);
+  }
 
   // plotting configuration
   int obs_plot_x(3);
