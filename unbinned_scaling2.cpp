@@ -47,6 +47,11 @@ void unbinned_scaling2(int num_cpu=1, bool force_num_int=false,
             << "\", \"parallel_interleave\": \"" << parallel_interleave
             << "\", \"seed\": \"" << seed
             << "\", \"pid\": \"" << getpid()
+            << "\", \"force_num_int\": \"" << force_num_int
+            << "\", \"time_num_ints\": \"" << time_num_ints
+            << "\", \"optConst\": \"" << optConst
+            << "\", \"print_level\": \"" << print_level
+            << "\", \"timing_flag\": \"" << timing_flag
             << "\"}," << std::endl;
 
     outfile.close();
