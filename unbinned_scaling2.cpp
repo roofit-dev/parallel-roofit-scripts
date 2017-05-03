@@ -34,27 +34,21 @@ void unbinned_scaling2(int num_cpu=1, bool force_num_int=false,
   RooMsgService::instance().addStream(DEBUG, Topic(Generation));
 
   // int N_parameters(8);  // must be even, means and sigmas have diff ranges
-  ofstream outfile;
 
   if (timing_flag > 0) {
-    outfile.open("timing_meta.json", ios::app);
+    RooJsonListFile outfile;
+  
+    outfile.open("timing_meta.json");
+    std::string names[13] = {"N_gaussians", "N_observables", "N_parameters",
+                             "N_events", "num_cpu", "parallel_interleave",
+                             "seed", "pid", "force_num_int", "time_num_ints",
+                             "optConst", "print_level", "timing_flag"};
+    outfile.set_member_names(names, names + 13);
 
-    outfile << "{\"N_gaussians\": \"" << N_gaussians
-            << "\", \"N_observables\": \"" << N_observables
-            << "\", \"N_parameters\": \"" << N_parameters
-            << "\", \"N_events\": \"" << N_events
-            << "\", \"num_cpu\": \"" << num_cpu
-            << "\", \"parallel_interleave\": \"" << parallel_interleave
-            << "\", \"seed\": \"" << seed
-            << "\", \"pid\": \"" << getpid()
-            << "\", \"force_num_int\": \"" << force_num_int
-            << "\", \"time_num_ints\": \"" << time_num_ints
-            << "\", \"optConst\": \"" << optConst
-            << "\", \"print_level\": \"" << print_level
-            << "\", \"timing_flag\": \"" << timing_flag
-            << "\"}," << std::endl;
-
-    outfile.close();
+    outfile << N_gaussians << N_observables << N_parameters
+            << N_events << num_cpu << parallel_interleave
+            << seed << getpid() << force_num_int << time_num_ints
+            << optConst << print_level << timing_flag;
   }
 
   RooTrace::timing_flag = timing_flag;
@@ -199,10 +193,14 @@ void unbinned_scaling2(int num_cpu=1, bool force_num_int=false,
   // sum.fitTo(*data,"Extended") ;
   // instead of full fitTo, only do the fit, leave out error matrix, using
   // run style of run_higgs.C
-  std::chrono::time_point<std::chrono::high_resolution_clock> begin, end;
 
+  RooJsonListFile outfile;
+  RooWallTimer timer;
+  
   if (timing_flag == 1) {
-    outfile.open("timing_full_minimize.json", ios::app);
+    outfile.open("timing_full_minimize.json");
+    std::string names[2] = {"full_minimize_wall_s", "pid"};
+    outfile.set_member_names(names, names + 2);
   }
 
   // for (int it = 0; it < N_timing_loops; ++it)
@@ -216,26 +214,17 @@ void unbinned_scaling2(int num_cpu=1, bool force_num_int=false,
     m.optimizeConst(optimizeConst);
 
     if (timing_flag == 1) {
-      begin = std::chrono::high_resolution_clock::now();
+      timer.start();
     }
     // m.hesse();
 
     m.minimize("Minuit2", "migrad");
 
     if (timing_flag == 1) {
-      end = std::chrono::high_resolution_clock::now();
-
-      float timing_s = std::chrono::duration_cast<std::chrono::nanoseconds>
-                       (end-begin).count() / static_cast<float>(1e9);
-      std::cout << timing_s << "s" << std::endl;
-
-      outfile << "{\"full_minimize_wall_s\": \"" << timing_s
-              << "\", \"pid\": \"" << getpid()
-              << "\"}," << std::endl;
+      timer.stop();
+      std::cout << timer.timing_s() << "s" << std::endl;
+      outfile << timer.timing_s() << getpid();
     }
-  }
-  if (timing_flag == 1) {
-    outfile.close();
   }
 
   // print the "true" values for comparison
