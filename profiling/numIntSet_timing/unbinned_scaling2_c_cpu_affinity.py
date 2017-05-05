@@ -4,7 +4,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:23:55
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-05-05 15:57:10
+# @Last Modified time: 2017-05-05 15:59:13
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -101,12 +101,12 @@ savefig_dn.mkdir(parents=True, exist_ok=True)
 
 #### LOAD DATA FROM FILES
 fpiter = itertools.chain(
-                         basepath.glob('18318493.allier.nikhef.nl/*.json')
-                         basepath.glob('18318494.allier.nikhef.nl/*.json')
-                         basepath.glob('18318495.allier.nikhef.nl/*.json')
-                         basepath.glob('18318496.allier.nikhef.nl/*.json')
-                         basepath.glob('18318497.allier.nikhef.nl/*.json')
-                         basepath.glob('18318498.allier.nikhef.nl/*.json')
+                         basepath.glob('18318493.allier.nikhef.nl/*.json'),
+                         basepath.glob('18318494.allier.nikhef.nl/*.json'),
+                         basepath.glob('18318495.allier.nikhef.nl/*.json'),
+                         basepath.glob('18318496.allier.nikhef.nl/*.json'),
+                         basepath.glob('18318497.allier.nikhef.nl/*.json'),
+                         basepath.glob('18318498.allier.nikhef.nl/*.json'),
                          )
 fplist = [fp for fp in fpiter if not fp.match('timing_meta.json')]
 
@@ -143,6 +143,38 @@ df_totals = df_totals.append(df_ideal)
 
 # add combination of two categories
 df_totals['N_events/timing_type'] = df_totals.N_events.astype(str) + '/' + df_totals.timing_type.astype(str)
+
+
+#### NUMERICAL INTEGRAL TIMINGS
+df_numints = dfs_mp_sl['numInts'].copy()
+
+# add iteration information, which can be deduced from the order, ppid, num_cpu and name (because u0_int is only done once, we have to add a special check for that)
+numints_iteration = []
+it = 0
+N_names = len(df_numints.name.unique())
+# local_N_num_int is the number of numerical integrals in the local (current) iteration
+# it determines after how long the next iteration starts
+local_N_num_int = df_numints.num_cpu.iloc[0] * N_names
+# the current iteration starts here:
+current_iteration_start = 0
+current_ppid = df_numints.ppid.iloc[0]
+for irow, row in enumerate(df_numints.itertuples()):
+    if ((irow - current_iteration_start) == local_N_num_int) or current_ppid != row.ppid:
+        current_ppid = row.ppid
+        current_iteration_start = irow
+        it += 1
+        local_N_names = len(df_numints[irow:irow + N_names * row.num_cpu].name.unique())
+        local_N_num_int = row.num_cpu * local_N_names
+
+    numints_iteration.append(it)
+
+    # if (irow + 1) % local_N_num_int == 0:
+    #     it += 1
+
+df_numints['iteration'] = numints_iteration
+
+df_numints_min_by_iteration = df_numints.groupby('iteration').min()
+df_numints_max_by_iteration = df_numints.groupby('iteration').max()
 
 
 #### ANALYSIS

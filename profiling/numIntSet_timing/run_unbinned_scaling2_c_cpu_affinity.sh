@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-05-05 15:47:04
+# @Last Modified time: 2017-05-05 16:00:14
 
 #PBS -l nodes=1:ppn=8
 #PBS -o pbs_log/run_unbinned_scaling2_c_cpu_affinity
@@ -48,9 +48,9 @@ optConst=2
 # parameters for numerical integral timing
 time_num_ints=true
 
-for force_num_int in true false; do
 for e in 100000 1000000 10000000 100000000; do
 for cpu in {1..8}; do
+for force_num_int in true false; do
 # for timing_flag in {1..7}; do
 timing_flag=1
 
