@@ -18,7 +18,8 @@ void unbinned_scaling2(int num_cpu=1, bool force_num_int=false,
                        int parallel_interleave=0,
                        int seed=1,
                        int print_level=0,
-                       int timing_flag=1
+                       int timing_flag=1,
+                       bool cpu_affinity=true
                        ) {
   //gSystem->Exec("top -n1 -b");
   // num_cpu: -1 is special option -> overhead communicatie protocol vergelijken (vgl met 1 cpu)
@@ -203,9 +204,17 @@ void unbinned_scaling2(int num_cpu=1, bool force_num_int=false,
     outfile.set_member_names(names, names + 2);
   }
 
+  Bool_t cpuAffinity;
+  if (cpu_affinity) {
+    cpuAffinity = kTRUE;
+  } else {
+    cpuAffinity = kFALSE;
+  }
+
   // for (int it = 0; it < N_timing_loops; ++it)
   {
-    RooAbsReal* nll = sum.createNLL(*data, NumCPU(num_cpu, parallel_interleave));//, "Extended");
+    RooAbsReal* nll = sum.createNLL(*data, NumCPU(num_cpu, parallel_interleave),
+                                    CPUAffinity(cpuAffinity));//, "Extended");
     RooMinimizer m(*nll);
     // m.setVerbose(1);
     m.setStrategy(0);
