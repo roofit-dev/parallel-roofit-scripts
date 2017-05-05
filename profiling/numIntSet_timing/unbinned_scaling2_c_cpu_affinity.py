@@ -4,7 +4,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:23:55
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-05-05 15:49:56
+# @Last Modified time: 2017-05-05 15:57:10
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -91,7 +91,7 @@ def savefig(factorplot, fp):
 
 """
 cd ~/projects/apcocsm/code/profiling/numIntSet_timing
-rsync -avr nikhef:project_atlas/apcocsm_code/profiling/numIntSet_timing/unbinned_scaling2_a_total_check ./
+rsync -avr nikhef:project_atlas/apcocsm_code/profiling/numIntSet_timing/unbinned_scaling2_c_cpu_affinity ./
 """
 
 basepath = Path.home() / 'projects/apcocsm/code/profiling/numIntSet_timing/unbinned_scaling2_c_cpu_affinity'
@@ -101,7 +101,12 @@ savefig_dn.mkdir(parents=True, exist_ok=True)
 
 #### LOAD DATA FROM FILES
 fpiter = itertools.chain(
-                         basepath.glob('18317508.allier.nikhef.nl/*.json')
+                         basepath.glob('18318493.allier.nikhef.nl/*.json')
+                         basepath.glob('18318494.allier.nikhef.nl/*.json')
+                         basepath.glob('18318495.allier.nikhef.nl/*.json')
+                         basepath.glob('18318496.allier.nikhef.nl/*.json')
+                         basepath.glob('18318497.allier.nikhef.nl/*.json')
+                         basepath.glob('18318498.allier.nikhef.nl/*.json')
                          )
 fplist = [fp for fp in fpiter if not fp.match('timing_meta.json')]
 
@@ -143,24 +148,24 @@ df_totals['N_events/timing_type'] = df_totals.N_events.astype(str) + '/' + df_to
 #### ANALYSIS
 
 # full timings
-g = sns.factorplot(x='num_cpu', y='full_minimize_wall_s', col='N_events', hue='N_events/timing_type', estimator=np.min, data=df_totals, legend_out=False, sharey=False)
+g = sns.factorplot(x='num_cpu', y='full_minimize_wall_s', col='N_events', hue='N_events/timing_type', row='force_num_int', estimator=np.min, data=df_totals, legend_out=False, sharey=False)
 plt.subplots_adjust(top=0.85)
 g.fig.suptitle('total wallclock timing of minimize("Minuit2", "migrad")')
 savefig(g, savefig_dn / 'total_timing.png')
 
 # numerical integrals
 
-g = sns.factorplot(x='num_cpu', y='wall_s', col='N_events', sharey='row', estimator=np.min, data=df_numints, legend_out=False)
+g = sns.factorplot(x='num_cpu', y='wall_s', col='N_events', sharey='row', row='force_num_int', estimator=np.min, data=df_numints, legend_out=False)
 plt.subplots_adjust(top=0.85)
 g.fig.suptitle('wallclock timing of all timed numerical integrals --- minima of all integrations per plotted factor --- vertical bars: variation in different runs and iterations')
 savefig(g, savefig_dn / 'numInts_min.png')
 
-g = sns.factorplot(x='num_cpu', y='wall_s', col='N_events', sharey='row', estimator=np.max, data=df_numints, legend_out=False)
+g = sns.factorplot(x='num_cpu', y='wall_s', col='N_events', sharey='row', row='force_num_int', estimator=np.max, data=df_numints, legend_out=False)
 plt.subplots_adjust(top=0.85)
 g.fig.suptitle('wallclock timing of all timed numerical integrals --- maxima of all integrations per plotted factor --- vertical bars: variation in different runs and iterations')
 savefig(g, savefig_dn / 'numInts_max.png')
 
-g = sns.factorplot(x='num_cpu', y='wall_s', col='N_events', sharey='row', estimator=np.sum, data=df_numints_max_by_iteration, legend_out=False)
+g = sns.factorplot(x='num_cpu', y='wall_s', col='N_events', sharey='row', row='force_num_int', estimator=np.sum, data=df_numints_max_by_iteration, legend_out=False)
 plt.subplots_adjust(top=0.8)
 g.fig.suptitle('wallclock timing of all timed numerical integrals --- sum of maximum of each iteration per run $\sum_{\mathrm{it}} \max_{\mathrm{core}}(t_{\mathrm{run,it,core}})$ --- vertical bars: variation in different runs')
 savefig(g, savefig_dn / 'numInts_it_sum_max.png')
