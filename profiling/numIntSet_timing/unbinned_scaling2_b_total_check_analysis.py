@@ -4,7 +4,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:23:55
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-05-05 11:24:21
+# @Last Modified time: 2017-05-05 11:42:05
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -94,14 +94,14 @@ cd ~/projects/apcocsm/code/profiling/numIntSet_timing
 rsync -avr nikhef:project_atlas/apcocsm_code/profiling/numIntSet_timing/unbinned_scaling2_a_total_check ./
 """
 
-basepath = Path.home() / 'projects/apcocsm/code/profiling/numIntSet_timing/unbinned_scaling2_a_total_check'
+basepath = Path.home() / 'projects/apcocsm/code/profiling/numIntSet_timing/unbinned_scaling2_b_total_check'
 savefig_dn = basepath / 'analysis'
 
 savefig_dn.mkdir(parents=True, exist_ok=True)
 
 #### LOAD DATA FROM FILES
 fpiter = itertools.chain(
-                         basepath.glob('18317503.allier.nikhef.nl/*.json')
+                         basepath.glob('18317508.allier.nikhef.nl/*.json')
                          )
 fplist = [fp for fp in fpiter if not fp.match('timing_meta.json')]
 
