@@ -5,7 +5,6 @@
 # @Last Modified time: 2017-05-05 16:00:14
 
 #PBS -l nodes=1:ppn=8
-#PBS -o pbs_log/run_unbinned_scaling2_c_cpu_affinity
 
 # unbinned_scaling2_a_total_check run still shows anomalous multi-core timings!
 # let's try without forced numerical integrals...
