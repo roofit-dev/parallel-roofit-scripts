@@ -4,7 +4,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:23:55
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-05-08 10:36:42
+# @Last Modified time: 2017-05-08 10:48:17
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -103,11 +103,11 @@ savefig_dn.mkdir(parents=True, exist_ok=True)
 fpiter = itertools.chain(
                          basepath.glob('18318493.allier.nikhef.nl/*.json'),  # had different run order, still fine results though
                          basepath.glob('18318520.allier.nikhef.nl/*.json'),
-                         basepath.glob('18329141.allier.nikhef.nl/*.json'),
-                         basepath.glob('18329142.allier.nikhef.nl/*.json'),
-                         basepath.glob('18329143.allier.nikhef.nl/*.json'),
-                         basepath.glob('18329144.allier.nikhef.nl/*.json'),
-                         basepath.glob('18329145.allier.nikhef.nl/*.json'),
+                         basepath.glob('18329146.allier.nikhef.nl/*.json'),
+                         basepath.glob('18329147.allier.nikhef.nl/*.json'),
+                         basepath.glob('18329148.allier.nikhef.nl/*.json'),
+                         basepath.glob('18329149.allier.nikhef.nl/*.json'),
+                         basepath.glob('18329150.allier.nikhef.nl/*.json'),
                          )
 fplist = [fp for fp in fpiter if not fp.match('timing_meta.json')]
 
