@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-05-09 14:21:34
+# @Last Modified time: 2017-05-09 14:26:52
 
 config_name=$1
 
@@ -27,9 +27,9 @@ fi
 ix=1
 while IFS= read -r argument_string ; do
   wallstr=${walltime_array[$ix]}
-  
+
   hours=${wallstr#*:}  # will drop begin of string upto first occur of `:`
-  if (( hours < 4 )); do
+  if (( hours < 4 )); then
     queue=short
   else
     queue=generic
