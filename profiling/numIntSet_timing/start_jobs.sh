@@ -28,8 +28,7 @@ ix=1
 while IFS= read -r argument_string ; do
   wallstr=${walltime_array[$ix]}
 
-  hours=${wallstr#*\:}  # will drop begin of string upto first occur of `:`
-  echo $hours
+  hours=${wallstr%%:*}  # will drop begin of string upto first occur of `:`
   if (( hours < 4 )); then
     queue=short
   else
