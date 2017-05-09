@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-05-09 13:48:19
+# @Last Modified time: 2017-05-09 13:52:11
 
 config_name=$1
 
@@ -26,6 +26,7 @@ fi
 
 ix=1
 for argument_string in "$argument_string_list"; do
+  echo $ix: $argument_string
   qsub -l "walltime=${walltime_array[$ix]}" -v "$argument_string" "$run_script_name"
   ((++ix))
 done
