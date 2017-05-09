@@ -1,8 +1,8 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-05-09 11:33:30
+# @Last Modified time: 2017-05-09 13:50:27
 
 #PBS -l nodes=1:ppn=8
 
