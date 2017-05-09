@@ -2,13 +2,13 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-05-09 13:33:18
+# @Last Modified time: 2017-05-09 13:46:45
 
 config_name=$1
 
 if [[ -z "$config_name" ]]; then
   echo "Warning: no config script filename argument given! Will try to read environment variables anyway."
-  if [[ -z "$argument_string_list" || -z "$run_script_name" || -z "${walltime_array[1]}"]]; then
+  if [[ -z "$argument_string_list" || -z "$run_script_name" || -z "${walltime_array[1]}" ]]; then
     echo "Error: argument_string_list, walltime_array and/or run_script_name not set!"
     exit 1
   else
@@ -16,7 +16,7 @@ if [[ -z "$config_name" ]]; then
   fi
 else
   source $config_name
-  if [[ -z "$argument_string_list" || -z "$run_script_name" || -z "${walltime_array[1]}"]]; then
+  if [[ -z "$argument_string_list" || -z "$run_script_name" || -z "${walltime_array[1]}" ]]; then
     echo "Error: argument_string_list, walltime_array and/or run_script_name were not set by config script $config_name!"
     exit 2
   else
