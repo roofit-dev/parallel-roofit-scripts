@@ -2,12 +2,12 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-05-09 13:27:29
+# @Last Modified time: 2017-05-09 14:13:09
 
 # unbinned_scaling2_a_total_check run still shows anomalous multi-core timings!
 # let's try without forced numerical integrals...
 
-run_id=unbinned_scaling2_c_cpu_affinity
+export run_id=unbinned_scaling2_c_cpu_affinity
 
 export run_script_name="run_root_unbinned_scaling2.sh"
 
