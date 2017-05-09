@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-05-09 14:13:09
+# @Last Modified time: 2017-05-09 17:29:35
 
 # unbinned_scaling2_a_total_check run still shows anomalous multi-core timings!
 # let's try without forced numerical integrals...
@@ -42,6 +42,8 @@ argument_string_list="${argument_string_list}run_id=${run_id},repeat_nr=${repeat
 # note the newline at the end of the string, don't remove that!
 
 # rough estimate walltime based on previous runs
+# in the analysis Python script, use something like this to estimate these times:
+# df_totals[(df_totals.N_events <= 1e7) & (df_totals.timing_type == 'real')].groupby(['force_num_int', 'num_cpu', 'N_events']).full_minimize_wall_s.max()
 if [ $force_num_int = false ]; then
   walltime_sec=$(($e/10000 + $wallclock_add_sec))
 else
