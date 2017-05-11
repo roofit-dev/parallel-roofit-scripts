@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-05-11 16:15:04
+# @Last Modified time: 2017-05-11 16:30:17
 
 # unbinned_scaling2_c_cpu_affinity run with Release ROOT showed improvement
 # in overall timings, but the multi-core anomalous overhead now became even more
@@ -67,6 +67,9 @@ walltime_array[ix]=$wall_hours:$wall_minutes:$wall_seconds
 
 done; done; done; done; done
 
-# before exporting, strip last newline
-export argument_string_list=${argument_string_list:0:-1}
+# before saving, strip last newline
+argument_string_list=${argument_string_list:0:-1}
+# don't export the variable; it might get too large and cause error: 
+#   ./start_jobs.sh:38: argument list too long: qsub
+echo $argument_string_list > "${run_id}_argument_string_list.txt"
 export walltime_array
