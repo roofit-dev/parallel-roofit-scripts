@@ -4,7 +4,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:23:55
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-05-09 14:40:53
+# @Last Modified time: 2017-05-11 10:04:47
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -102,7 +102,7 @@ savefig_dn.mkdir(parents=True, exist_ok=True)
 #### LOAD DATA FROM FILES
 # this time only the stuff run on the Release ROOT build
 fpgloblist = [basepath.glob('%i.allier.nikhef.nl/*.json' % i)
-              for i in range(18336892,18337084)]
+              for i in range(18339074,18339265)]
 fpiter = itertools.chain(*fpgloblist)
 fplist = [fp for fp in fpiter if not fp.match('timing_meta.json')]
 
