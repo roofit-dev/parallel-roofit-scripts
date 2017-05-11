@@ -4,7 +4,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:23:55
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-05-11 10:04:47
+# @Last Modified time: 2017-05-11 11:10:17
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -95,7 +95,7 @@ rsync -avr nikhef:project_atlas/apcocsm_code/profiling/numIntSet_timing/unbinned
 """
 
 basepath = Path.home() / 'projects/apcocsm/code/profiling/numIntSet_timing/unbinned_scaling2_c_cpu_affinity'
-savefig_dn = basepath / 'analysis'
+savefig_dn = basepath / 'analysis_release'
 
 savefig_dn.mkdir(parents=True, exist_ok=True)
 
