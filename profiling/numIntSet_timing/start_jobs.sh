@@ -25,7 +25,7 @@ fi
 short_full=false
 
 # start a selected range
-if [[ -z "$start_from" && -z "$start_upto" ]]; then
+if [[ -n "$start_from" && -n "$start_upto" ]]; then
   ix=$start_from
 
   argument_string_file="${run_id}_argument_string_list_${start_from}-${start_upto}.txt"
