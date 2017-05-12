@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-05-11 16:30:17
+# @Last Modified time: 2017-05-12 11:19:28
 
 # unbinned_scaling2_c_cpu_affinity run with Release ROOT showed improvement
 # in overall timings, but the multi-core anomalous overhead now became even more
@@ -40,7 +40,9 @@ for e in 100000 1000000 10000000 100000000; do
 for cpu in {1..8}; do
 for force_num_int in true false; do
 for repeat_nr in {1..3}; do
-for timing_flag in {2..10}; do
+
+# timing_flag 8 does nothing!
+for timing_flag in {2..7} {9..10}; do
 
 argument_string_list="${argument_string_list}run_id=${run_id},repeat_nr=${repeat_nr},cpu=${cpu},force_num_int=${force_num_int},time_num_ints=${time_num_ints},optConst=${optConst},g=${g},o=${o},p=${p},e=${e},ileave=${ileave},seed=${seed},printlevel=${printlevel},timing_flag=${timing_flag}
 "
