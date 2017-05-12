@@ -2,7 +2,7 @@
 # @Author: E. G. Patrick Bos
 # @Date:   2017-05-12 10:07:19
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-05-12 10:39:58
+# @Last Modified time: 2017-05-12 13:57:31
 
 # Module with loading functions for different types of RooFit timings.
 
@@ -74,15 +74,36 @@ def merge_dfs_by_split_per_filetype(dfdicts_by_split, split_key, filetype_keys):
     return dfs
 
 
-def load_dfs_coresplit(fpgloblist):
+def fix_terminated_json_file(fp):
+    with fp.open('r') as fh:
+        json_lines = fh.readlines()
+        json_fixed = "".join(json_lines[:-1])
+        json_fixed = json_fixed[:-2] + "\n]"  # remove trailing comma and add closing bracket
+    with fp.open('w') as fh:
+        fh.write(json_fixed)
+    print("Removed broken last line in " + fp.name)
+
+
+def load_dfs_coresplit(fpgloblist, skip_on_match=[], skip_meta=True):
+    if skip_meta:
+        skip_on_match.append('timing_meta.json')
+
     fpiter = itertools.chain(*fpgloblist)
-    fplist = [fp for fp in fpiter if not fp.match('timing_meta.json')]
+    fplist = [fp for fp in fpiter if not any(fp.match(s) for s in skip_on_match)]
 
     uniquefps = list(set(fp.name for fp in fplist))
     dfkeys = [u[u.find('_') + 1:u.rfind('.')] for u in uniquefps]
 
     # "split" by single, multi and master and of course by file still
-    dfs_split = {fp: df_from_json_incl_meta(fp) for fp in fplist}
+    dfs_split = {}
+    for fp in fplist:
+        try:
+            dfs_split[fp] = df_from_json_incl_meta(fp)
+        except ValueError as e:
+            if fp.match('timing_RRMPFE_serverloop_while_p*.json'):  # timing_flag 9
+                fix_terminated_json_file(fp)
+                dfs_split[fp] = df_from_json_incl_meta(fp)
+#    dfs_split = {fp: df_from_json_incl_meta(fp) for fp in fplist}
     dfs_sp = merge_dfs_by_split_per_filetype(dfs_split, 'single', dfkeys)
     dfs_mp_sl = merge_dfs_by_split_per_filetype(dfs_split, 'multi', dfkeys)
     dfs_mp_ma = merge_dfs_by_split_per_filetype(dfs_split, 'master', dfkeys)

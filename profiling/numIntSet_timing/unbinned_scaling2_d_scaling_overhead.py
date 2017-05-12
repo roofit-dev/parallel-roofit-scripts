@@ -4,7 +4,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:23:55
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-05-12 10:53:12
+# @Last Modified time: 2017-05-12 13:59:13
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -38,18 +38,21 @@ savefig_dn.mkdir(parents=True, exist_ok=True)
 #### LOAD DATA FROM FILES
 fpgloblist = [basepath.glob('%i.allier.nikhef.nl/*.json' % i)
               for i in range(18359816, 18361592)]
-dfs_sp, dfs_mp_sl, dfs_mp_ma = load_timing.load_dfs_coresplit(fpgloblist)
+
+skip_on_match = ['timing_RRMPFE_serverloop_p*.json',  # skip timing_flag 8 output (contains no data)
+                 ]
+dfs_sp, dfs_mp_sl, dfs_mp_ma = load_timing.load_dfs_coresplit(fpgloblist, skip_on_match=skip_on_match)
 
 
-#### TOTAL TIMINGS
-df_totals_real = pd.concat([dfs_sp['full_minimize'], dfs_mp_ma['full_minimize']])
+# #### TOTAL TIMINGS
+# df_totals_real = pd.concat([dfs_sp['full_minimize'], dfs_mp_ma['full_minimize']])
 
-### ADD IDEAL TIMING BASED ON SINGLE CORE RUNS
-df_totals_ideal = load_timing.estimate_ideal_timing(df_totals_real)
-df_totals = load_timing.combine_ideal_and_real(df_totals_real, df_totals_ideal)
+# ### ADD IDEAL TIMING BASED ON SINGLE CORE RUNS
+# df_totals_ideal = load_timing.estimate_ideal_timing(df_totals_real)
+# df_totals = load_timing.combine_ideal_and_real(df_totals_real, df_totals_ideal)
 
-# add combination of two categories
-df_totals['N_events/timing_type'] = df_totals.N_events.astype(str) + '/' + df_totals.timing_type.astype(str)
+# # add combination of two categories
+# df_totals['N_events/timing_type'] = df_totals.N_events.astype(str) + '/' + df_totals.timing_type.astype(str)
 
 
 #### NUMERICAL INTEGRAL TIMINGS
@@ -62,41 +65,9 @@ df_numints_max_by_iteration = df_numints.groupby('iteration').max()
 
 
 
-
-#### refactor and combine MPFE_evaluate_client timings
-mpfe_eval_wall = dfs_sp['wall_RRMPFE_evaluate_client']
-mpfe_eval_cpu = dfs_sp['cpu_RRMPFE_evaluate_client']
-# add after_retrieve columns
-mpfe_eval_wall['RRMPFE_evaluate_client_after_retrieve_wall_s'] = mpfe_eval_wall['RRMPFE_evaluate_client_wall_s'] - mpfe_eval_wall['RRMPFE_evaluate_client_before_retrieve_wall_s'] - mpfe_eval_wall['RRMPFE_evaluate_client_retrieve_wall_s']
-mpfe_eval_cpu['RRMPFE_evaluate_client_after_retrieve_cpu_s'] = mpfe_eval_cpu['RRMPFE_evaluate_client_cpu_s'] - mpfe_eval_cpu['RRMPFE_evaluate_client_before_retrieve_cpu_s'] - mpfe_eval_cpu['RRMPFE_evaluate_client_retrieve_cpu_s']
-# refactor for nice factorplotting; rename columns and add timing type column
-# ... cpu/wall column
-mpfe_eval_wall['cpu/wall'] = 'wall'
-mpfe_eval_cpu['cpu/wall'] = 'cpu'
-# ... give each timing column its own row
-mpfe_eval = pd.DataFrame(columns=['pid', 'N_events', 'num_cpu', 'time s', 'cpu/wall', 'segment'])
-cols_base = ['pid', 'N_events', 'num_cpu', 'cpu/wall']
-
-cols_wall = [('all', 'RRMPFE_evaluate_client_wall_s'),
-             ('before_retrieve', 'RRMPFE_evaluate_client_before_retrieve_wall_s'),
-             ('retrieve', 'RRMPFE_evaluate_client_retrieve_wall_s'),
-             ('after_retrieve', 'RRMPFE_evaluate_client_after_retrieve_wall_s')]
-cols_cpu = [('all', 'RRMPFE_evaluate_client_cpu_s'),
-            ('before_retrieve', 'RRMPFE_evaluate_client_before_retrieve_cpu_s'),
-            ('retrieve', 'RRMPFE_evaluate_client_retrieve_cpu_s'),
-            ('after_retrieve', 'RRMPFE_evaluate_client_after_retrieve_cpu_s')]
-
-for segment_id, col in cols_wall:
-    segment_timings = mpfe_eval_wall[cols_base + [col]].copy()
-    segment_timings['segment'] = segment_id
-    segment_timings.rename(columns={col: 'time s'}, inplace=True)
-    mpfe_eval = mpfe_eval.append(segment_timings, ignore_index=True)
-
-for segment_id, col in cols_cpu:
-    segment_timings = mpfe_eval_cpu[cols_base + [col]].copy()
-    segment_timings['segment'] = segment_id
-    segment_timings.rename(columns={col: 'time s'}, inplace=True)
-    mpfe_eval = mpfe_eval.append(segment_timings, ignore_index=True)
+#### MPFE evaluate @ client (single core)
+mpfe_eval = pd.concat([dfs_sp['wall_RRMPFE_evaluate_client'], dfs_sp['cpu_RRMPFE_evaluate_client']])
+raise Exception
 
 # correct types
 mpfe_eval.N_events = mpfe_eval.N_events.astype(np.int)
