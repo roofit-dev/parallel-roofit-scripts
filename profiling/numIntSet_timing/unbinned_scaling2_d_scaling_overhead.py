@@ -4,21 +4,17 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:23:55
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-05-12 10:25:13
+# @Last Modified time: 2017-05-12 10:28:01
 
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-import glob
-import os
-import functools
 from pathlib import Path
-import itertools
+
+import load_timing
 
 pd.set_option("display.width", None)
-
-from load_timing import *
 
 
 def savefig(factorplot, fp):
@@ -41,15 +37,15 @@ savefig_dn.mkdir(parents=True, exist_ok=True)
 
 #### LOAD DATA FROM FILES
 fpgloblist = [basepath.glob('%i.allier.nikhef.nl/*.json' % i)
-              for i in range(18359816,18361592)]
-dfs_sp, dfs_mp_sl, dfs_mp_ma = load_dfs_coresplit(fpgloblist)
+              for i in range(18359816, 18361592)]
+dfs_sp, dfs_mp_sl, dfs_mp_ma = load_timing.load_dfs_coresplit(fpgloblist)
 
 
 #### TOTAL TIMINGS
 df_totals = pd.concat([dfs_sp['full_minimize'], dfs_mp_ma['full_minimize']])
 
 ### ADD IDEAL TIMING BASED ON SINGLE CORE RUNS
-df_ideal = estimate_ideal_timing(df_totals)
+df_ideal = load_timing.estimate_ideal_timing(df_totals)
 
 
 df_totals['timing_type'] = pd.Series(len(df_totals) * ('real',), index=df_totals.index)

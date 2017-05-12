@@ -2,11 +2,14 @@
 # @Author: E. G. Patrick Bos
 # @Date:   2017-05-12 10:07:19
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-05-12 10:25:03
+# @Last Modified time: 2017-05-12 10:28:19
 
 # Module with loading functions for different types of RooFit timings.
 
+import functools
+import itertools
 import pandas as pd
+pd.set_option("display.width", None)
 
 
 def merge_dataframes(*dataframes):
@@ -101,4 +104,3 @@ def estimate_ideal_timing(df):
             df_ideal = df_ideal.append(ideal_num_cpu_i)
 
     return df_ideal
-
