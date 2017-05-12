@@ -4,7 +4,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:23:55
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-05-12 10:28:01
+# @Last Modified time: 2017-05-12 10:53:12
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -42,16 +42,11 @@ dfs_sp, dfs_mp_sl, dfs_mp_ma = load_timing.load_dfs_coresplit(fpgloblist)
 
 
 #### TOTAL TIMINGS
-df_totals = pd.concat([dfs_sp['full_minimize'], dfs_mp_ma['full_minimize']])
+df_totals_real = pd.concat([dfs_sp['full_minimize'], dfs_mp_ma['full_minimize']])
 
 ### ADD IDEAL TIMING BASED ON SINGLE CORE RUNS
-df_ideal = load_timing.estimate_ideal_timing(df_totals)
-
-
-df_totals['timing_type'] = pd.Series(len(df_totals) * ('real',), index=df_totals.index)
-df_ideal['timing_type'] = pd.Series(len(df_ideal) * ('ideal',), index=df_ideal.index)
-
-df_totals = df_totals.append(df_ideal)
+df_totals_ideal = load_timing.estimate_ideal_timing(df_totals_real)
+df_totals = load_timing.combine_ideal_and_real(df_totals_real, df_totals_ideal)
 
 # add combination of two categories
 df_totals['N_events/timing_type'] = df_totals.N_events.astype(str) + '/' + df_totals.timing_type.astype(str)
@@ -59,34 +54,143 @@ df_totals['N_events/timing_type'] = df_totals.N_events.astype(str) + '/' + df_to
 
 #### NUMERICAL INTEGRAL TIMINGS
 df_numints = dfs_mp_sl['numInts'].copy()
-
-# add iteration information, which can be deduced from the order, ppid, num_cpu and name (because u0_int is only done once, we have to add a special check for that)
-numints_iteration = []
-it = 0
-N_names = len(df_numints.name.unique())
-# local_N_num_int is the number of numerical integrals in the local (current) iteration
-# it determines after how long the next iteration starts
-local_N_num_int = df_numints.num_cpu.iloc[0] * N_names
-# the current iteration starts here:
-current_iteration_start = 0
-current_ppid = df_numints.ppid.iloc[0]
-for irow, row in enumerate(df_numints.itertuples()):
-    if ((irow - current_iteration_start) == local_N_num_int) or current_ppid != row.ppid:
-        current_ppid = row.ppid
-        current_iteration_start = irow
-        it += 1
-        local_N_names = len(df_numints[irow:irow + N_names * row.num_cpu].name.unique())
-        local_N_num_int = row.num_cpu * local_N_names
-
-    numints_iteration.append(it)
-
-    # if (irow + 1) % local_N_num_int == 0:
-    #     it += 1
-
-df_numints['iteration'] = numints_iteration
+load_timing.add_iteration_column(df_numints)
 
 df_numints_min_by_iteration = df_numints.groupby('iteration').min()
 df_numints_max_by_iteration = df_numints.groupby('iteration').max()
+
+
+
+
+
+#### refactor and combine MPFE_evaluate_client timings
+mpfe_eval_wall = dfs_sp['wall_RRMPFE_evaluate_client']
+mpfe_eval_cpu = dfs_sp['cpu_RRMPFE_evaluate_client']
+# add after_retrieve columns
+mpfe_eval_wall['RRMPFE_evaluate_client_after_retrieve_wall_s'] = mpfe_eval_wall['RRMPFE_evaluate_client_wall_s'] - mpfe_eval_wall['RRMPFE_evaluate_client_before_retrieve_wall_s'] - mpfe_eval_wall['RRMPFE_evaluate_client_retrieve_wall_s']
+mpfe_eval_cpu['RRMPFE_evaluate_client_after_retrieve_cpu_s'] = mpfe_eval_cpu['RRMPFE_evaluate_client_cpu_s'] - mpfe_eval_cpu['RRMPFE_evaluate_client_before_retrieve_cpu_s'] - mpfe_eval_cpu['RRMPFE_evaluate_client_retrieve_cpu_s']
+# refactor for nice factorplotting; rename columns and add timing type column
+# ... cpu/wall column
+mpfe_eval_wall['cpu/wall'] = 'wall'
+mpfe_eval_cpu['cpu/wall'] = 'cpu'
+# ... give each timing column its own row
+mpfe_eval = pd.DataFrame(columns=['pid', 'N_events', 'num_cpu', 'time s', 'cpu/wall', 'segment'])
+cols_base = ['pid', 'N_events', 'num_cpu', 'cpu/wall']
+
+cols_wall = [('all', 'RRMPFE_evaluate_client_wall_s'),
+             ('before_retrieve', 'RRMPFE_evaluate_client_before_retrieve_wall_s'),
+             ('retrieve', 'RRMPFE_evaluate_client_retrieve_wall_s'),
+             ('after_retrieve', 'RRMPFE_evaluate_client_after_retrieve_wall_s')]
+cols_cpu = [('all', 'RRMPFE_evaluate_client_cpu_s'),
+            ('before_retrieve', 'RRMPFE_evaluate_client_before_retrieve_cpu_s'),
+            ('retrieve', 'RRMPFE_evaluate_client_retrieve_cpu_s'),
+            ('after_retrieve', 'RRMPFE_evaluate_client_after_retrieve_cpu_s')]
+
+for segment_id, col in cols_wall:
+    segment_timings = mpfe_eval_wall[cols_base + [col]].copy()
+    segment_timings['segment'] = segment_id
+    segment_timings.rename(columns={col: 'time s'}, inplace=True)
+    mpfe_eval = mpfe_eval.append(segment_timings, ignore_index=True)
+
+for segment_id, col in cols_cpu:
+    segment_timings = mpfe_eval_cpu[cols_base + [col]].copy()
+    segment_timings['segment'] = segment_id
+    segment_timings.rename(columns={col: 'time s'}, inplace=True)
+    mpfe_eval = mpfe_eval.append(segment_timings, ignore_index=True)
+
+# correct types
+mpfe_eval.N_events = mpfe_eval.N_events.astype(np.int)
+mpfe_eval.num_cpu = mpfe_eval.num_cpu.astype(np.int)
+mpfe_eval.pid = mpfe_eval.pid.astype(np.int)
+
+
+#### add MPFE evaluate full timings
+mpfe_eval_full = dfs_sp['RRMPFE_evaluate_full']
+mpfe_eval_full.rename(columns={'RRMPFE_evaluate_wall_s': 'time s'}, inplace=True)
+mpfe_eval_full['cpu/wall'] = 'wall+INLINE'
+mpfe_eval_full['segment'] = 'all'
+
+mpfe_eval = mpfe_eval.append(mpfe_eval_full)
+
+
+#### total time per run (== per pid, but the other columns are also grouped-by to prevent from summing over them)
+mpfe_eval_total = mpfe_eval.groupby(['pid', 'N_events', 'num_cpu', 'cpu/wall', 'segment'], as_index=False).sum()
+
+
+#### MPFE calculate
+mpfe_calc = dfs_sp['RRMPFE_calculate_client']
+mpfe_calc.rename(columns={'RRMPFE_calculate_client_wall_s': 'walltime s'}, inplace=True)
+mpfe_calc_total = mpfe_calc.groupby(['pid', 'N_events', 'num_cpu'], as_index=False).sum()
+
+
+
+
+
+#### RATS evaluate full
+rats_eval_sp = dfs_sp['RATS_evaluate_full'].dropna()
+rats_eval_mp = dfs_mp['RATS_evaluate_full'].dropna()
+rats_eval_sp_total = rats_eval_sp.groupby(['pid', 'N_events', 'num_cpu', 'mode'], as_index=False).sum()
+rats_eval_mp_total = rats_eval_mp.groupby(['ppid', 'N_events', 'num_cpu', 'mode'], as_index=False).sum()\
+                                 .drop('pid', axis=1)
+
+rats_eval_mp_by_ppid = rats_eval_mp.groupby(['pid', 'ppid', 'N_events', 'num_cpu', 'mode'], as_index=False)\
+                                   .sum()\
+                                   .groupby('ppid')
+
+rats_eval_mp_maxppid = rats_eval_mp_by_ppid.max()\
+                                           .rename(columns={'RATS_evaluate_wall_s': 'ppid-max wall s'})
+rats_eval_mp_minppid = rats_eval_mp_by_ppid.min()\
+                                           .rename(columns={'RATS_evaluate_wall_s': 'ppid-min wall s'})
+
+
+#### RATS evaluate per CPU iteration
+rats_eval_itcpu_sp = dfs_sp['RATS_evaluate_mpmaster_perCPU']
+rats_eval_itcpu_mp = dfs_mp['RATS_evaluate_mpmaster_perCPU']
+
+rats_eval_itcpu_sp['sp/mp'] = 'sp'
+rats_eval_itcpu_mp['sp/mp'] = 'mp'
+
+## dataframe met versch. itX timings per rij en een klasse kolom die het itX X nummer bevat
+rats_eval_itcpu = pd.DataFrame(columns=['pid', 'N_events', 'num_cpu', 'walltime s', 'it_nr', 'sp/mp'])
+
+itX_cols = [(ix, 'RATS_evaluate_mpmaster_it%i_wall_s' % ix)
+            for ix in range(max(rats_eval_itcpu_sp.num_cpu))]
+
+cols_base = ['pid', 'N_events', 'num_cpu', 'sp/mp']
+
+for X, col in itX_cols:
+    itX_timings = rats_eval_itcpu_sp[cols_base + [col]].copy().dropna()
+    itX_timings['it_nr'] = X
+    itX_timings.rename(columns={col: 'walltime s'}, inplace=True)
+    rats_eval_itcpu = rats_eval_itcpu.append(itX_timings, ignore_index=True)
+    itX_timings = rats_eval_itcpu_mp[cols_base + [col]].copy().dropna()
+    itX_timings['it_nr'] = X
+    itX_timings.rename(columns={col: 'walltime s'}, inplace=True)
+    rats_eval_itcpu = rats_eval_itcpu.append(itX_timings, ignore_index=True)
+
+# correct types
+rats_eval_itcpu.pid = rats_eval_itcpu.pid.astype(np.int)
+rats_eval_itcpu.N_events = rats_eval_itcpu.N_events.astype(np.int)
+rats_eval_itcpu.num_cpu = rats_eval_itcpu.num_cpu.astype(np.int)
+rats_eval_itcpu.it_nr = rats_eval_itcpu.it_nr.astype(np.int)
+
+rats_eval_itcpu_total = rats_eval_itcpu.groupby(['pid', 'N_events', 'num_cpu', 'it_nr', 'sp/mp'], as_index=False).sum()
+
+
+#### ADD mpfe_eval COLUMN OF CPU_ID, ***PROBABLY***, WHICH SEEMS TO EXPLAIN DIFFERENT TIMINGS QUITE WELL
+mpfe_eval_cpu_split = pd.DataFrame(columns=mpfe_eval.columns)
+
+for num_cpu in range(2, 9):
+    mpfe_eval_num_cpu = mpfe_eval[(mpfe_eval.segment == 'all') * (mpfe_eval.num_cpu == num_cpu)]
+    mpfe_eval_num_cpu['cpu_id'] = None
+    for cpu_id in range(num_cpu):
+        mpfe_eval_num_cpu.iloc[cpu_id::num_cpu, mpfe_eval_num_cpu.columns.get_loc('cpu_id')] = cpu_id
+    mpfe_eval_cpu_split = mpfe_eval_cpu_split.append(mpfe_eval_num_cpu)
+
+mpfe_eval_cpu_split_total = mpfe_eval_cpu_split.groupby(['pid', 'N_events', 'num_cpu', 'cpu/wall', 'segment', 'cpu_id'], as_index=False).sum()
+
+
+
 
 
 #### ANALYSIS

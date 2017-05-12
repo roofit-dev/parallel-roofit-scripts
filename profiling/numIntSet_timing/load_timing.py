@@ -2,7 +2,7 @@
 # @Author: E. G. Patrick Bos
 # @Date:   2017-05-12 10:07:19
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-05-12 10:28:19
+# @Last Modified time: 2017-05-12 10:39:58
 
 # Module with loading functions for different types of RooFit timings.
 
@@ -104,3 +104,45 @@ def estimate_ideal_timing(df):
             df_ideal = df_ideal.append(ideal_num_cpu_i)
 
     return df_ideal
+
+
+def combine_ideal_and_real(df_real_orig, df_ideal_orig):
+    df_real = df_real_orig.copy()
+    df_ideal = df_ideal_orig.copy()
+
+    df_real['timing_type'] = pd.Series(len(df_real) * ('real',), index=df_real.index)
+    df_ideal['timing_type'] = pd.Series(len(df_ideal) * ('ideal',), index=df_ideal.index)
+
+    df_real = df_real.append(df_ideal)
+    return df_real
+
+
+def add_iteration_column(df):
+    """
+    Only used for numerical integral timings, but perhaps also useful for other timings with some
+    adaptations. Adds iteration information, which can be deduced from the order, ppid, num_cpu
+    and name (because u0_int is only done once, we have to add a special check for that).
+    """
+    iteration = []
+    it = 0
+    N_names = len(df.name.unique())
+    # local_N_num_int is the number of numerical integrals in the local (current) iteration
+    # it determines after how long the next iteration starts
+    local_N_num_int = df.num_cpu.iloc[0] * N_names
+    # the current iteration starts here:
+    current_iteration_start = 0
+    current_ppid = df.ppid.iloc[0]
+    for irow, row in enumerate(df.itertuples()):
+        if ((irow - current_iteration_start) == local_N_num_int) or current_ppid != row.ppid:
+            current_ppid = row.ppid
+            current_iteration_start = irow
+            it += 1
+            local_N_names = len(df[irow:irow + N_names * row.num_cpu].name.unique())
+            local_N_num_int = row.num_cpu * local_N_names
+
+        iteration.append(it)
+
+        # if (irow + 1) % local_N_num_int == 0:
+        #     it += 1
+
+    df['iteration'] = iteration
