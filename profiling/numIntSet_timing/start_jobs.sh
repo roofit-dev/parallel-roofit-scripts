@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-05-11 16:54:14
+# @Last Modified time: 2017-05-12 14:13:28
 
 config_name=$1
 
@@ -22,7 +22,22 @@ fi
 # the short queue gets full rather quickly, so flag when that happens
 short_full=false
 
-ix=1
+# start a selected range
+if [[ -z "$2" && -z "$3" ]]; then
+  start_from=$2
+  ix=$start_from
+  start_upto=$3
+
+  argument_string_file="${run_id}_argument_string_list_${start_from}-${start_upto}.txt"
+
+  cat "${run_id}_argument_string_list.txt" | sed -n -e "${start_from},${start_upto}p" > "${argument_string_file}"
+
+  echo "Starting selected range: job $2 up to job $3 in the argument_string_list file."
+else
+  ix=1
+  argument_string_file="${run_id}_argument_string_list.txt"
+fi
+
 while IFS= read -r argument_string ; do
   if $short_full ; then
     queue=generic
@@ -50,4 +65,4 @@ while IFS= read -r argument_string ; do
   fi
 
   ((++ix))
-done < "${run_id}_argument_string_list.txt"
+done < "${argument_string_file}"
