@@ -2,9 +2,11 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-05-12 14:13:28
+# @Last Modified time: 2017-05-12 14:36:02
 
 config_name=$1
+start_from=$2
+start_upto=$3
 
 if [[ -z "$config_name" ]]; then
   echo "Error: no config script filename argument given!"
@@ -23,14 +25,12 @@ fi
 short_full=false
 
 # start a selected range
-if [[ -z "$2" && -z "$3" ]]; then
-  start_from=$2
+if [[ -z "$start_from" && -z "$start_upto" ]]; then
   ix=$start_from
-  start_upto=$3
 
   argument_string_file="${run_id}_argument_string_list_${start_from}-${start_upto}.txt"
 
-  cat "${run_id}_argument_string_list.txt" | sed -n -e "${start_from},${start_upto}p" > "${argument_string_file}"
+  sed "${run_id}_argument_string_list.txt" -n -e "${start_from},${start_upto}p" > "${argument_string_file}"
 
   echo "Starting selected range: job $2 up to job $3 in the argument_string_list file."
 else
