@@ -2,7 +2,7 @@
 # @Author: E. G. Patrick Bos
 # @Date:   2017-05-12 10:07:19
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-05-12 13:57:31
+# @Last Modified time: 2017-05-12 16:49:59
 
 # Module with loading functions for different types of RooFit timings.
 
@@ -22,7 +22,7 @@ def df_from_json_incl_meta(fp, fp_meta=None,
                                       'seed', 'print_level',
                                       'time_num_ints', 'timing_flag',
                                       'optConst'],
-                           drop_nan=False):
+                           drop_nan=False, non_slave_ppid=-1):
     result = {}
     if fp_meta is None:
         fp_meta = fp.with_name('timing_meta.json')
@@ -32,10 +32,12 @@ def df_from_json_incl_meta(fp, fp_meta=None,
     single_and_master_process = pd.merge(main_df, meta_df, how='left', on='pid')
     if 'ppid' in main_df.columns:
         single_and_master_process.drop('ppid', axis=1, inplace=True)
-        multi_process = pd.merge(main_df, meta_df, how='left',
-                                 left_on='ppid', right_on='pid').drop('pid_y', axis=1)
-        multi_process.rename(columns={'pid_x': 'pid'}, inplace=True)
-        result['multi'] = multi_process
+        slaves_df = main_df[main_df.ppid != non_slave_ppid]
+        if len(slaves_df) > 0:
+            multi_process = pd.merge(slaves_df, meta_df, how='left',
+                                     left_on='ppid', right_on='pid').drop('pid_y', axis=1)
+            multi_process.rename(columns={'pid_x': 'pid'}, inplace=True)
+            result['multi'] = multi_process
 
     single_process = single_and_master_process[single_and_master_process.num_cpu == 1].copy()
     master_process = single_and_master_process[single_and_master_process.num_cpu > 1].copy()
