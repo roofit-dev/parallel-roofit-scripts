@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-05-12 14:36:02
+# @Last Modified time: 2017-05-30 17:31:59
 
 config_name=$1
 start_from=$2
@@ -23,6 +23,9 @@ fi
 
 # the short queue gets full rather quickly, so flag when that happens
 short_full=false
+
+# use the multicore queue!
+force_multicore_queue=true
 
 # start a selected range
 if [[ -n "$start_from" && -n "$start_upto" ]]; then
@@ -50,6 +53,10 @@ while IFS= read -r argument_string ; do
     else
       queue=generic
     fi
+  fi
+
+  if $force_multicore_queue; then
+    queue=multicore
   fi
 
   qsub -q $queue -N $run_id -l "walltime=$wallstr" -v "$argument_string" "$run_script_name"
