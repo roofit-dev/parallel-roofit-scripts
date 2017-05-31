@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-05-31 14:21:51
+# @Last Modified time: 2017-05-31 14:28:41
 
 config_name=$1
 start_from=$2
@@ -25,7 +25,7 @@ fi
 short_full=false
 
 # use the multicore queue!
-force_multicore_queue=false
+force_multicore_queue=true
 
 # start a selected range
 if [[ -n "$start_from" && -n "$start_upto" ]]; then
