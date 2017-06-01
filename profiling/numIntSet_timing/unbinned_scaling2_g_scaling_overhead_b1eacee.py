@@ -4,7 +4,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:23:55
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-06-01 07:24:33
+# @Last Modified time: 2017-06-01 08:18:27
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -69,10 +69,13 @@ df_totals['N_events/timing_type'] = df_totals.N_events.astype(str) + '/' + df_to
 #### RooRealMPFE TIMINGS
 
 ### MPFE evaluate @ client (single core) (flags 5 and 6)
-mpfe_eval = pd.concat([dfs_mp_ma['wall_RRMPFE_evaluate_client'], dfs_mp_ma['cpu_RRMPFE_evaluate_client']])
+# mpfe_eval = pd.concat([dfs_mp_ma['wall_RRMPFE_evaluate_client'], dfs_mp_ma['cpu_RRMPFE_evaluate_client']])
+mpfe_eval = pd.concat([v for k, v in dfs_mp_ma.items() if 'wall_RRMPFE_evaluate_client' in k] +
+                      [v for k, v in dfs_mp_ma.items() if 'cpu_RRMPFE_evaluate_client' in k])
 
 ### add MPFE evaluate full timings (flag 4)
-mpfe_eval_full = dfs_mp_ma['RRMPFE_evaluate_full']
+# mpfe_eval_full = dfs_mp_ma['RRMPFE_evaluate_full']
+mpfe_eval_full = pd.concat([v for k, v in dfs_mp_ma.items() if 'RRMPFE_evaluate_full' in k])
 mpfe_eval_full.rename(columns={'RRMPFE_evaluate_wall_s': 'time s'}, inplace=True)
 mpfe_eval_full['cpu/wall'] = 'wall+INLINE'
 mpfe_eval_full['segment'] = 'all'
@@ -97,8 +100,9 @@ mpfe_eval_cpu_split_total = mpfe_eval_cpu_split.groupby(['pid', 'N_events', 'num
 
 
 ### MPFE calculate
-mpfe_calc = dfs_mp_ma['RRMPFE_calculate_client']
-mpfe_calc.rename(columns={'RRMPFE_calculate_client_wall_s': 'walltime s'}, inplace=True)
+# mpfe_calc = dfs_mp_ma['RRMPFE_calculate_client']
+mpfe_calc = pd.concat([v for k, v in dfs_mp_ma.items() if 'RRMPFE_calculate_initialize' in k])
+mpfe_calc.rename(columns={'RRMPFE_calculate_initialize_wall_s': 'walltime s'}, inplace=True)
 mpfe_calc_total = mpfe_calc.groupby(['pid', 'N_events', 'num_cpu', 'force_num_int'], as_index=False).sum()
 
 
