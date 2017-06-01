@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-06-01 16:57:20
+# @Last Modified time: 2017-06-01 17:00:03
 
 # unbinned_scaling2_c_cpu_affinity run with Release ROOT showed improvement
 # in overall timings, but the multi-core anomalous overhead now became even more
@@ -10,7 +10,7 @@
 # This set will run with all other timing flags in order to try to track down
 # what's causing these multi-core delays.
 
-export run_id=unbinned_scaling2_i_scaling_overhead_setgetattributes
+export run_id=unbinned_scaling2_j_scaling_overhead_timing_removed
 
 export run_script_name="run_root_unbinned_scaling2.sh"
 
