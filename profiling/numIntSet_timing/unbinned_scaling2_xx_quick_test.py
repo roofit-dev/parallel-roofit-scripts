@@ -4,7 +4,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:23:55
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-06-12 10:26:40
+# @Last Modified time: 2017-06-12 10:32:13
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -40,10 +40,7 @@ savefig_dn = basepath / 'analysis'
 savefig_dn.mkdir(parents=True, exist_ok=True)
 
 #### LOAD DATA FROM FILES
-fpgloblist = [basepath.glob('%i.allier.nikhef.nl/*.json' % i)
-              for i in range(18465713, 18465728)]
-              # for i in itertools.chain(range(18445438, 18445581),
-              #                          range(18366732, 18367027))]
+fpgloblist = [basepath.glob('*.allier.nikhef.nl/*.json')]
 
 skip_on_match = ['timing_RRMPFE_serverloop_p*.json',  # skip timing_flag 8 output (contains no data)
                  ]
