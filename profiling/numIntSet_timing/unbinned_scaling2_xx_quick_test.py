@@ -4,7 +4,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:23:55
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-06-12 13:35:52
+# @Last Modified time: 2017-06-12 13:38:27
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -28,7 +28,7 @@ def savefig(factorplot, fp):
 
 """
 cd ~/projects/apcocsm/code/profiling/numIntSet_timing
-rsync -zavr --exclude='*_argument_string_list.txt' nikhef:'project_atlas/apcocsm_code/profiling/numIntSet_timing/unbinned_scaling2_xx_quick_test_*' ./
+rsync -zavr --exclude='unbinned_scaling2_*.[oe]*' --exclude='*_argument_string_list.txt' nikhef:'project_atlas/apcocsm_code/profiling/numIntSet_timing/unbinned_scaling2_xx_quick_test_*' ./
 """
 
 basebasepath = Path.home() / 'projects/apcocsm/code/profiling/numIntSet_timing/'
