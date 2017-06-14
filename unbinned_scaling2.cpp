@@ -24,7 +24,8 @@ void unbinned_scaling2(int num_cpu=1, bool force_num_int=false,
                        int timing_flag=1,
                        bool cpu_affinity=true,
                        bool fork_timer = false,
-                       int fork_timer_sleep_us = 100000
+                       int fork_timer_sleep_us = 100000,
+                       bool debug=true
                        ) {
   //gSystem->Exec("top -n1 -b");
   // num_cpu: -1 is special option -> overhead communicatie protocol vergelijken (vgl met 1 cpu)
@@ -37,7 +38,10 @@ void unbinned_scaling2(int num_cpu=1, bool force_num_int=false,
   // - weinig parameters, veel data: scalability hoort beter te zijn (minder comm overhead) -> bottom line van wat de software kan
   // - observables even op 1 houden, alles optellen klopt conceptueel-statistisch niet
 
-  RooMsgService::instance().addStream(DEBUG, Topic(Generation));
+  if (debug) {
+    RooMsgService::instance().addStream(DEBUG);
+    // extra possible options: Topic(Generation) Topic(RooFit::Eval), ClassName("RooAbsTestStatistic")
+  }
 
   // int N_parameters(8);  // must be even, means and sigmas have diff ranges
 
