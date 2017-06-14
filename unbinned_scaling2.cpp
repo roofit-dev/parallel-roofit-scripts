@@ -3,6 +3,9 @@
 #include <sstream>
 #include <fstream>
 #include <string>
+#include <unistd.h>  // usleep
+#include <sys/types.h>  // for kill
+#include <signal.h>     // for kill
 
 using namespace RooFit;
 
@@ -13,6 +16,8 @@ using namespace RooFit;
 
 void unbinned_scaling2(int num_cpu=1, bool force_num_int=false,
                        bool time_num_ints=false, int optConst=2,
+                       bool fork_timer = false,
+                       int fork_timer_sleep_us = 100000,
                        int N_gaussians=1, int N_observables=1, int N_parameters=2,
                        int N_events=100000,
                        int parallel_interleave=0,
@@ -222,17 +227,39 @@ void unbinned_scaling2(int num_cpu=1, bool force_num_int=false,
     m.setPrintLevel(printlevel);
     m.optimizeConst(optimizeConst);
 
-    if (timing_flag == 1) {
-      timer.start();
+    int pid = -1;
+
+    if (fork_timer) {
+      pid = fork();
     }
-    // m.hesse();
+    if (pid == 0) {
+      /* child */
+      timer.start();
+      while (true) {
+        timer.stop();
+        std::cout << "TIME: " << timer.timing_s() << "s" << std::endl;
+        usleep(fork_timer_sleep_us);
+      }
+    }
+    else {
+      /* parent */
+      if (timing_flag == 1) {
+        timer.start();
+      }
+      // m.hesse();
 
-    m.minimize("Minuit2", "migrad");
+      m.minimize("Minuit2", "migrad");
 
-    if (timing_flag == 1) {
-      timer.stop();
-      std::cout << timer.timing_s() << "s" << std::endl;
-      outfile << timer.timing_s() << getpid();
+      if (timing_flag == 1) {
+        timer.stop();
+        std::cout << timer.timing_s() << "s" << std::endl;
+        outfile << timer.timing_s() << getpid();
+      }
+
+      if (pid > 0) {
+        // a child exists
+        kill(pid, SIGKILL);
+      }
     }
   }
 
