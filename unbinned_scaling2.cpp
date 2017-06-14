@@ -16,15 +16,15 @@ using namespace RooFit;
 
 void unbinned_scaling2(int num_cpu=1, bool force_num_int=false,
                        bool time_num_ints=false, int optConst=2,
-                       bool fork_timer = false,
-                       int fork_timer_sleep_us = 100000,
                        int N_gaussians=1, int N_observables=1, int N_parameters=2,
                        int N_events=100000,
                        int parallel_interleave=0,
                        int seed=1,
                        int print_level=0,
                        int timing_flag=1,
-                       bool cpu_affinity=true
+                       bool cpu_affinity=true,
+                       bool fork_timer = false,
+                       int fork_timer_sleep_us = 100000
                        ) {
   //gSystem->Exec("top -n1 -b");
   // num_cpu: -1 is special option -> overhead communicatie protocol vergelijken (vgl met 1 cpu)
