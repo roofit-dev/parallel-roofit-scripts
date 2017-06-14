@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-06-12 10:21:04
+# @Last Modified time: 2017-06-14 13:47:13
 
 # Run a few short scaling total timing tests
 
@@ -34,7 +34,7 @@ ix=1
 
 # for e in 100000 1000000 10000000 100000000; do
 for e in 100000; do
-for cpu in {1..8}; do
+for cpu in {1..3}; do
 for force_and_time_num_int in true false; do
 # for repeat_nr in {1..3}; do
 for repeat_nr in 1; do
