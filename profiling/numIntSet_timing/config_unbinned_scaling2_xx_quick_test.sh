@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-06-14 15:15:15
+# @Last Modified time: 2017-06-14 15:37:07
 
 # Run a few short scaling total timing tests
 
@@ -22,7 +22,7 @@ o=1
 p=2
 ileave=0
 seed=1
-printlevel=0
+printlevel=1
 optConst=2
 
 # parameters for numerical integral timing
