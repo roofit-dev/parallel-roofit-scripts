@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-06-14 13:47:13
+# @Last Modified time: 2017-06-14 15:15:15
 
 # Run a few short scaling total timing tests
 
@@ -28,6 +28,10 @@ optConst=2
 # parameters for numerical integral timing
 # for time_num_ints in true false; do
 
+# ugly hacky timeline profiler
+fork_timer=true
+fork_timer_sleep_us=100000
+
 argument_string_list=""
 ix=1
 # walltime_array is declared implictly below
@@ -46,7 +50,7 @@ for timing_flag in 1; do
 force_num_int=$force_and_time_num_int
 time_num_ints=$force_and_time_num_int
 
-argument_string_list="${argument_string_list}run_id=${run_id},repeat_nr=${repeat_nr},cpu=${cpu},force_num_int=${force_num_int},time_num_ints=${time_num_ints},optConst=${optConst},g=${g},o=${o},p=${p},e=${e},ileave=${ileave},seed=${seed},printlevel=${printlevel},timing_flag=${timing_flag}
+argument_string_list="${argument_string_list}run_id=${run_id},repeat_nr=${repeat_nr},cpu=${cpu},force_num_int=${force_num_int},time_num_ints=${time_num_ints},optConst=${optConst},g=${g},o=${o},p=${p},e=${e},ileave=${ileave},seed=${seed},printlevel=${printlevel},timing_flag=${timing_flag},fork_timer=${fork_timer},fork_timer_sleep_us=${fork_timer_sleep_us}
 "
 # note the newline at the end of the string, don't remove that!
 

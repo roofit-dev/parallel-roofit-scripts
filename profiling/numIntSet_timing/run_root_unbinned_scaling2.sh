@@ -2,11 +2,11 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-05-09 17:29:39
+# @Last Modified time: 2017-06-14 15:14:17
 
 #PBS -l nodes=1:ppn=8
 
-if [[ -z "$run_id" || -z "$timing_flag" || -z "$g" || -z "$o" || -z "$p" || -z "$ileave" || -z "$seed" || -z "$printlevel" || -z "$optConst" || -z "$time_num_ints" || -z "$e" || -z "$cpu" || -z "$force_num_int" ]]; then
+if [[ -z "$run_id" || -z "$timing_flag" || -z "$g" || -z "$o" || -z "$p" || -z "$ileave" || -z "$seed" || -z "$printlevel" || -z "$optConst" || -z "$time_num_ints" || -z "$e" || -z "$cpu" || -z "$force_num_int" || -z "$fork_timer" || -z "$fork_timer_sleep_us" ]]; then
   echo "Error: configuration environment variable missing!"
   echo "run_id: $run_id"
   echo "g: $g"
@@ -21,6 +21,8 @@ if [[ -z "$run_id" || -z "$timing_flag" || -z "$g" || -z "$o" || -z "$p" || -z "
   echo "cpu: $cpu"
   echo "force_num_int: $force_num_int"
   echo "timing_flag: $timing_flag"
+  echo "fork_timer: $fork_timer"
+  echo "fork_timer_sleep_us: $fork_timer_sleep_us"
   exit 1
 fi
 
@@ -45,6 +47,6 @@ else
   echo "Repeat number $repeat_nr"
 fi
 
-root -b -q -l "$SCRIPT_PATH(${cpu},${force_num_int},${time_num_ints},${optConst},${g},${o},${p},${e},${ileave},${seed},${printlevel},${timing_flag})"
+root -b -q -l "$SCRIPT_PATH(${cpu},${force_num_int},${time_num_ints},${optConst},${g},${o},${p},${e},${ileave},${seed},${printlevel},${timing_flag},${fork_timer},${fork_timer_sleep_us})"
 
 cd -
