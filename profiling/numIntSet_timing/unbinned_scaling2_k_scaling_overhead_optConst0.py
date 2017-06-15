@@ -4,7 +4,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:23:55
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-06-15 09:36:31
+# @Last Modified time: 2017-06-15 10:41:24
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -57,16 +57,15 @@ df_totals = load_timing.combine_ideal_and_real(df_totals_real, df_totals_ideal)
 # # add combination of two categories
 df_totals['N_events/timing_type'] = df_totals.N_events.astype(str) + '/' + df_totals.timing_type.astype(str)
 
-# ONLY TOTALS IN THIS RUN
-
-"""
 
 #### NUMERICAL INTEGRAL TIMINGS
-# df_numints = dfs_mp_sl['numInts'].copy()
-# load_timing.add_iteration_column(df_numints)
+df_numints = dfs_mp_sl['numInts'].copy()
+load_timing.add_iteration_column(df_numints)
 
-# df_numints_min_by_iteration = df_numints.groupby('iteration').min()
-# df_numints_max_by_iteration = df_numints.groupby('iteration').max()
+df_numints_min_by_iteration = df_numints.groupby('iteration').min()
+df_numints_max_by_iteration = df_numints.groupby('iteration').max()
+
+"""
 
 
 #### RooRealMPFE TIMINGS
@@ -175,19 +174,19 @@ savefig(g, savefig_dn / 'mpfe_calc.png')
 
 # numerical integrals
 
-# g = sns.factorplot(x='num_cpu', y='wall_s', col='N_events', sharey='row', row='force_num_int', estimator=np.min, data=df_numints, legend_out=False)
-# plt.subplots_adjust(top=0.85)
-# g.fig.suptitle('wallclock timing of all timed numerical integrals --- minima of all integrations per plotted factor --- vertical bars: variation in different runs and iterations')
-# savefig(g, savefig_dn / 'numInts_min.png')
+g = sns.factorplot(x='num_cpu', y='wall_s', col='N_events', sharey='row', row='force_num_int', estimator=np.min, data=df_numints, legend_out=False)
+plt.subplots_adjust(top=0.85)
+g.fig.suptitle('wallclock timing of all timed numerical integrals --- minima of all integrations per plotted factor --- vertical bars: variation in different runs and iterations')
+savefig(g, savefig_dn / 'numInts_min.png')
 
-# g = sns.factorplot(x='num_cpu', y='wall_s', col='N_events', sharey='row', row='force_num_int', estimator=np.max, data=df_numints, legend_out=False)
-# plt.subplots_adjust(top=0.85)
-# g.fig.suptitle('wallclock timing of all timed numerical integrals --- maxima of all integrations per plotted factor --- vertical bars: variation in different runs and iterations')
-# savefig(g, savefig_dn / 'numInts_max.png')
+g = sns.factorplot(x='num_cpu', y='wall_s', col='N_events', sharey='row', row='force_num_int', estimator=np.max, data=df_numints, legend_out=False)
+plt.subplots_adjust(top=0.85)
+g.fig.suptitle('wallclock timing of all timed numerical integrals --- maxima of all integrations per plotted factor --- vertical bars: variation in different runs and iterations')
+savefig(g, savefig_dn / 'numInts_max.png')
 
-# g = sns.factorplot(x='num_cpu', y='wall_s', col='N_events', sharey='row', row='force_num_int', estimator=np.sum, data=df_numints_max_by_iteration, legend_out=False)
-# plt.subplots_adjust(top=0.8)
-# g.fig.suptitle('wallclock timing of all timed numerical integrals --- sum of maximum of each iteration per run $\sum_{\mathrm{it}} \max_{\mathrm{core}}(t_{\mathrm{run,it,core}})$ --- vertical bars: variation in different runs')
-# savefig(g, savefig_dn / 'numInts_it_sum_max.png')
+g = sns.factorplot(x='num_cpu', y='wall_s', col='N_events', sharey='row', row='force_num_int', estimator=np.sum, data=df_numints_max_by_iteration, legend_out=False)
+plt.subplots_adjust(top=0.8)
+g.fig.suptitle('wallclock timing of all timed numerical integrals --- sum of maximum of each iteration per run $\sum_{\mathrm{it}} \max_{\mathrm{core}}(t_{\mathrm{run,it,core}})$ --- vertical bars: variation in different runs')
+savefig(g, savefig_dn / 'numInts_it_sum_max.png')
 
 plt.show()
