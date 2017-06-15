@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-06-15 07:52:06
+# @Last Modified time: 2017-06-15 08:11:42
 
 # unbinned_scaling2_c_cpu_affinity run with Release ROOT showed improvement
 # in overall timings, but the multi-core anomalous overhead now became even more
@@ -29,6 +29,9 @@ seed=1
 printlevel=0
 optConst=0
 
+cpu_affinity=true
+debug=false
+
 # parameters for numerical integral timing
 # time_num_ints=false
 
@@ -40,8 +43,8 @@ argument_string_list=""
 ix=1
 # walltime_array is declared implictly below
 
-# for e in 1000000 10000000 100000000; do
-for e in 100000; do
+for e in 100000 1000000 10000000 100000000; do
+# for e in 100000; do
 for cpu in {1..8}; do
 # for force_num_int in true false; do
 for force_and_time_num_int in true false; do
@@ -55,7 +58,7 @@ for timing_flag in 1; do
 force_num_int=$force_and_time_num_int
 time_num_ints=$force_and_time_num_int
 
-argument_string_list="${argument_string_list}run_id=${run_id},repeat_nr=${repeat_nr},cpu=${cpu},force_num_int=${force_num_int},time_num_ints=${time_num_ints},optConst=${optConst},g=${g},o=${o},p=${p},e=${e},ileave=${ileave},seed=${seed},printlevel=${printlevel},timing_flag=${timing_flag},fork_timer=${fork_timer},fork_timer_sleep_us=${fork_timer_sleep_us}
+argument_string_list="${argument_string_list}run_id=${run_id},repeat_nr=${repeat_nr},cpu=${cpu},force_num_int=${force_num_int},time_num_ints=${time_num_ints},optConst=${optConst},g=${g},o=${o},p=${p},e=${e},ileave=${ileave},seed=${seed},printlevel=${printlevel},timing_flag=${timing_flag},cpu_affinity=${cpu_affinity},fork_timer=${fork_timer},fork_timer_sleep_us=${fork_timer_sleep_us},debug=${debug}
 "
 # note the newline at the end of the string, don't remove that!
 
