@@ -4,7 +4,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:23:55
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-06-15 08:30:52
+# @Last Modified time: 2017-06-15 09:36:31
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -51,7 +51,7 @@ dfs_sp, dfs_mp_sl, dfs_mp_ma = load_timing.load_dfs_coresplit(fpgloblist, skip_o
 df_totals_real = pd.concat([dfs_sp['full_minimize'], dfs_mp_ma['full_minimize']])
 
 # ### ADD IDEAL TIMING BASED ON SINGLE CORE RUNS
-df_totals_ideal = load_timing.estimate_ideal_timing(df_totals_real)
+df_totals_ideal = load_timing.estimate_ideal_timing(df_totals_real, groupby=['N_events', 'force_num_int'])
 df_totals = load_timing.combine_ideal_and_real(df_totals_real, df_totals_ideal)
 
 # # add combination of two categories

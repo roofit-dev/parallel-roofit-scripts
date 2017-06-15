@@ -2,7 +2,7 @@
 # @Author: E. G. Patrick Bos
 # @Date:   2017-05-12 10:07:19
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-05-12 16:49:59
+# @Last Modified time: 2017-06-15 09:36:01
 
 # Module with loading functions for different types of RooFit timings.
 
@@ -112,12 +112,12 @@ def load_dfs_coresplit(fpgloblist, skip_on_match=[], skip_meta=True):
     return dfs_sp, dfs_mp_sl, dfs_mp_ma
 
 
-def estimate_ideal_timing(df):
+def estimate_ideal_timing(df, groupby=['N_events']):
     """Estimate ideal timing based on single core runs"""
     single_core = df[df.num_cpu == 1]
 
     # estimate ideal curve from fastest single_core run:
-    single_core_fastest = single_core.groupby('N_events', as_index=False).min()
+    single_core_fastest = single_core.groupby(groupby, as_index=False).min()
     df_ideal = single_core_fastest.copy()
     for num_cpu in df.num_cpu.unique():
         if num_cpu != 1:
