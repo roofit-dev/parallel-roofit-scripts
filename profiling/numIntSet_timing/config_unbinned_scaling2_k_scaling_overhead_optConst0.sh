@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-06-14 16:59:46
+# @Last Modified time: 2017-06-15 07:52:06
 
 # unbinned_scaling2_c_cpu_affinity run with Release ROOT showed improvement
 # in overall timings, but the multi-core anomalous overhead now became even more
@@ -40,13 +40,13 @@ argument_string_list=""
 ix=1
 # walltime_array is declared implictly below
 
-# for e in 100000 1000000 10000000 100000000; do
+# for e in 1000000 10000000 100000000; do
 for e in 100000; do
 for cpu in {1..8}; do
 # for force_num_int in true false; do
 for force_and_time_num_int in true false; do
-# for repeat_nr in {1..3}; do
-for repeat_nr in 1; do
+for repeat_nr in {1..3}; do
+# for repeat_nr in 1; do
 
 # timing_flag 8 does nothing!
 # for timing_flag in {1..7} {9..10}; do
