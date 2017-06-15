@@ -4,7 +4,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:23:55
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-06-15 08:30:52
+# @Last Modified time: 2017-06-15 08:30:35
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -32,13 +32,13 @@ rsync -zavr nikhef:project_atlas/apcocsm_code/profiling/numIntSet_timing/unbinne
 """
 
 basepath = Path.home() / 'projects/apcocsm/code/profiling/numIntSet_timing/unbinned_scaling2_k_scaling_overhead_optConst0'
-savefig_dn = basepath / 'analysis'
+savefig_dn = basepath / 'analysis_NOaffinity'
 
 savefig_dn.mkdir(parents=True, exist_ok=True)
 
 #### LOAD DATA FROM FILES
 fpgloblist = [basepath.glob('%i.allier.nikhef.nl/*.json' % i)
-              for i in range(18501465, 18501656)]
+              for i in range(18500663, 18500678)]
               # for i in itertools.chain(range(18445438, 18445581),
               #                          range(18366732, 18367027))]
 
