@@ -28,7 +28,7 @@ std::string cut_between(std::string input, std::string before, std::string after
 // parallel_interleave: 0 = blocks of equal size, 1 = interleave
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void vincemark(std::string workspace_filename,
+void vincemark(std::string workspace_filepath,
                int num_cpu=1,
                int optConst=0,
                int parallel_interleave=0,
@@ -52,19 +52,21 @@ void vincemark(std::string workspace_filename,
     RooJsonListFile outfile;
   
     outfile.open("timing_meta.json");
-    std::string names[13] = {"workspace_filename",
+    std::string names[13] = {"workspace_filepath",
                              "N_chans", "N_bins", "N_nuisance_parameters",
                              "N_events", "num_cpu", "parallel_interleave",
                              "seed", "pid", "time_num_ints",
                              "optConst", "print_level", "timing_flag"};
     outfile.set_member_names(names, names + 13);
 
-    std::string N_channels = cut_between(workspace_filename, "workspace", "channels");
-    std::string N_events = cut_between(workspace_filename, "channels", "events");
-    std::string N_bins = cut_between(workspace_filename, "events", "bins");
-    std::string N_nuisance_parameters = cut_between(workspace_filename, "bins", "nps");
+    auto workspace_fn = workspace_filepath.substr(workspace_filepath.rfind("/"));
 
-    outfile << workspace_filename << N_channels << N_bins << N_nuisance_parameters
+    std::string N_channels = cut_between(workspace_fn, "workspace", "channels");
+    std::string N_events = cut_between(workspace_fn, "channels", "events");
+    std::string N_bins = cut_between(workspace_fn, "events", "bins");
+    std::string N_nuisance_parameters = cut_between(workspace_fn, "bins", "nps");
+
+    outfile << workspace_filepath << N_channels << N_bins << N_nuisance_parameters
             << N_events << num_cpu << parallel_interleave
             << seed << getpid() << time_num_ints
             << optConst << print_level << timing_flag;
@@ -89,7 +91,7 @@ void vincemark(std::string workspace_filename,
   gRandom->SetSeed(seed);
 
   // Load the workspace data and pdf
-  TFile *_file0 = TFile::Open(workspace_filename.c_str());
+  TFile *_file0 = TFile::Open(workspace_filepath.c_str());
   
   RooWorkspace* w = static_cast<RooWorkspace*>(gDirectory->Get("BinnedWorkspace"));
   RooStats::ModelConfig* mc = static_cast<RooStats::ModelConfig*>(w->genobj("ModelConfig"));
@@ -119,8 +121,8 @@ void vincemark(std::string workspace_filename,
 
   // for (int it = 0; it < N_timing_loops; ++it)
   {
-    RooAbsReal* nll = pdf.createNLL(*data, NumCPU(num_cpu, parallel_interleave),
-                                    CPUAffinity(cpuAffinity));//, "Extended");
+    RooAbsReal* nll = pdf->createNLL(*data, NumCPU(num_cpu, parallel_interleave),
+                                     CPUAffinity(cpuAffinity));//, "Extended");
     RooMinimizer m(*nll);
     // m.setVerbose(1);
     m.setStrategy(0);
@@ -174,7 +176,7 @@ void vincemark(std::string workspace_filename,
         timer.start();
       }
 
-      m.minos(mc->GetParametersOfInterest());
+      m.minos(*mc->GetParametersOfInterest());
 
       if (timing_flag == 1) {
         timer.stop();
