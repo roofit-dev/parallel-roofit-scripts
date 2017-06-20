@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-06-14 15:37:07
+# @Last Modified time: 2017-06-20 17:44:28
 
 # Run a few short scaling total timing tests
 
