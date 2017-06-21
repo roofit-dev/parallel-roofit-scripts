@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-06-21 08:59:33
+# @Last Modified time: 2017-06-21 09:24:37
 
 #PBS -l nodes=1:ppn=8
 #PBS -o $PBS_JOBNAME/$PBS_JOBID.out
@@ -47,6 +47,6 @@ else
   echo "Repeat number $repeat_nr"
 fi
 
-root -b -q -l "$SCRIPT_PATH(${workspace_filepath},${num_cpu},${optConst},${ileave},${cpu_affinity},${seed},${timing_flag},${time_num_ints},${fork_timer},${fork_timer_sleep_us},${printlevel},${debug})"
+root -b -q -l "$SCRIPT_PATH(\"${workspace_filepath}\",${num_cpu},${optConst},${ileave},${cpu_affinity},${seed},${timing_flag},${time_num_ints},${fork_timer},${fork_timer_sleep_us},${printlevel},${debug})"
 
 cd -
