@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-06-21 12:09:48
+# @Last Modified time: 2017-06-21 13:30:28
 
 bunch=false
 while getopts r:b: opt
@@ -97,6 +97,7 @@ function add_times() {
 
 bunch_time="0:00:00"
 argument_string_bunch=""
+bunch_ix=1
 
 
 while IFS= read -r argument_string ; do
@@ -122,13 +123,17 @@ while IFS= read -r argument_string ; do
 "
     bunch_time=$(add_times $bunch_time $wallstr)
     if [[ $(timestr_to_seconds $bunch_time) -ge $(timestr_to_seconds $bunch_time_minimum) ]]; then
+      # write job bunch arguments to file
+      bunch_fn="${run_id}_argument_string_list_bunch_${bunch_ix}.txt"
+      echo "${argument_string_bunch}" > "${bunch_fn}"
       # start job bunch
-      argument_string="argument_string_bunch=${argument_string_bunch}"
+      argument_string="argument_string_bunch_file=${bunch_fn}"
       wallstr=$bunch_time
       submit_job
       # reset bunch variables
       bunch_time="0:00:00"
       argument_string_bunch=""
+      bunch_ix=$((bunch_ix + 1))
     fi
   else
     submit_job

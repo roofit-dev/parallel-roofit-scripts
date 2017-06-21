@@ -2,14 +2,14 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-06-21 13:13:49
+# @Last Modified time: 2017-06-21 13:33:34
 
 #PBS -l nodes=1:ppn=8
 #PBS -o $PBS_JOBNAME/$PBS_JOBID.out
 #PBS -e $PBS_JOBNAME/$PBS_JOBID.err
 
-if [[ "$bunch" == true && -z "$argument_string_bunch" ]]; then
-  echo "Error: in bunch mode, but argument_string_bunch environment variable not set!"
+if [[ "$bunch" == true && -z "$argument_string_bunch_file" ]]; then
+  echo "Error: in bunch mode, but argument_string_bunch_file environment variable not set!"
   exit 1
 fi
 
@@ -70,5 +70,5 @@ else
     eval $argument_string
     start_run
     bunch_i=$((bunch_i+1))
-  done <<< "$argument_string_bunch"
+  done < "${argument_string_bunch_file}"
 fi
