@@ -5,8 +5,8 @@
 # @Last Modified time: 2017-06-21 13:33:34
 
 #PBS -l nodes=1:ppn=8
-## #PBS -o $PBS_JOBNAME/$PBS_JOBID.out
-## #PBS -e $PBS_JOBNAME/$PBS_JOBID.err
+#PBS -o $PBS_JOBNAME/$PBS_JOBID.out
+#PBS -e $PBS_JOBNAME/$PBS_JOBID.err
 
 if [[ "$bunch" == true && -z "$argument_string_bunch_file" ]]; then
   echo "Error: in bunch mode, but argument_string_bunch_file environment variable not set!"
