@@ -2,9 +2,11 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-06-20 18:08:00
+# @Last Modified time: 2017-06-21 08:59:33
 
 #PBS -l nodes=1:ppn=8
+#PBS -o $PBS_JOBNAME/$PBS_JOBID.out
+#PBS -e $PBS_JOBNAME/$PBS_JOBID.err
 
 if [[ -z "$run_id" || -z "$timing_flag" || -z "$workspace_filepath" || -z "$ileave" || -z "$seed" || -z "$printlevel" || -z "$optConst" || -z "$time_num_ints" || -z "$num_cpu" || -z "$fork_timer" || -z "$fork_timer_sleep_us" || -z "$cpu_affinity" || -z "$debug" ]]; then
   echo "Error: configuration environment variable missing!"
