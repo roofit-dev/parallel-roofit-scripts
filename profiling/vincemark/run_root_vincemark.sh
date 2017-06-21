@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-06-21 10:59:58
+# @Last Modified time: 2017-06-21 11:58:05
 
 #PBS -l nodes=1:ppn=8
 #PBS -o $PBS_JOBNAME/$PBS_JOBID.out
@@ -59,10 +59,10 @@ function start_run() {
 }
 
 if [[ "$bunch" == false ]]; then
-  start_run()
+  start_run
 else
   while IFS= read -r argument_string ; do
     eval $argument_string
-    start_run()
+    start_run
   done <<< "$argument_string_bunch"
 fi

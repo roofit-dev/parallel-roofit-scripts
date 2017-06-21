@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-06-21 11:51:01
+# @Last Modified time: 2017-06-21 11:59:07
 
 bunch=false
 while getopts r:b: opt
@@ -73,15 +73,17 @@ function submit_job() {
 }
 
 
-function timestr_to_seconds(str) {
-  IFS=':' read -r h m s <<< str
+# input argument: timestring with hours, minutes and seconds, H:MM:SS
+function timestr_to_seconds() {
+  IFS=':' read -r h m s <<< $1
   t = $(($h * 3600 + $m * 60 + $s))
-  return t
+  echo $t
 }
 
-function add_times(str1, str2) {
-  t1 = timestr_to_seconds($str1)
-  t2 = timestr_to_seconds($str2)
+# input arguments: two timestrings with hours, minutes and seconds, H:MM:SS
+function add_times() {
+  t1 = $(timestr_to_seconds($1))
+  t2 = $(timestr_to_seconds($2))
 
   tt = $(($t1 + $t2))
 
@@ -89,11 +91,11 @@ function add_times(str1, str2) {
   mt = $((($tt - $ht*3600)/60))
   st = $(($tt % 60))
 
-  return "${ht}:${(l:2::0:)mt}:${(l:2::0:)st}"
+  echo "${ht}:${(l:2::0:)mt}:${(l:2::0:)st}"
 }
 
 
-bunch_time=0:00:00
+bunch_time="0:00:00"
 argument_string_bunch=""
 
 
@@ -118,18 +120,18 @@ while IFS= read -r argument_string ; do
   if [[ "$bunch" == true ]]; then
     argument_string_bunch="${argument_string_bunch}${argument_string}
 "
-    bunch_time = add_times($bunch_time, $wallstr)
-    if [[ timestr_to_seconds($bunch_time) -gt timestr_to_seconds($bunch_time_minimum) ]]; then
+    bunch_time = $(add_times $bunch_time $wallstr)
+    if [[ $(timestr_to_seconds($bunch_time)) -gt $(timestr_to_seconds($bunch_time_minimum)) ]]; then
       # start job bunch
       argument_string="argument_string_bunch=${argument_string_bunch}"
       wallstr=$bunch_time
-      submit_job()
+      submit_job
       # reset bunch variables
-      bunch_time=0:00:00
+      bunch_time="0:00:00"
       argument_string_bunch=""
     fi
   else
-    submit_job()
+    submit_job
   fi
 
   ((++ix))
