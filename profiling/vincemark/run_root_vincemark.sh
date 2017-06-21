@@ -5,8 +5,8 @@
 # @Last Modified time: 2017-06-21 13:33:34
 
 #PBS -l nodes=1:ppn=8
-#PBS -o $PBS_JOBNAME/$PBS_JOBID.out
-#PBS -e $PBS_JOBNAME/$PBS_JOBID.err
+## #PBS -o $PBS_JOBNAME/$PBS_JOBID.out
+## #PBS -e $PBS_JOBNAME/$PBS_JOBID.err
 
 if [[ "$bunch" == true && -z "$argument_string_bunch_file" ]]; then
   echo "Error: in bunch mode, but argument_string_bunch_file environment variable not set!"
@@ -22,6 +22,13 @@ shopt -s expand_aliases
 source $HOME/root_run_deps.sh
 
 export SCRIPT_PATH="$HOME/project_atlas/apcocsm_code/vincemark.cpp"
+
+export BASERUNDIR="$HOME/project_atlas/apcocsm_code/profiling/vincemark"
+export RUNDIR="$BASERUNDIR/$PBS_JOBNAME/$PBS_JOBID"
+
+# go to run-dir
+mkdir -p $RUNDIR
+cd $RUNDIR
 
 function start_run() {
   if [[ -z "$run_id" || -z "$timing_flag" || -z "$workspace_filepath" || -z "$ileave" || -z "$seed" || -z "$printlevel" || -z "$optConst" || -z "$time_num_ints" || -z "$num_cpu" || -z "$fork_timer" || -z "$fork_timer_sleep_us" || -z "$cpu_affinity" || -z "$debug" ]]; then
@@ -42,12 +49,6 @@ function start_run() {
     exit 1
   fi
 
-  export RUNDIR="$HOME/project_atlas/apcocsm_code/profiling/vincemark/$run_id/$PBS_JOBID"
-
-  # go to run-dir
-  mkdir -p $RUNDIR
-  cd $RUNDIR
-
   if [[ -z "$repeat_nr" ]]; then
     echo "repeat_nr not set as environment variable"
   else
@@ -63,12 +64,11 @@ if [[ "$bunch" == false ]]; then
   start_run
 else
   echo "starting runs in bunch mode"
-  echo "DEBUG -- argument_string_bunch:\n${argument_string_bunch}"
   bunch_i=1
   while IFS= read -r argument_string ; do
     echo "bunch ${bunch_i}"
     eval $argument_string
     start_run
     bunch_i=$((bunch_i+1))
-  done < "${argument_string_bunch_file}"
+  done < "${BASERUNDIR}/${argument_string_bunch_file}"
 fi

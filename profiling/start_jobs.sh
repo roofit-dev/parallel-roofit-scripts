@@ -119,13 +119,12 @@ while IFS= read -r argument_string ; do
   fi
 
   if [[ "$bunch" == true ]]; then
-    argument_string_bunch="${argument_string_bunch}${argument_string}
-"
+    argument_string_bunch="${argument_string_bunch}${argument_string}"
     bunch_time=$(add_times $bunch_time $wallstr)
     if [[ $(timestr_to_seconds $bunch_time) -ge $(timestr_to_seconds $bunch_time_minimum) ]]; then
       # write job bunch arguments to file
       bunch_fn="${run_id}_argument_string_list_bunch_${bunch_ix}.txt"
-      echo "${argument_string_bunch}" > "${bunch_fn}"
+      echo "${argument_string_bunch}" | sed 's/,/;/g' > "${bunch_fn}"
       # start job bunch
       argument_string="argument_string_bunch_file=${bunch_fn}"
       wallstr=$bunch_time
@@ -134,6 +133,10 @@ while IFS= read -r argument_string ; do
       bunch_time="0:00:00"
       argument_string_bunch=""
       bunch_ix=$((bunch_ix + 1))
+    else
+      # add a newline and continue
+      argument_string_bunch="${argument_string_bunch}
+"
     fi
   else
     submit_job
