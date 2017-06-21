@@ -2,11 +2,28 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-05-31 14:28:41
+# @Last Modified time: 2017-06-21 11:48:03
+
+bunch=false
+while getopts r:b: opt
+do
+    case "$opt" in
+      # v)  vflag=on;;
+      r)  start_range="$OPTARG"
+          IFS=- read -r start_from start_upto <<< "$start_range"
+          ;;
+      b)  bunch=true
+          bunch_time_minimum="$OPTARG:00"
+          ;;
+      \?) # unknown flag
+          echo >&2 "usage: $0 [-r start_from-start_upto (line range from argument_string_list file)] [-b H:MM (minimum bunch time)] config_filename"
+          exit 1
+          ;;
+    esac
+done
+shift `expr $OPTIND - 1`
 
 config_name=$1
-start_from=$2
-start_upto=$3
 
 if [[ -z "$config_name" ]]; then
   echo "Error: no config script filename argument given!"
@@ -41,12 +58,51 @@ else
   argument_string_file="${run_id}_argument_string_list.txt"
 fi
 
+function submit_job() {
+  qsub -q $queue -N $run_id -l "walltime=$wallstr" -v "bunch=${bunch}" -v "$argument_string" "$run_script_name"
+
+  if [[ $? -eq 15046 ]]; then
+    if [[ $queue -eq "short" ]]; then
+      echo "at entry ${ix}, the short queue is now full, switching to generic only"
+      qsub -q generic -N $run_id -l "walltime=$wallstr" -v "$argument_string" "$run_script_name"
+    else
+      echo "ERROR: at entry ${ix}, both short and generic queues are full, exiting now!"
+      exit 3
+    fi
+  fi
+}
+
+
+function timestr_to_seconds(str) {
+  IFS=':' read -r h m s <<< str
+  t = $(($h * 3600 + $m * 60 + $s))
+  return t
+}
+
+function add_times(str1, str2) {
+  t1 = timestr_to_seconds(str1)
+  t2 = timestr_to_seconds(str2)
+
+  tt = $(($t1 + $t2))
+
+  ht = $(($tt/3600))
+  mt = $((($tt - $ht*3600)/60))
+  st = $(($tt % 60))
+
+  return "${ht}:${(l:2::0:)mt}:${(l:2::0:)st}"
+}
+
+
+bunch_time=0:00:00
+argument_string_bunch=""
+
+
 while IFS= read -r argument_string ; do
+  wallstr=${walltime_array[$ix]}
+
   if $short_full ; then
     queue=generic
   else
-    wallstr=${walltime_array[$ix]}
-
     hours=${wallstr%%:*}  # will drop begin of string upto first occur of `:`
     if (( hours < 4 )); then
       queue=short
@@ -59,16 +115,21 @@ while IFS= read -r argument_string ; do
     queue=multicore
   fi
 
-  qsub -q $queue -N $run_id -l "walltime=$wallstr" -v "$argument_string" "$run_script_name"
-
-  if [[ $? -eq 15046 ]]; then
-    if [[ $queue -eq "short" ]]; then
-      echo "at entry ${ix}, the short queue is now full, switching to generic only"
-      qsub -q generic -N $run_id -l "walltime=$wallstr" -v "$argument_string" "$run_script_name"
-    else
-      echo "ERROR: at entry ${ix}, both short and generic queues are full, exiting now!"
-      exit 3
+  if [[ "$bunch" == true ]]; then
+    argument_string_bunch="${argument_string_bunch}${argument_string}
+"
+    bunch_time = add_times($bunch_time, $wallstr)
+    if [[ timestr_to_seconds($bunch_time) -gt timestr_to_seconds($bunch_time_minimum) ]]; then
+      # start job bunch
+      argument_string="argument_string_bunch=${argument_string_bunch}"
+      wallstr=$bunch_time
+      submit_job()
+      # reset bunch variables
+      bunch_time=0:00:00
+      argument_string_bunch=""
     fi
+  else
+    submit_job()
   fi
 
   ((++ix))
