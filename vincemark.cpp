@@ -1,6 +1,8 @@
 // call from command line like, for instance:
 // root -l 'vincemark.cpp()'
 
+R__LOAD_LIBRARY(libRooFit)
+
 #include <chrono>
 #include <iostream>
 #include <sstream>
