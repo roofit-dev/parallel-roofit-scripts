@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-06-21 11:59:07
+# @Last Modified time: 2017-06-21 12:04:28
 
 bunch=false
 while getopts r:b: opt
@@ -52,7 +52,7 @@ if [[ -n "$start_from" && -n "$start_upto" ]]; then
 
   sed "${run_id}_argument_string_list.txt" -n -e "${start_from},${start_upto}p" > "${argument_string_file}"
 
-  echo "Starting selected range: job $2 up to job $3 in the argument_string_list file."
+  echo "Starting selected range: job $start_from up to job $start_upto in the argument_string_list file."
 else
   ix=1
   argument_string_file="${run_id}_argument_string_list.txt"
@@ -82,8 +82,8 @@ function timestr_to_seconds() {
 
 # input arguments: two timestrings with hours, minutes and seconds, H:MM:SS
 function add_times() {
-  t1 = $(timestr_to_seconds($1))
-  t2 = $(timestr_to_seconds($2))
+  t1 = $(timestr_to_seconds $1)
+  t2 = $(timestr_to_seconds $2)
 
   tt = $(($t1 + $t2))
 
@@ -121,7 +121,7 @@ while IFS= read -r argument_string ; do
     argument_string_bunch="${argument_string_bunch}${argument_string}
 "
     bunch_time = $(add_times $bunch_time $wallstr)
-    if [[ $(timestr_to_seconds($bunch_time)) -gt $(timestr_to_seconds($bunch_time_minimum)) ]]; then
+    if [[ $(timestr_to_seconds $bunch_time) -gt $(timestr_to_seconds $bunch_time_minimum) ]]; then
       # start job bunch
       argument_string="argument_string_bunch=${argument_string_bunch}"
       wallstr=$bunch_time
