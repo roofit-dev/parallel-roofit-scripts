@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-06-21 08:24:41
+# @Last Modified time: 2017-06-21 09:30:15
 
 # Run a few short scaling total timing tests
 
@@ -46,10 +46,10 @@ for repeat_nr in 1; do
 # for timing_flag in {1..7} {9..10}; do
 for timing_flag in 1; do
 
-for N_channels in 1 5; do
-for N_events in 1000 1000000; do
-for N_bins in 1 100; do
-for N_nps in 0 3; do
+for N_channels in 1; do
+for N_events in 1000; do
+for N_bins in 100; do
+for N_nps in 0; do
 
 workspace_filepath="${ws_base_path}/workspace${N_channels}channels${N_events}events${N_bins}bins${N_nps}nps.root"
 
