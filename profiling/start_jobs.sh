@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-06-21 12:04:28
+# @Last Modified time: 2017-06-21 12:06:20
 
 bunch=false
 while getopts r:b: opt
@@ -85,7 +85,7 @@ function add_times() {
   t1 = $(timestr_to_seconds $1)
   t2 = $(timestr_to_seconds $2)
 
-  tt = $(($t1 + $t2))
+  tt = $((${t1} + ${t2}))
 
   ht = $(($tt/3600))
   mt = $((($tt - $ht*3600)/60))
