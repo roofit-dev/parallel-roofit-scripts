@@ -2,7 +2,7 @@
 # @Author: E. G. Patrick Bos
 # @Date:   2017-05-12 10:07:19
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-06-15 09:36:01
+# @Last Modified time: 2017-06-21 16:29:33
 
 # Module with loading functions for different types of RooFit timings.
 
@@ -86,7 +86,7 @@ def fix_terminated_json_file(fp):
     print("Removed broken last line in " + fp.name)
 
 
-def load_dfs_coresplit(fpgloblist, skip_on_match=[], skip_meta=True):
+def load_dfs_coresplit(fpgloblist, *, skip_on_match=[], skip_meta=True, **df_from_json_kwargs):
     if skip_meta:
         skip_on_match.append('timing_meta.json')
 
@@ -100,11 +100,14 @@ def load_dfs_coresplit(fpgloblist, skip_on_match=[], skip_meta=True):
     dfs_split = {}
     for fp in fplist:
         try:
-            dfs_split[fp] = df_from_json_incl_meta(fp)
+            dfs_split[fp] = df_from_json_incl_meta(fp, **df_from_json_kwargs)
         except ValueError as e:
             if fp.match('timing_RRMPFE_serverloop_while_p*.json'):  # timing_flag 9
                 fix_terminated_json_file(fp)
-                dfs_split[fp] = df_from_json_incl_meta(fp)
+                dfs_split[fp] = df_from_json_incl_meta(fp, **df_from_json_kwargs)
+            else:
+                print(f'fail for file {fp}')
+                raise e
 #    dfs_split = {fp: df_from_json_incl_meta(fp) for fp in fplist}
     dfs_sp = merge_dfs_by_split_per_filetype(dfs_split, 'single', dfkeys)
     dfs_mp_sl = merge_dfs_by_split_per_filetype(dfs_split, 'multi', dfkeys)
@@ -112,7 +115,7 @@ def load_dfs_coresplit(fpgloblist, skip_on_match=[], skip_meta=True):
     return dfs_sp, dfs_mp_sl, dfs_mp_ma
 
 
-def estimate_ideal_timing(df, groupby=['N_events']):
+def estimate_ideal_timing(df, groupby=['N_events'], time_col='full_minimize_wall_s'):
     """Estimate ideal timing based on single core runs"""
     single_core = df[df.num_cpu == 1]
 
@@ -122,7 +125,7 @@ def estimate_ideal_timing(df, groupby=['N_events']):
     for num_cpu in df.num_cpu.unique():
         if num_cpu != 1:
             ideal_num_cpu_i = single_core_fastest.copy()
-            ideal_num_cpu_i.full_minimize_wall_s /= num_cpu
+            ideal_num_cpu_i[time_col] /= num_cpu
             ideal_num_cpu_i.num_cpu = num_cpu
             df_ideal = df_ideal.append(ideal_num_cpu_i)
 
