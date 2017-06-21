@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-06-21 08:24:03
+# @Last Modified time: 2017-06-21 12:10:32
 
 # set a: just run it all for the first time, only with full timing (timing_flag = 1)
 
@@ -84,7 +84,7 @@ argument_string_list="${argument_string_list}run_id=${run_id},repeat_nr=${repeat
 # DETERMINE PROPER ESTIMATES BASED ON RUN _a AND THEN USE THOSE IN SUBSEQUENT RUNS
 # DETERMINE PROPER ESTIMATES BASED ON RUN _a AND THEN USE THOSE IN SUBSEQUENT RUNS
 
-walltime_array[ix]=0:10:00
+walltime_array[ix]=0:01:00
 
 ((++ix))
 

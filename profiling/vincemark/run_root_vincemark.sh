@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-06-21 11:58:05
+# @Last Modified time: 2017-06-21 13:00:43
 
 #PBS -l nodes=1:ppn=8
 #PBS -o $PBS_JOBNAME/$PBS_JOBID.out
@@ -20,6 +20,8 @@ shopt -s expand_aliases
 # ALIASES MOETEN AANGEZET WORDEN (http://unix.stackexchange.com/a/1498/193258)
 
 source $HOME/root_run_deps.sh
+
+export SCRIPT_PATH="$HOME/project_atlas/apcocsm_code/vincemark.cpp"
 
 function start_run() {
   if [[ -z "$run_id" || -z "$timing_flag" || -z "$workspace_filepath" || -z "$ileave" || -z "$seed" || -z "$printlevel" || -z "$optConst" || -z "$time_num_ints" || -z "$num_cpu" || -z "$fork_timer" || -z "$fork_timer_sleep_us" || -z "$cpu_affinity" || -z "$debug" ]]; then
@@ -41,7 +43,6 @@ function start_run() {
   fi
 
   export RUNDIR="$HOME/project_atlas/apcocsm_code/profiling/vincemark/$run_id/$PBS_JOBID"
-  export SCRIPT_PATH="$HOME/project_atlas/apcocsm_code/vincemark.cpp"
 
   # go to run-dir
   mkdir -p $RUNDIR
@@ -61,8 +62,12 @@ function start_run() {
 if [[ "$bunch" == false ]]; then
   start_run
 else
+  echo "starting runs in bunch mode"
+  bunch_i=1
   while IFS= read -r argument_string ; do
+    echo "bunch ${bunch_i}"
     eval $argument_string
     start_run
+    bunch_i=$((bunch_i+1))
   done <<< "$argument_string_bunch"
 fi

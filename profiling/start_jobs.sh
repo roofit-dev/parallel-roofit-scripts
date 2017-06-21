@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-06-21 12:08:05
+# @Last Modified time: 2017-06-21 12:09:48
 
 bunch=false
 while getopts r:b: opt
@@ -121,7 +121,7 @@ while IFS= read -r argument_string ; do
     argument_string_bunch="${argument_string_bunch}${argument_string}
 "
     bunch_time=$(add_times $bunch_time $wallstr)
-    if [[ $(timestr_to_seconds $bunch_time) -gt $(timestr_to_seconds $bunch_time_minimum) ]]; then
+    if [[ $(timestr_to_seconds $bunch_time) -ge $(timestr_to_seconds $bunch_time_minimum) ]]; then
       # start job bunch
       argument_string="argument_string_bunch=${argument_string_bunch}"
       wallstr=$bunch_time
