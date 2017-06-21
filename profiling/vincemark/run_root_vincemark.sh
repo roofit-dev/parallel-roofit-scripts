@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-06-21 13:00:43
+# @Last Modified time: 2017-06-21 13:13:49
 
 #PBS -l nodes=1:ppn=8
 #PBS -o $PBS_JOBNAME/$PBS_JOBID.out
@@ -63,6 +63,7 @@ if [[ "$bunch" == false ]]; then
   start_run
 else
   echo "starting runs in bunch mode"
+  echo "DEBUG -- argument_string_bunch:\n${argument_string_bunch}"
   bunch_i=1
   while IFS= read -r argument_string ; do
     echo "bunch ${bunch_i}"
