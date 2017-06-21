@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-06-21 09:30:15
+# @Last Modified time: 2017-06-21 09:45:39
 
 # Run a few short scaling total timing tests
 
@@ -46,10 +46,12 @@ for repeat_nr in 1; do
 # for timing_flag in {1..7} {9..10}; do
 for timing_flag in 1; do
 
-for N_channels in 1; do
-for N_events in 1000; do
-for N_bins in 100; do
-for N_nps in 0; do
+# for N_channels in 1 5; do
+# for N_events in 1000 1000000; do
+# for N_bins in 1 100; do
+# for N_nps in 0 3; do
+# see https://unix.stackexchange.com/a/279764/193258, zsh has multiple variable looping!
+for N_channels N_events N_bins N_nps in 1 1000 1 0 5 1000000 100 3; do
 
 workspace_filepath="${ws_base_path}/workspace${N_channels}channels${N_events}events${N_bins}bins${N_nps}nps.root"
 
@@ -88,7 +90,7 @@ walltime_array[ix]=0:01:00
 
 ((++ix))
 
-done; done; done; done; done; done; done; done
+done; done; done; done; done #; done; done; done
 
 # before saving, strip last newline
 argument_string_list=${argument_string_list:0:-1}
