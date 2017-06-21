@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-06-21 11:48:03
+# @Last Modified time: 2017-06-21 11:51:01
 
 bunch=false
 while getopts r:b: opt
@@ -80,8 +80,8 @@ function timestr_to_seconds(str) {
 }
 
 function add_times(str1, str2) {
-  t1 = timestr_to_seconds(str1)
-  t2 = timestr_to_seconds(str2)
+  t1 = timestr_to_seconds($str1)
+  t2 = timestr_to_seconds($str2)
 
   tt = $(($t1 + $t2))
 
