@@ -4,7 +4,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:23:55
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-06-21 17:11:35
+# @Last Modified time: 2017-06-22 17:15:37
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -28,7 +28,7 @@ def savefig(factorplot, fp):
 
 """
 cd ~/projects/apcocsm/code/profiling/vincemark
-rsync --include='*/' --include='*/*/' --include='timing*.json' --exclude='*' -zavr nikhef:project_atlas/apcocsm_code/profiling/vincemark/vincemark_a ./
+rsync --progress --include='*/' --include='*/*/' --include='timing*.json' --exclude='*' -zavr nikhef:project_atlas/apcocsm_code/profiling/vincemark/vincemark_a ./
 """
 
 basepath = Path.home() / 'projects/apcocsm/code/profiling/vincemark/vincemark_a'
@@ -54,7 +54,8 @@ dfs_sp, dfs_mp_sl, dfs_mp_ma = load_timing.load_dfs_coresplit(fpgloblist, skip_o
 df_totals_real = pd.concat([dfs_sp['full_minimize'], dfs_mp_ma['full_minimize']])
 
 # ### ADD IDEAL TIMING BASED ON SINGLE CORE RUNS
-df_totals_ideal = load_timing.estimate_ideal_timing(df_totals_real, groupby=['N_events', 'time_num_ints', 'segment'],
+df_totals_ideal = load_timing.estimate_ideal_timing(df_totals_real, groupby=['N_events', 'time_num_ints', 'segment',
+                                                    'N_chans', 'N_nuisance_parameters', 'N_bins'],
                                                     time_col='walltime_s')
 df_totals = load_timing.combine_ideal_and_real(df_totals_real, df_totals_ideal)
 
@@ -63,11 +64,52 @@ df_totals = df_totals[df_totals.segment != 'migrad+hesse+minos']
 
 
 # # add combination of two categories
-df_totals['time_num_ints/N_events'] = df_totals.time_num_ints.astype(str) + '/' + df_totals.N_events.astype(str)
+df_totals['timeNIs/Nevents'] = df_totals.time_num_ints.astype(str) + '/' + df_totals.N_events.astype(str)
+df_totals['timeNIs/Nbins'] = df_totals.time_num_ints.astype(str) + '/' + df_totals.N_bins.astype(str)
+df_totals['timeNIs/Nnps'] = df_totals.time_num_ints.astype(str) + '/' + df_totals.N_nuisance_parameters.astype(str)
+df_totals['timeNIs/Nchans'] = df_totals.time_num_ints.astype(str) + '/' + df_totals.N_chans.astype(str)
+
+
+#### ANALYSIS
+
+# full timings
+g = sns.factorplot(x='num_cpu', y='walltime_s', col='timeNIs/Nevents', hue='timing_type', row='segment', estimator=np.min, data=df_totals, legend_out=False, sharey='row')
+plt.subplots_adjust(top=0.93)
+g.fig.suptitle(f'total wallclock timing of migrad, hesse and minos')
+savefig(g, savefig_dn / f'total_timing.png')
+
+for chans in df_totals.N_chans.unique():
+    for bins in df_totals.N_bins.unique():
+        for nps in df_totals.N_nuisance_parameters.unique():
+            data = df_totals[(df_totals.N_chans == chans) & (df_totals.N_bins == bins) & (df_totals.N_nuisance_parameters == nps)]
+            g = sns.factorplot(x='num_cpu', y='walltime_s', col='timeNIs/Nevents', hue='timing_type', row='segment', estimator=np.min, data=data, legend_out=False, sharey='row')
+            plt.subplots_adjust(top=0.93)
+            g.fig.suptitle(f'total wallclock timing of migrad, hesse and minos --- N_channels = {chans}, N_bins = {bins}, N_nps = {nps}')
+            savefig(g, savefig_dn / f'total_timing_chan{chans}_bin{bins}_np{nps}.png')
+
+# some more, focused on different parameters based on analysis of above plots
+# scale with Nbins instead of Nevents
+g = sns.factorplot(x='num_cpu', y='walltime_s', col='timeNIs/Nbins', hue='timing_type', row='segment', estimator=np.min, data=df_totals, legend_out=False, sharey='row')
+plt.subplots_adjust(top=0.93)
+g.fig.suptitle(f'total wallclock timing of migrad, hesse and minos')
+savefig(g, savefig_dn / f'total_timing_col-Nbins.png')
+
+# scale with Nnps instead of Nevents
+g = sns.factorplot(x='num_cpu', y='walltime_s', col='timeNIs/Nnps', hue='timing_type', row='segment', estimator=np.min, data=df_totals, legend_out=False, sharey='row')
+plt.subplots_adjust(top=0.93)
+g.fig.suptitle(f'total wallclock timing of migrad, hesse and minos')
+savefig(g, savefig_dn / f'total_timing_col-Nnps.png')
+
+# scale with Nchans instead of Nevents
+g = sns.factorplot(x='num_cpu', y='walltime_s', col='timeNIs/Nchans', hue='timing_type', row='segment', estimator=np.min, data=df_totals, legend_out=False, sharey='row')
+plt.subplots_adjust(top=0.93)
+g.fig.suptitle(f'total wallclock timing of migrad, hesse and minos')
+savefig(g, savefig_dn / f'total_timing_col-Nchans.png')
+
 
 
 #### NUMERICAL INTEGRAL TIMINGS
-df_numints = dfs_mp_sl['numInts'].copy()
+df_numints = dfs_mp_sl['numInts']
 load_timing.add_iteration_column(df_numints)
 
 df_numints_min_by_iteration = df_numints.groupby('iteration').min()
@@ -137,13 +179,6 @@ rats_eval_itcpu_total = rats_eval_itcpu.groupby(['pid', 'N_events', 'num_cpu', '
 
 
 #### ANALYSIS
-
-# full timings
-g = sns.factorplot(x='num_cpu', y='walltime_s', col='time_num_ints/N_events', hue='timing_type', row='segment', estimator=np.min, data=df_totals, legend_out=False, sharey=False)
-# plt.subplots_adjust(top=0.85)
-g.fig.suptitle('total wallclock timing of minimize("Minuit2", "migrad")')
-savefig(g, savefig_dn / 'total_timing.png')
-
 
 """
 
