@@ -4,7 +4,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:23:55
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-06-22 17:15:37
+# @Last Modified time: 2017-06-26 08:47:52
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -47,6 +47,10 @@ drop_meta = ['parallel_interleave', 'seed', 'print_level', 'timing_flag',
 
 skip_on_match = ['timing_RRMPFE_serverloop_p*.json',  # skip timing_flag 8 output (contains no data)
                  ]
+
+if Path('df_numints.hdf').exists():
+    skip_on_match.append('timings_numInts.json')
+
 dfs_sp, dfs_mp_sl, dfs_mp_ma = load_timing.load_dfs_coresplit(fpgloblist, skip_on_match=skip_on_match, drop_meta=drop_meta)
 
 
@@ -72,6 +76,7 @@ df_totals['timeNIs/Nchans'] = df_totals.time_num_ints.astype(str) + '/' + df_tot
 
 #### ANALYSIS
 
+"""
 # full timings
 g = sns.factorplot(x='num_cpu', y='walltime_s', col='timeNIs/Nevents', hue='timing_type', row='segment', estimator=np.min, data=df_totals, legend_out=False, sharey='row')
 plt.subplots_adjust(top=0.93)
@@ -105,11 +110,18 @@ g = sns.factorplot(x='num_cpu', y='walltime_s', col='timeNIs/Nchans', hue='timin
 plt.subplots_adjust(top=0.93)
 g.fig.suptitle(f'total wallclock timing of migrad, hesse and minos')
 savefig(g, savefig_dn / f'total_timing_col-Nchans.png')
-
+"""
 
 
 #### NUMERICAL INTEGRAL TIMINGS
-df_numints = dfs_mp_sl['numInts']
+if not Path('df_numints.hdf').exists():
+    df_numints = dfs_mp_sl['numInts']
+    df_numints.to_hdf('df_numints.hdf', 'vincemark_a_numint_timings')
+else:
+    print("loading numerical integral timings from HDF file...")
+    df_numints = pd.read_hdf('df_numints.hdf', 'vincemark_a_numint_timings')
+    print("...done")
+
 load_timing.add_iteration_column(df_numints)
 
 df_numints_min_by_iteration = df_numints.groupby('iteration').min()
