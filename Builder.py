@@ -40,7 +40,6 @@ def get_workspace(nchannels = 1, events = 1000, nbins = 1, nnps = 0):
 
         if nnps > 0:
             for np in range(nnps):
-                print "this uncertainty is {}".format(np)
                 uncertainty_up   = nevents * 1.1
                 uncertainty_down = nevents * 0.9
                 signal.AddOverallSys( "signal_norm_uncertainty_{}".format(np),  uncertainty_down*.1, uncertainty_up*.1 )
@@ -76,6 +75,14 @@ def get_workspace(nchannels = 1, events = 1000, nbins = 1, nnps = 0):
 
     hist2workspace = ROOT.RooStats.HistFactory.HistoToWorkspaceFactoryFast(meas)
     if nchannels < 2:
-        return hist2workspace.MakeSingleChannelModel( meas, chan )
+        ws = hist2workspace.MakeSingleChannelModel( meas, chan )
     else:
-        return hist2workspace.MakeCombinedModel(meas)
+        ws = hist2workspace.MakeCombinedModel(meas)
+        
+    iter = ws.components().fwdIterator()
+    arg = iter.next()
+    while arg:
+        if "RooRealSum" in str(arg.IsA()):
+            arg.setAttribute("BinnedLikelihood")
+        arg = iter.next()
+    return ws
