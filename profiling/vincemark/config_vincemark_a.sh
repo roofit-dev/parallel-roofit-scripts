@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-06-21 12:10:32
+# @Last Modified time: 2017-06-28 11:01:14
 
 # set a: just run it all for the first time, only with full timing (timing_flag = 1)
 
@@ -45,6 +45,7 @@ for repeat_nr in {1..3}; do
 # timing_flag 8 does nothing!
 # for timing_flag in {1..7} {9..10}; do
 for timing_flag in 1; do
+total_cpu_timing=false
 
 for N_channels in {1..5}; do
 for N_events in 1000 1000000 10000000; do
@@ -53,7 +54,7 @@ for N_nps in 0 1 3; do
 
 workspace_filepath="${ws_base_path}/workspace${N_channels}channels${N_events}events${N_bins}bins${N_nps}nps.root"
 
-argument_string_list="${argument_string_list}run_id=${run_id},repeat_nr=${repeat_nr},workspace_filepath=${workspace_filepath},num_cpu=${num_cpu},time_num_ints=${time_num_ints},optConst=${optConst},ileave=${ileave},seed=${seed},printlevel=${printlevel},timing_flag=${timing_flag},cpu_affinity=${cpu_affinity},fork_timer=${fork_timer},fork_timer_sleep_us=${fork_timer_sleep_us},debug=${debug}
+argument_string_list="${argument_string_list}run_id=${run_id},repeat_nr=${repeat_nr},workspace_filepath=${workspace_filepath},num_cpu=${num_cpu},time_num_ints=${time_num_ints},optConst=${optConst},ileave=${ileave},seed=${seed},printlevel=${printlevel},timing_flag=${timing_flag},cpu_affinity=${cpu_affinity},fork_timer=${fork_timer},fork_timer_sleep_us=${fork_timer_sleep_us},debug=${debug},total_cpu_timing=${total_cpu_timing}
 "
 # note the newline at the end of the string, don't remove that!
 

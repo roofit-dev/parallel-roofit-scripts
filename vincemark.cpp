@@ -41,7 +41,8 @@ void vincemark(std::string workspace_filepath,
                bool fork_timer = false,
                int fork_timer_sleep_us = 100000,
                int print_level=0,
-               bool debug=false
+               bool debug=false,
+               bool total_cpu_timing=false
                ) {
   if (debug) {
     RooMsgService::instance().addStream(DEBUG);
@@ -114,6 +115,16 @@ void vincemark(std::string workspace_filepath,
            .add_member_name("pid");
   }
 
+  RooJsonListFile outfile_cpu;
+  RooCPUTimer ctimer;
+  
+  if (total_cpu_timing) {
+    outfile_cpu.open("timing_full_minimize_cpu.json");
+    outfile.add_member_name("cputime_s")
+           .add_member_name("segment")
+           .add_member_name("pid");
+  }
+
   Bool_t cpuAffinity;
   if (cpu_affinity) {
     cpuAffinity = kTRUE;
@@ -150,9 +161,13 @@ void vincemark(std::string workspace_filepath,
       /* parent */
 
       double time_migrad, time_hesse, time_minos;
+      double ctime_migrad, ctime_hesse, ctime_minos;
 
       if (timing_flag == 1) {
         timer.start();
+      }
+      if (total_cpu_timing) {
+        ctimer.start();
       }
       // m.hesse();
 
@@ -160,33 +175,74 @@ void vincemark(std::string workspace_filepath,
 
       if (timing_flag == 1) {
         timer.stop();
+      }
+      if (total_cpu_timing) {
+        ctimer.stop();
+      }
+      if (timing_flag == 1) {
         std::cout << "TIME migrad: " << timer.timing_s() << "s" << std::endl;
         outfile << timer.timing_s() << "migrad" << getpid();
         time_migrad = timer.timing_s();
-
+      }
+      if (total_cpu_timing) {
+        std::cout << "CPUTIME migrad: " << ctimer.timing_s() << "s" << std::endl;
+        outfile_cpu << ctimer.timing_s() << "migrad" << getpid();
+        ctime_migrad = ctimer.timing_s();
+      }
+      if (timing_flag == 1) {
         timer.start();
+      }
+      if (total_cpu_timing) {
+        ctimer.start();
       }
 
       m.hesse();
 
       if (timing_flag == 1) {
         timer.stop();
+      }
+      if (total_cpu_timing) {
+        ctimer.stop();
+      }
+      if (timing_flag == 1) {
         std::cout << "TIME hesse: " << timer.timing_s() << "s" << std::endl;
         outfile << timer.timing_s() << "hesse" << getpid();
         time_hesse = timer.timing_s();
-
+      }
+      if (total_cpu_timing) {
+        std::cout << "CPUTIME hesse: " << ctimer.timing_s() << "s" << std::endl;
+        outfile_cpu << ctimer.timing_s() << "hesse" << getpid();
+        ctime_hesse = ctimer.timing_s();
+      }
+      if (timing_flag == 1) {
         timer.start();
       }
+      if (total_cpu_timing) {
+        ctimer.start();
+      }
+
 
       m.minos(*mc->GetParametersOfInterest());
 
       if (timing_flag == 1) {
         timer.stop();
+      }
+      if (total_cpu_timing) {
+        ctimer.stop();
+      }
+      if (timing_flag == 1) {
         std::cout << "TIME minos: " << timer.timing_s() << "s" << std::endl;
         outfile << timer.timing_s() << "minos" << getpid();
         time_minos = timer.timing_s();
 
         outfile << (time_migrad + time_hesse + time_minos) << "migrad+hesse+minos" << getpid();
+      }
+      if (total_cpu_timing) {
+        std::cout << "CPUTIME minos: " << ctimer.timing_s() << "s" << std::endl;
+        outfile_cpu << ctimer.timing_s() << "minos" << getpid();
+        ctime_minos = ctimer.timing_s();
+
+        outfile_cpu << (ctime_migrad + ctime_hesse + ctime_minos) << "migrad+hesse+minos" << getpid();
       }
 
       if (pid > 0) {

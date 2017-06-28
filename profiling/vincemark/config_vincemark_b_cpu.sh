@@ -2,9 +2,9 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-06-28 11:01:11
+# @Last Modified time: 2017-06-28 11:00:29
 
-# set b: new workspaces, again only with full timing (timing_flag = 1), now also without numInt timing
+# set b_cpu: like b, but now cpu timing only
 
 export run_id=vincemark_b_cpu
 
@@ -44,8 +44,8 @@ for repeat_nr in {1..3}; do
 
 # timing_flag 8 does nothing!
 # for timing_flag in {1..7} {9..10}; do
-for timing_flag in 1; do
-total_cpu_timing=false
+for timing_flag in 0; do
+total_cpu_timing=true
 
 for workspace_filepath in $ws_base_path/workspace*.root; do
 
