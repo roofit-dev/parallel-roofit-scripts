@@ -42,7 +42,8 @@ void vincemark(std::string workspace_filepath,
                int fork_timer_sleep_us = 100000,
                int print_level=0,
                bool debug=false,
-               bool total_cpu_timing=false
+               bool total_cpu_timing=false,
+               bool fix_binned_pdfs=false
                ) {
   if (debug) {
     RooMsgService::instance().addStream(DEBUG);
@@ -97,6 +98,19 @@ void vincemark(std::string workspace_filepath,
   TFile *_file0 = TFile::Open(workspace_filepath.c_str());
   
   RooWorkspace* w = static_cast<RooWorkspace*>(gDirectory->Get("BinnedWorkspace"));
+
+  // Activate binned likelihood calculation for binned models
+  if (fix_binned_pdfs) {
+    RooFIter iter = w->components().fwdIterator();
+    RooAbsArg* arg;
+    while(arg = iter.next()) {
+      if (arg->IsA() == RooRealSumPdf::Class()) {
+        arg->setAttribute("BinnedLikelihood");
+        std::cout << "component " << arg->GetName() << " is a binned likelihood" << std::endl;
+      }
+    }
+  }
+
   RooStats::ModelConfig* mc = static_cast<RooStats::ModelConfig*>(w->genobj("ModelConfig"));
 
   RooAbsPdf* pdf = w->pdf(mc->GetPdf()->GetName()) ;

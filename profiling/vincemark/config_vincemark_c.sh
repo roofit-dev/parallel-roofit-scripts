@@ -2,11 +2,12 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-06-28 14:38:13
+# @Last Modified time: 2017-06-28 14:42:08
 
-# set a: just run it all for the first time, only with full timing (timing_flag = 1)
+# set c: workspaces from a, full timing only, no numerical integral timing, but
+#        now with fixed binned pdfs
 
-export run_id=vincemark_a
+export run_id=vincemark_c
 
 export run_script_name="run_root_vincemark.sh"
 
@@ -27,8 +28,8 @@ optConst=0
 cpu_affinity=true
 debug=false
 
-# PUT IN AFTERWARDS ON 28 JUNE 2017 FOR BACKWARDS COMPATIBILITY
-fix_binned_pdfs=false
+# this is the crucial feature in (/ since) set _c
+fix_binned_pdfs=true
 
 # parameters for numerical integral timing
 # time_num_ints=false
@@ -42,7 +43,7 @@ ix=1
 # walltime_array is declared implictly below
 
 for num_cpu in {1..8}; do
-for time_num_ints in true false; do
+for time_num_ints in false; do
 for repeat_nr in {1..3}; do
 
 # timing_flag 8 does nothing!
@@ -50,12 +51,7 @@ for repeat_nr in {1..3}; do
 for timing_flag in 1; do
 total_cpu_timing=false
 
-for N_channels in {1..5}; do
-for N_events in 1000 1000000 10000000; do
-for N_bins in 1 10 100; do
-for N_nps in 0 1 3; do
-
-workspace_filepath="${ws_base_path}/workspace${N_channels}channels${N_events}events${N_bins}bins${N_nps}nps.root"
+for workspace_filepath in $ws_base_path/workspace*.root; do
 
 argument_string_list="${argument_string_list}run_id=${run_id},repeat_nr=${repeat_nr},workspace_filepath=${workspace_filepath},num_cpu=${num_cpu},time_num_ints=${time_num_ints},optConst=${optConst},ileave=${ileave},seed=${seed},printlevel=${printlevel},timing_flag=${timing_flag},cpu_affinity=${cpu_affinity},fork_timer=${fork_timer},fork_timer_sleep_us=${fork_timer_sleep_us},debug=${debug},total_cpu_timing=${total_cpu_timing},fix_binned_pdfs=${fix_binned_pdfs}
 "
@@ -88,11 +84,11 @@ argument_string_list="${argument_string_list}run_id=${run_id},repeat_nr=${repeat
 # DETERMINE PROPER ESTIMATES BASED ON RUN _a AND THEN USE THOSE IN SUBSEQUENT RUNS
 # DETERMINE PROPER ESTIMATES BASED ON RUN _a AND THEN USE THOSE IN SUBSEQUENT RUNS
 
-walltime_array[ix]=0:01:00
+walltime_array[ix]=0:01:30
 
 ((++ix))
 
-done; done; done; done; done; done; done; done
+done; done; done; done; done;
 
 # before saving, strip last newline
 argument_string_list=${argument_string_list:0:-1}

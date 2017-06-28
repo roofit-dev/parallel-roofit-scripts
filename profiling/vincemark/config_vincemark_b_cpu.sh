@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-06-28 11:00:29
+# @Last Modified time: 2017-06-28 14:38:43
 
 # set b_cpu: like b, but now cpu timing only
 
@@ -27,6 +27,9 @@ optConst=0
 cpu_affinity=true
 debug=false
 
+# PUT IN AFTERWARDS ON 28 JUNE 2017 FOR BACKWARDS COMPATIBILITY
+fix_binned_pdfs=false
+
 # parameters for numerical integral timing
 # time_num_ints=false
 
@@ -49,7 +52,7 @@ total_cpu_timing=true
 
 for workspace_filepath in $ws_base_path/workspace*.root; do
 
-argument_string_list="${argument_string_list}run_id=${run_id},repeat_nr=${repeat_nr},workspace_filepath=${workspace_filepath},num_cpu=${num_cpu},time_num_ints=${time_num_ints},optConst=${optConst},ileave=${ileave},seed=${seed},printlevel=${printlevel},timing_flag=${timing_flag},cpu_affinity=${cpu_affinity},fork_timer=${fork_timer},fork_timer_sleep_us=${fork_timer_sleep_us},debug=${debug},total_cpu_timing=${total_cpu_timing}
+argument_string_list="${argument_string_list}run_id=${run_id},repeat_nr=${repeat_nr},workspace_filepath=${workspace_filepath},num_cpu=${num_cpu},time_num_ints=${time_num_ints},optConst=${optConst},ileave=${ileave},seed=${seed},printlevel=${printlevel},timing_flag=${timing_flag},cpu_affinity=${cpu_affinity},fork_timer=${fork_timer},fork_timer_sleep_us=${fork_timer_sleep_us},debug=${debug},total_cpu_timing=${total_cpu_timing},fix_binned_pdfs=${fix_binned_pdfs}
 "
 # note the newline at the end of the string, don't remove that!
 
