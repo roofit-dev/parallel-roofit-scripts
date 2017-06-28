@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-06-28 10:03:53
+# @Last Modified time: 2017-06-28 10:09:38
 
 # set b: new workspaces, again only with full timing (timing_flag = 1), now also without numInt timing
 
@@ -46,7 +46,7 @@ for repeat_nr in {1..3}; do
 # for timing_flag in {1..7} {9..10}; do
 for timing_flag in 1; do
 
-for workspace_filepath in "${ws_base_path}/workspace*.root"; do
+for workspace_filepath in $ws_base_path/workspace*.root; do
 
 argument_string_list="${argument_string_list}run_id=${run_id},repeat_nr=${repeat_nr},workspace_filepath=${workspace_filepath},num_cpu=${num_cpu},time_num_ints=${time_num_ints},optConst=${optConst},ileave=${ileave},seed=${seed},printlevel=${printlevel},timing_flag=${timing_flag},cpu_affinity=${cpu_affinity},fork_timer=${fork_timer},fork_timer_sleep_us=${fork_timer_sleep_us},debug=${debug}
 "
