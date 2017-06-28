@@ -4,7 +4,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:23:55
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-06-26 08:47:52
+# @Last Modified time: 2017-06-28 09:57:32
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -112,6 +112,8 @@ g.fig.suptitle(f'total wallclock timing of migrad, hesse and minos')
 savefig(g, savefig_dn / f'total_timing_col-Nchans.png')
 """
 
+print("Something is not going right with the iteration columns... are they structured the way I thought at all?")
+raise SystemExit
 
 #### NUMERICAL INTEGRAL TIMINGS
 if not Path('df_numints.hdf').exists():
