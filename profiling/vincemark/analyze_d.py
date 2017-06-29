@@ -4,7 +4,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:23:55
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-06-29 08:14:18
+# @Last Modified time: 2017-06-29 15:46:35
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -27,8 +27,7 @@ def savefig(factorplot, fp):
 
 
 """
-cd ~/projects/apcocsm/code/profiling/vincemark
-rsync --progress --include='*/' --include='*/*/' --include='timing*.json' --exclude='*' -zavr nikhef:project_atlas/apcocsm_code/profiling/vincemark/vincemark_d ./
+cd ~/projects/apcocsm/code/profiling/vincemark && rsync --progress --include='*/' --include='*/*/' --include='timing*.json' --exclude='*' -zavr nikhef:project_atlas/apcocsm_code/profiling/vincemark/vincemark_d ./ && cd -
 """
 
 basepath = Path.home() / 'projects/apcocsm/code/profiling/vincemark/vincemark_d'
@@ -77,34 +76,35 @@ df_totals = df_totals[df_totals.segment != 'migrad+hesse+minos']
 #### ANALYSIS
 
 # full timings
-g = sns.factorplot(x='num_cpu', y='walltime_s', col='N_bins', hue='timing_type', row='segment', estimator=np.min, data=df_totals, legend_out=False, sharey='row')
+# g = sns.factorplot(x='num_cpu', y='walltime_s', col='N_bins', hue='timing_type', row='segment', estimator=np.min, data=df_totals, legend_out=False, sharey='row')
+# plt.subplots_adjust(top=0.93)
+# g.fig.suptitle(f'total wallclock timing of migrad, hesse and minos')
+# savefig(g, savefig_dn / f'total_timing.png')
+
+g = sns.factorplot(x='N_bins', y='walltime_s', col='num_cpu', hue='timing_type', row='segment', estimator=np.min, data=df_totals, legend_out=False, sharey='row', order=range(1,1001))
 plt.subplots_adjust(top=0.93)
 g.fig.suptitle(f'total wallclock timing of migrad, hesse and minos')
-savefig(g, savefig_dn / f'total_timing.png')
+savefig(g, savefig_dn / f'total_timing_vs_bins.png')
 
-for chans in df_totals.N_chans.unique():
-    for events in df_totals.N_events.unique():
-        for nps in df_totals.N_nuisance_parameters.unique():
-            data = df_totals[(df_totals.N_chans == chans) & (df_totals.N_events == events) & (df_totals.N_nuisance_parameters == nps)]
-            if len(data) > 0:
-                g = sns.factorplot(x='num_cpu', y='walltime_s', col='N_bins', hue='timing_type', row='segment', estimator=np.min, data=data, legend_out=False, sharey='row')
-                plt.subplots_adjust(top=0.93)
-                g.fig.suptitle(f'total wallclock timing of migrad, hesse and minos --- N_channels = {chans}, N_events = {events}, N_nps = {nps}')
-                savefig(g, savefig_dn / f'total_timing_chan{chans}_event{events}_np{nps}.png')
 
-# some more, focused on different parameters based on analysis of above plots
-# scale with Nnps
-g = sns.factorplot(x='num_cpu', y='walltime_s', col='N_nuisance_parameters', hue='timing_type', row='segment', estimator=np.min, data=df_totals, legend_out=False, sharey='row')
+g = sns.factorplot(x='N_chans', y='walltime_s', col='num_cpu', hue='timing_type', row='segment', estimator=np.min, data=df_totals, legend_out=False, sharey='row')
 plt.subplots_adjust(top=0.93)
 g.fig.suptitle(f'total wallclock timing of migrad, hesse and minos')
-savefig(g, savefig_dn / f'total_timing_col-Nnps.png')
+savefig(g, savefig_dn / f'total_timing_vs_chans.png')
 
-# scale with Nchans
-g = sns.factorplot(x='num_cpu', y='walltime_s', col='N_chans', hue='timing_type', row='segment', estimator=np.min, data=df_totals, legend_out=False, sharey='row')
-plt.subplots_adjust(top=0.93)
-g.fig.suptitle(f'total wallclock timing of migrad, hesse and minos')
-savefig(g, savefig_dn / f'total_timing_col-Nchans.png')
 
+# make a plot per unique combination of parameters (looping is too complicated, since the combination space is sparse)
+# # https://stackoverflow.com/a/35268906/1199693
+# # for name, group in df_totals.groupby([]):
+# for chans in df_totals.N_chans.unique():
+#     for events in df_totals.N_events.unique():
+#         for nps in df_totals.N_nuisance_parameters.unique():
+#             data = df_totals[(df_totals.N_chans == chans) & (df_totals.N_events == events) & (df_totals.N_nuisance_parameters == nps)]
+#             if len(data) > 0:
+#                 g = sns.factorplot(x='num_cpu', y='walltime_s', col='N_bins', hue='timing_type', row='segment', estimator=np.min, data=data, legend_out=False, sharey='row')
+#                 plt.subplots_adjust(top=0.93)
+#                 g.fig.suptitle(f'total wallclock timing of migrad, hesse and minos --- N_channels = {chans}, N_events = {events}, N_nps = {nps}')
+#                 savefig(g, savefig_dn / f'total_timing_chan{chans}_event{events}_np{nps}.png')
 
 
 print("Something is not going right with the numerical integral added iteration columns... are they structured the way I thought at all?")
