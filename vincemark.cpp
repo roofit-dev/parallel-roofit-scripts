@@ -103,7 +103,7 @@ void vincemark(std::string workspace_filepath,
   if (fix_binned_pdfs) {
     RooFIter iter = w->components().fwdIterator();
     RooAbsArg* component_arg;
-    while(component_arg = iter.next()) {
+    while((component_arg = iter.next())) {
       if (component_arg->IsA() == RooRealSumPdf::Class()) {
         component_arg->setAttribute("BinnedLikelihood");
         std::cout << "component " << component_arg->GetName() << " is a binned likelihood" << std::endl;
