@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-06-28 14:39:14
+# @Last Modified time: 2017-07-03 16:49:03
 
 #PBS -l nodes=1:ppn=8
 #PBS -o $PBS_JOBNAME/$PBS_JOBID.out
@@ -51,13 +51,18 @@ function start_run() {
     exit 1
   fi
 
+  if [[ -z "$zero_initial_POI" ]]; then
+    echo "Warning: zero_initial_POI not set! Exists since run e, so take care if doing later run. Setting to false now."
+    zero_initial_POI=false
+  fi
+
   if [[ -z "$repeat_nr" ]]; then
     echo "repeat_nr not set as environment variable"
   else
     echo "Repeat number $repeat_nr"
   fi
 
-  root -b -q -l "$SCRIPT_PATH(\"${workspace_filepath}\",${num_cpu},${optConst},${ileave},${cpu_affinity},${seed},${timing_flag},${time_num_ints},${fork_timer},${fork_timer_sleep_us},${printlevel},${debug},${total_cpu_timing},${fix_binned_pdfs})"
+  root -b -q -l "$SCRIPT_PATH(\"${workspace_filepath}\",${num_cpu},${optConst},${ileave},${cpu_affinity},${seed},${timing_flag},${time_num_ints},${fork_timer},${fork_timer_sleep_us},${printlevel},${debug},${total_cpu_timing},${fix_binned_pdfs},${zero_initial_POI})"
 
   cd -
 }

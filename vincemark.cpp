@@ -43,7 +43,8 @@ void vincemark(std::string workspace_filepath,
                int print_level=0,
                bool debug=false,
                bool total_cpu_timing=false,
-               bool fix_binned_pdfs=false
+               bool fix_binned_pdfs=false,
+               bool zero_initial_POI=false
                ) {
   if (debug) {
     RooMsgService::instance().addStream(DEBUG);
@@ -115,6 +116,13 @@ void vincemark(std::string workspace_filepath,
 
   RooAbsPdf* pdf = w->pdf(mc->GetPdf()->GetName()) ;
   RooAbsData * data = w->data("obsData");
+
+
+  // Manually set initial values of parameter of interest
+  if (zero_initial_POI) {
+    RooAbsRealLValue* POI = static_cast<RooAbsRealLValue *>(pdf->getParameters(data)->selectByName("SignalStrength")->first());
+    POI->setVal(0);
+  }
 
 
   // --- Perform extended ML fit of composite PDF to data ---
