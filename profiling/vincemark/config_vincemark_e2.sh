@@ -2,18 +2,18 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-07-03 17:28:17
+# @Last Modified time: 2017-07-03 17:29:00
 
-# set e: same as c (workspaces from a, full timing only, no numerical integral
-#        timing, fixed binned pdfs), but now with fixed code (3 July 2017).
-#        Still with initial POI = 1, like in a, so not using new option for
-#        setting it to zero, so results can be compared to sets a and c.
+# set e2: same as d (workspaces from d, full timing only, no numerical integral
+#         timing, fixed binned pdfs), but now with fixed code (3 July 2017).
+#         Still with initial POI = 1, like in a, so not using new option for
+#         setting it to zero, so results can be compared to sets a and c.
 
-export run_id=vincemark_e
+export run_id=vincemark_e2
 
 export run_script_name="run_root_vincemark.sh"
 
-ws_base_path="$HOME/project_atlas/vince/toy_workspaces_20170530"
+ws_base_path="$HOME/project_atlas/vince/toy_workspaces_20170628"
 
 # wallclock time estimate parameters
 # additive parameter for things like setting environment (ROOT etc)
