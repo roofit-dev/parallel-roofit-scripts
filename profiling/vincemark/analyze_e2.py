@@ -4,7 +4,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:23:55
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-07-03 17:40:41
+# @Last Modified time: 2017-07-03 17:42:29
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -27,17 +27,17 @@ def savefig(factorplot, fp):
 
 
 """
-cd ~/projects/apcocsm/code/profiling/vincemark && rsync --progress --include='*/' --include='*/*/' --include='timing*.json' --exclude='*' -zavr nikhef:project_atlas/apcocsm_code/profiling/vincemark/vincemark_e ./ && cd -
+cd ~/projects/apcocsm/code/profiling/vincemark && rsync --progress --include='*/' --include='*/*/' --include='timing*.json' --exclude='*' -zavr nikhef:project_atlas/apcocsm_code/profiling/vincemark/vincemark_e2 ./ && cd -
 """
 
-basepath = Path.home() / 'projects/apcocsm/code/profiling/vincemark/vincemark_e'
+basepath = Path.home() / 'projects/apcocsm/code/profiling/vincemark/vincemark_e2'
 savefig_dn = basepath / 'analysis'
 
 savefig_dn.mkdir(parents=True, exist_ok=True)
 
 #### LOAD DATA FROM FILES
 fpgloblist = [basepath.glob('%i.allier.nikhef.nl/*.json' % i)
-              for i in range(18575799, 18575870)]
+              for i in range(18576382, 18576493)]
               # for i in itertools.chain(range(18445438, 18445581),
               #                          range(18366732, 18367027))]
 
@@ -81,7 +81,7 @@ df_totals = df_totals[df_totals.segment != 'migrad+hesse+minos']
 # g.fig.suptitle(f'total wallclock timing of migrad, hesse and minos')
 # savefig(g, savefig_dn / f'total_timing.png')
 
-g = sns.factorplot(x='N_bins', y='walltime_s', col='num_cpu', hue='timing_type', row='segment', estimator=np.min, data=df_totals, legend_out=False, sharey='row')#, order=range(1,1001))
+g = sns.factorplot(x='N_bins', y='walltime_s', col='num_cpu', hue='timing_type', row='segment', estimator=np.min, data=df_totals, legend_out=False, sharey='row', order=range(1, 1001))
 plt.subplots_adjust(top=0.93)
 g.fig.suptitle(f'total wallclock timing of migrad, hesse and minos')
 savefig(g, savefig_dn / f'total_timing_vs_bins.png')
