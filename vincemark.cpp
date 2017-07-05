@@ -27,7 +27,8 @@ std::string cut_between(std::string input, std::string before, std::string after
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // timing_flag is used to activate only selected timing statements [1-7]
 // num_cpu: -1 is special option -> compare overhead communication protocol (wrt 1 cpu)
-// parallel_interleave: 0 = blocks of equal size, 1 = interleave
+// parallel_interleave: 0 = blocks of equal size, 1 = interleave, 2 = simultaneous pdfs mode
+//                      { BulkPartition=0, Interleave=1, SimComponents=2, Hybrid=3 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void vincemark(std::string workspace_filepath,
