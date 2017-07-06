@@ -143,9 +143,9 @@ void vincemark(std::string workspace_filepath,
   
   if (total_cpu_timing) {
     outfile_cpu.open("timing_full_minimize_cpu.json");
-    outfile.add_member_name("cputime_s")
-           .add_member_name("segment")
-           .add_member_name("pid");
+    outfile_cpu.add_member_name("cputime_s")
+               .add_member_name("segment")
+               .add_member_name("pid");
   }
 
   Bool_t cpuAffinity;
