@@ -4,7 +4,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:23:55
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-07-03 17:40:41
+# @Last Modified time: 2017-07-06 11:23:34
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -81,16 +81,25 @@ df_totals = df_totals[df_totals.segment != 'migrad+hesse+minos']
 # g.fig.suptitle(f'total wallclock timing of migrad, hesse and minos')
 # savefig(g, savefig_dn / f'total_timing.png')
 
-g = sns.factorplot(x='N_bins', y='walltime_s', col='num_cpu', hue='timing_type', row='segment', estimator=np.min, data=df_totals, legend_out=False, sharey='row')#, order=range(1,1001))
-plt.subplots_adjust(top=0.93)
-g.fig.suptitle(f'total wallclock timing of migrad, hesse and minos')
-savefig(g, savefig_dn / f'total_timing_vs_bins.png')
+plot_stuff = input("press ENTER to plot stuff, type n and press ENTER to not plot stuff. ")
 
+if plot_stuff != "n":
+    g = sns.factorplot(x='N_bins', y='walltime_s', col='num_cpu', hue='timing_type', row='segment', estimator=np.min, data=df_totals, legend_out=False, sharey='row')#, order=range(1,1001))
+    plt.subplots_adjust(top=0.93)
+    g.fig.suptitle(f'total wallclock timing of migrad, hesse and minos')
+    savefig(g, savefig_dn / f'total_timing_vs_bins.png')
 
-g = sns.factorplot(x='N_chans', y='walltime_s', col='num_cpu', hue='timing_type', row='segment', estimator=np.min, data=df_totals, legend_out=False, sharey='row')
-plt.subplots_adjust(top=0.93)
-g.fig.suptitle(f'total wallclock timing of migrad, hesse and minos')
-savefig(g, savefig_dn / f'total_timing_vs_chans.png')
+    g = sns.factorplot(x='N_chans', y='walltime_s', col='num_cpu', hue='timing_type', row='segment', estimator=np.min, data=df_totals, legend_out=False, sharey='row')
+    plt.subplots_adjust(top=0.93)
+    g.fig.suptitle(f'total wallclock timing of migrad, hesse and minos')
+    savefig(g, savefig_dn / f'total_timing_vs_chans.png')
+
+    # Use the 1 channel 100 bins 1 nps runs as a special case, since these should scale linearly (i.e. no costs, no benefits)
+    subset = df_totals[(df_totals.N_chans == 1) & (df_totals.N_bins == 100) & (df_totals.N_nuisance_parameters == 1)]
+    g = sns.factorplot(x='num_cpu', y='walltime_s', hue='timing_type', row='segment', data=subset, legend_out=False)
+    plt.subplots_adjust(top=0.93)
+    g.fig.suptitle(f'total wallclock timing for only the 1 channel 100 bins 1 nps runs')
+    savefig(g, savefig_dn / f'total_timing_vs_1chan100bins1nps.png')
 
 
 # make a plot per unique combination of parameters (looping is too complicated, since the combination space is sparse)
