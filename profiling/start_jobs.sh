@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-06-21 13:30:28
+# @Last Modified time: 2017-07-18 20:48:24
 
 bunch=false
 while getopts r:b: opt
@@ -30,7 +30,7 @@ if [[ -z "$config_name" ]]; then
   exit 1
 else
   source $config_name
-  if [[ ! -s "${run_id}_argument_string_list.txt" || -z "$run_script_name" || -z "${walltime_array[1]}" ]]; then
+  if [[ ! -s "argument_string_lists/${run_id}.txt" || -z "$run_script_name" || -z "${walltime_array[1]}" ]]; then
     echo "Error: argument_string_list file empty or walltime_array and/or run_script_name were not set by config script $config_name!"
     exit 2
   else
@@ -48,14 +48,14 @@ force_multicore_queue=true
 if [[ -n "$start_from" && -n "$start_upto" ]]; then
   ix=$start_from
 
-  argument_string_file="${run_id}_argument_string_list_${start_from}-${start_upto}.txt"
+  argument_string_file="argument_string_lists/${run_id}_${start_from}-${start_upto}.txt"
 
-  sed "${run_id}_argument_string_list.txt" -n -e "${start_from},${start_upto}p" > "${argument_string_file}"
+  sed "argument_string_lists/${run_id}.txt" -n -e "${start_from},${start_upto}p" > "${argument_string_file}"
 
   echo "Starting selected range: job $start_from up to job $start_upto in the argument_string_list file."
 else
   ix=1
-  argument_string_file="${run_id}_argument_string_list.txt"
+  argument_string_file="argument_string_lists/${run_id}.txt"
 fi
 
 function submit_job() {
