@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-07-18 20:48:24
+# @Last Modified time: 2017-07-18 21:37:58
 
 bunch=false
 while getopts r:b: opt
@@ -59,7 +59,7 @@ else
 fi
 
 function submit_job() {
-  qsub -q $queue -N $run_id -l "walltime=$wallstr" -v "bunch=${bunch}" -v "$argument_string" "$run_script_name"
+  qsub -q $queue -N $run_id -l "walltime=$wallstr" -v "bunch=${bunch},$argument_string" "$run_script_name"
 
   if [[ $? -eq 15046 ]]; then
     if [[ $queue -eq "short" ]]; then
