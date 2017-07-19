@@ -4,7 +4,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:23:55
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-07-18 22:08:11
+# @Last Modified time: 2017-07-18 22:18:40
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -94,8 +94,8 @@ df_totals['cpu|wall / real|ideal'] = df_totals['cpu/wall'].astype(str) + '/' + d
 plot_stuff = input("press ENTER to plot stuff, type n and press ENTER to not plot stuff. ")
 
 if plot_stuff != "n":
-    g = sns.factorplot(x='num_cpu', y='time_s', col='num_cpu', hue='cpu|wall / real|ideal', row='segment', data=df_totals, legend_out=False, sharey='row')
-    plt.subplots_adjust(top=0.93)
+    g = sns.factorplot(x='num_cpu', y='time_s', hue='cpu|wall / real|ideal', col='segment', data=df_totals, legend_out=False, sharey=False)
+    plt.subplots_adjust(top=0.86)
     g.fig.suptitle(f'total timings of migrad, hesse and minos')
     savefig(g, savefig_dn / f'total_timing.png')
 

@@ -69,9 +69,9 @@ void workbench(std::string workspace_filepath,
             << optConst << print_level << timing_flag;
   }
 
-  RooTrace::timing_flag = timing_flag;
+  RooTimer::set_timing_flag(timing_flag);
   if (time_num_ints) {
-    RooTrace::set_time_numInts(kTRUE);
+    RooTimer::set_time_numInts(kTRUE);
   }
 
   // plotting configuration
