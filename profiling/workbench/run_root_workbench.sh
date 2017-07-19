@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-07-18 21:33:34
+# @Last Modified time: 2017-07-19 20:38:24
 
 #PBS -l nodes=1:ppn=8
 #PBS -o $PBS_JOBNAME/$PBS_JOBID.out
@@ -31,7 +31,7 @@ mkdir -p $RUNDIR
 cd $RUNDIR
 
 function start_run() {
-  if [[ -z "$run_id" || -z "$timing_flag" || -z "$workspace_filepath" || -z "$workspace_name" || -z "$model_config" || -z "$data_name" || -z "$ileave" || -z "$seed" || -z "$printlevel" || -z "$optConst" || -z "$time_num_ints" || -z "$num_cpu" || -z "$fork_timer" || -z "$fork_timer_sleep_us" || -z "$cpu_affinity" || -z "$debug" || -z "$total_cpu_timing" || -z "$fix_binned_pdfs" || -z "$zero_initial_POI" ]]; then
+  if [[ -z "$run_id" || -z "$timing_flag" || -z "$workspace_filepath" || -z "$workspace_name" || -z "$model_config" || -z "$data_name" || -z "$ileave" || -z "$seed" || -z "$printlevel" || -z "$optConst" || -z "$time_num_ints" || -z "$num_cpu" || -z "$fork_timer" || -z "$fork_timer_sleep_us" || -z "$cpu_affinity" || -z "$debug" || -z "$total_cpu_timing" || -z "$fix_binned_pdfs" || -z "$zero_initial_POI" || -z "$time_evaluate_partition" ]]; then
     echo "Error: configuration environment variable missing!"
     echo "run_id: $run_id"
     echo "workspace_filepath: $workspace_filepath"
@@ -52,6 +52,7 @@ function start_run() {
     echo "total_cpu_timing: $total_cpu_timing"
     echo "fix_binned_pdfs: $fix_binned_pdfs"
     echo "zero_initial_POI: $zero_initial_POI"
+    echo "time_evaluate_partition: $time_evaluate_partition"
     exit 1
   fi
 
@@ -61,7 +62,7 @@ function start_run() {
     echo "Repeat number $repeat_nr"
   fi
 
-  root -b -q -l "$SCRIPT_PATH(\"${workspace_filepath}\",\"${workspace_name}\",\"${model_config}\",\"${data_name}\",${num_cpu},${optConst},${ileave},${cpu_affinity},${seed},${timing_flag},${time_num_ints},${fork_timer},${fork_timer_sleep_us},${printlevel},${debug},${total_cpu_timing},${fix_binned_pdfs},${zero_initial_POI})"
+  root -b -q -l "$SCRIPT_PATH(\"${workspace_filepath}\",\"${workspace_name}\",\"${model_config}\",\"${data_name}\",${num_cpu},${optConst},${ileave},${cpu_affinity},${seed},${timing_flag},${time_num_ints},${fork_timer},${fork_timer_sleep_us},${printlevel},${debug},${total_cpu_timing},${fix_binned_pdfs},${zero_initial_POI},${time_evaluate_partition})"
 
   cd -
 }

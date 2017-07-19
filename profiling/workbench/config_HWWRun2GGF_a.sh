@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-07-18 20:45:33
+# @Last Modified time: 2017-07-19 20:38:44
 
 # set a: just run it all for the first time, full timing, cpu and wall
 
@@ -39,6 +39,8 @@ fix_binned_pdfs=true
 # introduced since set _e, but not used in _e yet
 zero_initial_POI=false
 
+time_evaluate_partition=false
+
 # crucial parameter for set f
 # ileave=2
 
@@ -66,7 +68,7 @@ total_cpu_timing=true
 
 # for workspace_filepath in $ws_base_path/$workspace_set/workspace*.root; do
 
-argument_string_list="${argument_string_list}run_id=${run_id},repeat_nr=${repeat_nr},workspace_filepath=${workspace_filepath},workspace_name=${workspace_name},model_config=${model_config},data_name=${data_name},num_cpu=${num_cpu},time_num_ints=${time_num_ints},optConst=${optConst},ileave=${ileave},seed=${seed},printlevel=${printlevel},timing_flag=${timing_flag},cpu_affinity=${cpu_affinity},fork_timer=${fork_timer},fork_timer_sleep_us=${fork_timer_sleep_us},debug=${debug},total_cpu_timing=${total_cpu_timing},fix_binned_pdfs=${fix_binned_pdfs},zero_initial_POI=${zero_initial_POI}
+argument_string_list="${argument_string_list}run_id=${run_id},repeat_nr=${repeat_nr},workspace_filepath=${workspace_filepath},workspace_name=${workspace_name},model_config=${model_config},data_name=${data_name},num_cpu=${num_cpu},time_num_ints=${time_num_ints},optConst=${optConst},ileave=${ileave},seed=${seed},printlevel=${printlevel},timing_flag=${timing_flag},cpu_affinity=${cpu_affinity},fork_timer=${fork_timer},fork_timer_sleep_us=${fork_timer_sleep_us},debug=${debug},total_cpu_timing=${total_cpu_timing},fix_binned_pdfs=${fix_binned_pdfs},zero_initial_POI=${zero_initial_POI},time_evaluate_partition=${time_evaluate_partition}
 "
 # note the newline at the end of the string, don't remove that!
 

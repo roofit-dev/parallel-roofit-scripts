@@ -42,7 +42,8 @@ void workbench(std::string workspace_filepath,
                bool total_cpu_timing=false,
                bool fix_binned_pdfs=false,
                bool zero_initial_POI=false,
-               std::string POI_name=""
+               std::string POI_name="",
+               bool time_evaluate_partition=false
                ) {
   if (debug) {
     RooMsgService::instance().addStream(DEBUG);
@@ -72,6 +73,9 @@ void workbench(std::string workspace_filepath,
   RooTimer::set_timing_flag(timing_flag);
   if (time_num_ints) {
     RooTimer::set_time_numInts(kTRUE);
+  }
+  if (time_evaluate_partition) {
+    RooTimer::set_time_evaluate_partition(kTRUE);
   }
 
   // plotting configuration
