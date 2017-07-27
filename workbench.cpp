@@ -43,7 +43,8 @@ void workbench(std::string workspace_filepath,
                bool fix_binned_pdfs=false,
                bool zero_initial_POI=false,
                std::string POI_name="",
-               bool time_evaluate_partition=false
+               bool time_evaluate_partition=false,
+               bool time_MPFE_forks=false
                ) {
   if (debug) {
     RooMsgService::instance().addStream(DEBUG);
@@ -76,6 +77,9 @@ void workbench(std::string workspace_filepath,
   }
   if (time_evaluate_partition) {
     RooTimer::set_time_evaluate_partition(kTRUE);
+  }
+  if (time_MPFE_forks) {
+    RooTimer::set_time_MPFE_forks(kTRUE);
   }
 
   // plotting configuration
@@ -158,8 +162,12 @@ void workbench(std::string workspace_filepath,
 
   // for (int it = 0; it < N_timing_loops; ++it)
   {
-    RooAbsReal* nll = pdf->createNLL(*data, NumCPU(num_cpu, parallel_interleave),
-                                     CPUAffinity(cpuAffinity));//, "Extended");
+    std::shared_ptr<RooAbsReal> nll(pdf->createNLL(*data, NumCPU(num_cpu, parallel_interleave),
+                                    CPUAffinity(cpuAffinity)));//, "Extended");
+    if (time_evaluate_partition) {
+      nll->setTimingEvaluatePartitions(kTRUE);
+    }
+
     RooMinimizer m(*nll);
     // m.setVerbose(1);
     m.setStrategy(0);

@@ -2,11 +2,11 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-07-27 21:15:30
+# @Last Modified time: 2017-07-27 21:16:37
 
-# set a: just run it all for the first time, full timing, cpu and wall
+# set b: same as a, full timing, cpu and wall, but now also with MPFE-forks CPU timing
 
-export run_id=HWWRun2GGF_a
+export run_id=HWWRun2GGF_b
 
 export run_script_name="run_root_workbench.sh"
 
@@ -41,7 +41,7 @@ zero_initial_POI=false
 POI_name=""
 
 time_evaluate_partition=false
-time_MPFE_forks=false
+time_MPFE_forks=true
 
 # crucial parameter for set f
 # ileave=2
