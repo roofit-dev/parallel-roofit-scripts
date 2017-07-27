@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-07-27 21:16:37
+# @Last Modified time: 2017-07-27 22:03:03
 
 # set b: same as a, full timing, cpu and wall, but now also with MPFE-forks CPU timing
 
@@ -38,7 +38,7 @@ fix_binned_pdfs=true
 
 # introduced since set _e, but not used in _e yet
 zero_initial_POI=false
-POI_name=""
+POI_name="\"\""
 
 time_evaluate_partition=false
 time_MPFE_forks=true
