@@ -162,8 +162,10 @@ void workbench(std::string workspace_filepath,
 
   // for (int it = 0; it < N_timing_loops; ++it)
   {
-    std::shared_ptr<RooAbsReal> nll(pdf->createNLL(*data, NumCPU(num_cpu, parallel_interleave),
-                                    CPUAffinity(cpuAffinity)));//, "Extended");
+    RooAbsReal* RARnll(pdf->createNLL(*data, NumCPU(num_cpu, parallel_interleave),
+                       CPUAffinity(cpuAffinity)));//, "Extended");
+    std::shared_ptr<RooAbsTestStatistic> nll = dynamic_cast<RooAbsTestStatistic*>(RARnll);
+    
     if (time_evaluate_partition) {
       nll->setTimingEvaluatePartitions(kTRUE);
     }
