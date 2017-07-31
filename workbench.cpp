@@ -167,7 +167,7 @@ void workbench(std::string workspace_filepath,
     std::shared_ptr<RooAbsTestStatistic> nll(dynamic_cast<RooAbsTestStatistic*>(RARnll));
 
     if (time_evaluate_partition) {
-      nll->setTimingEvaluatePartitions(kTRUE);
+      nll->setTimeEvaluatePartition(kTRUE);
     }
 
     RooMinimizer m(*nll);
