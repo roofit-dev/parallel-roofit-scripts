@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-07-27 22:01:44
+# @Last Modified time: 2017-07-31 06:45:13
 
 #PBS -l nodes=1:ppn=8
 #PBS -o $PBS_JOBNAME/$PBS_JOBID.out
@@ -31,13 +31,11 @@ mkdir -p $RUNDIR
 cd $RUNDIR
 
 function start_run() {
-  if [[ -z "$run_id" || -z "$timing_flag" || -z "$workspace_filepath" || -z "$workspace_name" || -z "$model_config" || -z "$data_name" || -z "$ileave" || -z "$seed" || -z "$printlevel" || -z "$optConst" || -z "$time_num_ints" || -z "$num_cpu" || -z "$fork_timer" || -z "$fork_timer_sleep_us" || -z "$cpu_affinity" || -z "$debug" || -z "$total_cpu_timing" || -z "$fix_binned_pdfs" || -z "$zero_initial_POI" || -z "$POI_name" || -z "$time_evaluate_partition" || -z "$time_MPFE_forks" ]]; then
+  if [[ -z "$run_id" || -z "$timing_flag" || -z "$workspace_filepath" || -z "$workspace_name" || -z "$ileave" || -z "$seed" || -z "$printlevel" || -z "$optConst" || -z "$time_num_ints" || -z "$num_cpu" || -z "$fork_timer" || -z "$fork_timer_sleep_us" || -z "$cpu_affinity" || -z "$debug" || -z "$total_cpu_timing" || -z "$fix_binned_pdfs" || -z "$zero_initial_POI" || -z "$time_evaluate_partition" || -z "$time_MPFE_forks" ]]; then
     echo "Error: configuration environment variable missing!"
     echo "run_id: $run_id"
     echo "workspace_filepath: $workspace_filepath"
     echo "workspace_name: $workspace_name"
-    echo "model_config: $model_config"
-    echo "data_name: $data_name"
     echo "num_cpu: $num_cpu"
     echo "optConst: $optConst"
     echo "ileave: $ileave"
@@ -52,10 +50,16 @@ function start_run() {
     echo "total_cpu_timing: $total_cpu_timing"
     echo "fix_binned_pdfs: $fix_binned_pdfs"
     echo "zero_initial_POI: $zero_initial_POI"
-    echo "POI_name: $POI_name"
     echo "time_evaluate_partition: $time_evaluate_partition"
     echo "time_MPFE_forks: $time_MPFE_forks"
     exit 1
+  fi
+
+  if [[ -z "$model_config" || -z "$data_name" || -z "$POI_name" ]]; then
+    echo "Warning: string configuration environment variable empty! This may not be intended."
+    echo "model_config: $model_config"
+    echo "data_name: $data_name"
+    echo "POI_name: $POI_name"
   fi
 
   if [[ -z "$repeat_nr" ]]; then
