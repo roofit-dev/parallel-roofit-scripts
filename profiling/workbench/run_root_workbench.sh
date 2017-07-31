@@ -2,7 +2,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:54:41
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-07-31 06:45:13
+# @Last Modified time: 2017-07-31 07:01:56
 
 #PBS -l nodes=1:ppn=8
 #PBS -o $PBS_JOBNAME/$PBS_JOBID.out
@@ -68,7 +68,7 @@ function start_run() {
     echo "Repeat number $repeat_nr"
   fi
 
-  root -b -q -l "$SCRIPT_PATH(\"${workspace_filepath}\",\"${workspace_name}\",\"${model_config}\",\"${data_name}\",${num_cpu},${optConst},${ileave},${cpu_affinity},${seed},${timing_flag},${time_num_ints},${fork_timer},${fork_timer_sleep_us},${printlevel},${debug},${total_cpu_timing},${fix_binned_pdfs},${zero_initial_POI},${POI_name},${time_evaluate_partition},${time_MPFE_forks})"
+  root -b -q -l "$SCRIPT_PATH(\"${workspace_filepath}\",\"${workspace_name}\",\"${model_config}\",\"${data_name}\",${num_cpu},${optConst},${ileave},${cpu_affinity},${seed},${timing_flag},${time_num_ints},${fork_timer},${fork_timer_sleep_us},${printlevel},${debug},${total_cpu_timing},${fix_binned_pdfs},${zero_initial_POI},\"${POI_name}\",${time_evaluate_partition},${time_MPFE_forks})"
 
   cd -
 }
