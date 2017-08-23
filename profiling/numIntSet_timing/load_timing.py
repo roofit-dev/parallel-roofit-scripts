@@ -2,7 +2,7 @@
 # @Author: E. G. Patrick Bos
 # @Date:   2017-05-12 10:07:19
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-06-21 16:29:33
+# @Last Modified time: 2017-08-08 10:56:09
 
 # Module with loading functions for different types of RooFit timings.
 

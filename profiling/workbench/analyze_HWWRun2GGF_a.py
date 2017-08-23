@@ -4,7 +4,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:23:55
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-07-18 22:18:40
+# @Last Modified time: 2017-08-08 11:43:32
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -20,10 +20,10 @@ pd.set_option("display.width", None)
 
 def savefig(factorplot, fp):
     try:
-        g.savefig(fp)
+        factorplot.savefig(fp)
         print("saved figure using pathlib.Path, apparently mpl is now pep 519 compatible! https://github.com/matplotlib/matplotlib/pull/8481")
     except TypeError:
-        g.savefig(fp.__str__())
+        factorplot.savefig(fp.__str__())
 
 
 """

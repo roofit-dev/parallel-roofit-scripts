@@ -164,13 +164,14 @@ void workbench(std::string workspace_filepath,
   {
     RooAbsReal* RARnll(pdf->createNLL(*data, NumCPU(num_cpu, parallel_interleave),
                        CPUAffinity(cpuAffinity)));//, "Extended");
-    std::shared_ptr<RooAbsTestStatistic> nll(dynamic_cast<RooAbsTestStatistic*>(RARnll));
+    // std::shared_ptr<RooAbsTestStatistic> nll(dynamic_cast<RooAbsTestStatistic*>(RARnll)); // shared_ptr gives odd error in ROOT cling!
+    // RooAbsTestStatistic * nll = dynamic_cast<RooAbsTestStatistic*>(RARnll);
 
-    if (time_evaluate_partition) {
-      nll->setTimeEvaluatePartition(kTRUE);
-    }
+    // if (time_evaluate_partition) {
+    //   nll->setTimeEvaluatePartition(kTRUE);
+    // }
 
-    RooMinimizer m(*nll);
+    RooMinimizer m(*RARnll);
     // m.setVerbose(1);
     m.setStrategy(0);
     m.setProfile(1);
@@ -284,5 +285,7 @@ void workbench(std::string workspace_filepath,
         kill(pid, SIGKILL);
       }
     }
+
+    delete RARnll;
   }
 }
