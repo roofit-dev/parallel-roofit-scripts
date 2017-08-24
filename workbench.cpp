@@ -14,6 +14,7 @@ R__LOAD_LIBRARY(libRooFit)
 #include <unistd.h>  // usleep
 #include <sys/types.h>  // for kill
 #include <signal.h>     // for kill
+#include <ctime>
 
 using namespace RooFit;
 
@@ -57,14 +58,18 @@ void workbench(std::string workspace_filepath,
     RooJsonListFile outfile;
   
     outfile.open("timing_meta.json");
-    std::list<std::string> names = {"workspace_filepath", "workspace_name",
+    std::list<std::string> names = {"timestamp",
+                                    "workspace_filepath", "workspace_name",
                                     "model_config_name", "data_name",
                                     "num_cpu", "parallel_interleave", "cpu_affinity",
                                     "seed", "pid", "time_num_ints",
                                     "optConst", "print_level", "timing_flag"};
     outfile.set_member_names(names.begin(), names.end());
 
-    outfile << workspace_filepath << workspace_name
+    // int timestamp = std::time(nullptr);
+
+    outfile << std::time(nullptr)
+            << workspace_filepath << workspace_name
             << model_config_name << data_name
             << num_cpu << parallel_interleave << cpu_affinity
             << seed << getpid() << time_num_ints

@@ -4,7 +4,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:23:55
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-08-24 10:05:32
+# @Last Modified time: 2017-08-24 10:11:11
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -26,7 +26,7 @@ def savefig(factorplot, fp):
         factorplot.savefig(fp.__str__())
 
 
-basepath = Path.home() / 'projects/apcocsm/code/profiling/workbench/test/vbfComb_detailedMPFEcpuTiming'
+basepath = Path.home() / 'projects/apcocsm/code/profiling/workbench/test/vbfComb_detailedMPFEcpuTiming2'
 savefig_dn = basepath / 'analysis'
 
 savefig_dn.mkdir(parents=True, exist_ok=True)
@@ -62,14 +62,14 @@ df_totals_cpu['cpu/wall'] = 'cpu'
 df_totals = pd.concat([df_totals_wall, df_totals_cpu])
 
 
-print("TOTAL CPU TIME (seconds) IN MAIN PROCESS: \n", df_totals[df_totals['cpu/wall'] == 'cpu'].groupby('pid').time_s.sum())
+print("TOTAL CPU TIME (seconds) IN MAIN PROCESS: \n", df_totals[df_totals['cpu/wall'] == 'cpu'].groupby('timestamp').time_s.sum())
 
 
 #### Evaluate partition timings
 
 try:
     df_evalPart = pd.concat([dfs_mp_sl[k] for k in dfs_mp_sl.keys() if "evaluate_partitions" in k])
-    print("TOTAL CPU TIME (seconds) IN EVALUATE PARTITION TIMINGS: \n", df_evalPart[df_evalPart['cpu/wall'] == 'cpu'].groupby(('ppid', 'pid')).time_s.sum())
+    print("TOTAL CPU TIME (seconds) IN EVALUATE PARTITION TIMINGS: \n", df_evalPart[df_evalPart['cpu/wall'] == 'cpu'].groupby(('timestamp', 'pid')).time_s.sum())
 except ValueError:
     print("no evaluate partition timings, carry on")
 
@@ -78,25 +78,25 @@ except ValueError:
 
 df_MPFEforks = dfs_mp_ma["MPFE_forks_cputime"]
 
-print("TOTAL CPU TIME (seconds) IN FORKED MPFE PROCESSES: \n", df_MPFEforks.groupby('pid').time_s.sum())
+print("TOTAL CPU TIME (seconds) IN FORKED MPFE PROCESSES: \n", df_MPFEforks.groupby('timestamp').time_s.sum())
 
 
 #### MPFE forks CPU time, split into while loop iterations, including messages
 
 try:
-    df_MPFEdetails = pd.concat(dfs_mp_sl.values()).reset_index()
-    print("TOTAL CPU TIME (seconds) IN serverLoops OF FORKED MPFE PROCESSES: \n", df_MPFEdetails.groupby(('ppid', 'pid', 'message', 'cpu/wall')).time_s.sum())
-    print("TOTAL CPU TIME (seconds) IN serverLoops OF FORKED MPFE PROCESSES: \n", df_MPFEdetails.groupby(('ppid', 'pid', 'segment', 'message', 'cpu/wall')).time_s.sum())
+    df_MPFEdetails = pd.concat([dfs_mp_sl[k] for k in dfs_mp_sl.keys() if 'RRMPFE_serverloop_while' in k]).reset_index()
+    print("TOTAL CPU TIME (seconds) IN serverLoops OF FORKED MPFE PROCESSES: \n", df_MPFEdetails.groupby(('timestamp', 'pid', 'message', 'cpu/wall')).time_s.sum())
+    print("TOTAL CPU TIME (seconds) IN serverLoops OF FORKED MPFE PROCESSES: \n", df_MPFEdetails.groupby(('timestamp', 'pid', 'segment', 'message', 'cpu/wall')).time_s.sum())
 
-    print("MEDIAN of CPU TIMES (seconds) IN serverLoops OF FORKED MPFE PROCESSES: \n", df_MPFEdetails.groupby(('ppid', 'pid', 'segment', 'message', 'cpu/wall')).time_s.median())
+    print("MEDIAN of CPU TIMES (seconds) IN serverLoops OF FORKED MPFE PROCESSES: \n", df_MPFEdetails.groupby(('timestamp', 'pid', 'segment', 'message', 'cpu/wall')).time_s.median())
 
-    print(df_MPFEdetails[df_MPFEdetails.message == "RooRealMPFE::SendReal"].groupby(('ppid', 'pid', 'segment', 'cpu/wall')).time_s.describe())
+    print(df_MPFEdetails[df_MPFEdetails.message == "RooRealMPFE::SendReal"].groupby(('timestamp', 'pid', 'segment', 'cpu/wall')).time_s.describe())
 
-    print(df_MPFEdetails[(df_MPFEdetails.message == "RooRealMPFE::SendReal") & (df_MPFEdetails.ppid == 63264)].groupby(('ppid', 'pid', 'segment', 'cpu/wall')).time_s.describe())
+    print(df_MPFEdetails[(df_MPFEdetails.message == "RooRealMPFE::SendReal") & (df_MPFEdetails.ppid == 63264)].groupby(('timestamp', 'pid', 'segment', 'cpu/wall')).time_s.describe())
 
 
-    print(df_MPFEdetails[(df_MPFEdetails.segment == "msg_pipe") & (df_MPFEdetails['cpu/wall'] == "cpu")].groupby(('ppid')).time_s.sum())
-    print(df_MPFEdetails[(df_MPFEdetails.segment == "msg_pipe") & (df_MPFEdetails['cpu/wall'] == "cpu")].groupby(('ppid', 'message')).time_s.sum())
+    print(df_MPFEdetails[(df_MPFEdetails.segment == "msg_pipe") & (df_MPFEdetails['cpu/wall'] == "cpu")].groupby(('timestamp')).time_s.sum())
+    print(df_MPFEdetails[(df_MPFEdetails.segment == "msg_pipe") & (df_MPFEdetails['cpu/wall'] == "cpu")].groupby(('timestamp', 'message')).time_s.sum())
 
 
     df_MPFEdetails[(df_MPFEdetails.message == "RooRealMPFE::SendReal") & (df_MPFEdetails.ppid == 63264)].groupby(('pid', 'segment', 'cpu/wall')).time_s.hist(bins=200, log=True)
@@ -120,6 +120,6 @@ try:
 
     print("The 'other' mode times almost sum up to the SimMaster times. The latter are then the interesting ones.")
 
-    print("TOTAL CPU TIME (seconds) OF SimMaster MODE RATS::EVALUATE CALLS IN SINGLE CORE RUNS:\n", df_evalSingle_SimMaster.groupby(('pid')).time_s.sum())
+    print("TOTAL CPU TIME (seconds) OF SimMaster MODE RATS::EVALUATE CALLS IN SINGLE CORE RUNS:\n", df_evalSingle_SimMaster.groupby(('timestamp')).time_s.sum())
 except KeyError:
     print("no single core evaluate timings, carry on")
