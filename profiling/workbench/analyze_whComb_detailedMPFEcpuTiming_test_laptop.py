@@ -4,7 +4,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:23:55
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-08-24 10:53:44
+# @Last Modified time: 2017-08-24 11:00:28
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -26,7 +26,7 @@ def savefig(factorplot, fp):
         factorplot.savefig(fp.__str__())
 
 
-basepath = Path.home() / 'projects/apcocsm/code/profiling/workbench/test/vbfComb_detailedMPFEcpuTiming2'
+basepath = Path.home() / 'projects/apcocsm/code/profiling/workbench/test/whComb_detailedMPFEcpuTiming'
 savefig_dn = basepath / 'analysis'
 
 savefig_dn.mkdir(parents=True, exist_ok=True)
@@ -50,8 +50,8 @@ dfs_sp, dfs_mp_sl, dfs_mp_ma = load_timing.load_dfs_coresplit(fpgloblist, skip_o
 
 
 # #### TOTAL TIMINGS (flag 1)
-# df_totals_real = pd.concat([dfs_sp['full_minimize'], dfs_mp_ma['full_minimize']])
-df_totals_real = dfs_mp_ma['full_minimize']
+df_totals_real = pd.concat([dfs_sp['full_minimize'], dfs_mp_ma['full_minimize']])
+# df_totals_real = dfs_mp_ma['full_minimize']
 
 # combine cpu and wall timings into one time_s column and add a cpu/wall column
 df_totals_wall = df_totals_real[df_totals_real.walltime_s.notnull()].drop("cputime_s", axis=1).rename_axis({"walltime_s": "time_s"}, axis="columns")
