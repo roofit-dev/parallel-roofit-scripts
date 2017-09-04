@@ -45,7 +45,8 @@ void workbench(std::string workspace_filepath,
                bool zero_initial_POI=false,
                std::string POI_name="",
                bool time_evaluate_partition=false,
-               bool time_MPFE_forks=false
+               bool time_MPFE_forks=false//,
+               // bool callNLLfirst=false
                ) {
   if (debug) {
     RooMsgService::instance().addStream(DEBUG);
@@ -174,6 +175,10 @@ void workbench(std::string workspace_filepath,
 
     // if (time_evaluate_partition) {
     //   nll->setTimeEvaluatePartition(kTRUE);
+    // }
+
+    // if (callNLLfirst) {
+    //   RARnll->getVal();
     // }
 
     RooMinimizer m(*RARnll);
