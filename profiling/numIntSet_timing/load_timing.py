@@ -2,10 +2,11 @@
 # @Author: E. G. Patrick Bos
 # @Date:   2017-05-12 10:07:19
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-08-08 10:56:09
+# @Last Modified time: 2017-09-06 09:48:14
 
 # Module with loading functions for different types of RooFit timings.
 
+import os
 import functools
 import itertools
 import pandas as pd
@@ -14,6 +15,10 @@ pd.set_option("display.width", None)
 
 def merge_dataframes(*dataframes):
     return functools.reduce(pd.merge, dataframes)
+
+
+class EmptyJsonFileException(Exception):
+    pass
 
 
 def df_from_json_incl_meta(fp, fp_meta=None,
@@ -26,6 +31,11 @@ def df_from_json_incl_meta(fp, fp_meta=None,
     result = {}
     if fp_meta is None:
         fp_meta = fp.with_name('timing_meta.json')
+    if os.stat(fp).st_size == 0:
+        raise EmptyJsonFileException(f"{fp} is empty!")
+    if os.stat(fp_meta).st_size == 0:
+        raise EmptyJsonFileException(f"{fp_meta} is empty!")
+
     main_df = pd.read_json(fp)
     meta_df = pd.read_json(fp_meta).drop(drop_meta, axis=1)
     # not just single process runs, also master processes in multi-process runs:
@@ -108,6 +118,9 @@ def load_dfs_coresplit(fpgloblist, *, skip_on_match=[], skip_meta=True, **df_fro
             else:
                 print(f'fail for file {fp}')
                 raise e
+        except EmptyJsonFileException as e:
+            print(f'Exception: file {fp} is empty! Skipping.')
+
 #    dfs_split = {fp: df_from_json_incl_meta(fp) for fp in fplist}
     dfs_sp = merge_dfs_by_split_per_filetype(dfs_split, 'single', dfkeys)
     dfs_mp_sl = merge_dfs_by_split_per_filetype(dfs_split, 'multi', dfkeys)

@@ -4,7 +4,7 @@
 # @Author: Patrick Bos
 # @Date:   2016-11-16 16:23:55
 # @Last Modified by:   E. G. Patrick Bos
-# @Last Modified time: 2017-07-10 08:07:14
+# @Last Modified time: 2017-09-05 17:27:17
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -27,10 +27,10 @@ def savefig(factorplot, fp):
 
 
 """
-cd ~/projects/apcocsm/code/profiling/vincemark && rsync --progress --include='*/' --include='*/*/' --include='timing*.json' --exclude='*' -zavr nikhef:project_atlas/apcocsm_code/profiling/vincemark/vincemark_g ./ && cd -
+cd ~/projects/apcocsm/code/profiling/workbench && rsync --progress --include='*/' --include='*/*/' --include='timing*.json' --exclude='*' -zavr nikhef:project_atlas/apcocsm_code/profiling/workbench/vincemark_outputAugust09 ./ && cd -
 """
 
-basepath = Path.home() / 'projects/apcocsm/code/profiling/vincemark/vincemark_g'
+basepath = Path.home() / 'projects/apcocsm/code/profiling/workbench/vincemark_outputAugust09'
 savefig_dn = basepath / 'analysis'
 
 savefig_dn.mkdir(parents=True, exist_ok=True)
