@@ -72,9 +72,9 @@ Channel makeChannel(int channel, int nnps, bool channel_crosstalk){
 }
 
 void buildBinnedTest3(){
-  int n_channels = 10;
+  int n_channels = 1;
   bool channel_crosstalk = true;
-  int nnps = 10;
+  int nnps = 0;
   Measurement meas("meas","meas");
   meas.SetPOI( "SignalStrength" );
   meas.SetLumi( 1.0 );
