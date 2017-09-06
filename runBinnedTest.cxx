@@ -26,4 +26,5 @@ void runBinnedTest()
   m.migrad();
   m.hesse();
   m.minos();
+  delete nll;
 }
