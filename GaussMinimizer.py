@@ -18,5 +18,9 @@ mu.setVal(-2.9)
 print 'trying GaussMinimizer'
 m1  = ROOT.RooGaussMinimizer(nll)
 m1.migrad()
-print mu.getVal()
+print "migrad worked with mu of ",mu.getVal()
+m1.hesse()
+print "hesse worked with mu of ",mu.getVal()
+m1.minos()
+print "minos worked with mu of ",mu.getVal()
 print "Made and minimised an nll with 2 Gradient Function"
