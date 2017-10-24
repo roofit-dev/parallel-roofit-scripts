@@ -22,15 +22,25 @@ void GaussMinimizer() {
 
   auto nll = pdf->createNLL(*data);
 
+  // set mu to same value at the start of all minimizations
+  mu->setVal(-2.9);
+
   std::cout << "trying nominal calculation" << std::endl;
   RooMinimizer m0(*nll);
 
   m0.migrad();
+
+  mu->setVal(-2.9); // this does nothing
+
   m0.hesse();
+
+  mu->setVal(-2.9); // this does nothing
+
   m0.minos();
 
   std::cout << "nominal mu fit is," << mu->getVal() << std::endl;
 
+  // set mu to same value at the start of both minimizations
   mu->setVal(-2.9);
 
   std::cout << "trying GaussMinimizer" << std::endl;
@@ -38,8 +48,14 @@ void GaussMinimizer() {
 
   m1.migrad();
   std::cout << "migrad worked with mu of " << mu->getVal() << std::endl;
+  
+  mu->setVal(-2.9); // this does nothing
+  
   m1.hesse();
   std::cout << "hesse worked with mu of " << mu->getVal() << std::endl;
+  
+  mu->setVal(-2.9); // this does nothing
+
   m1.minos();
   std::cout << "minos worked with mu of " << mu->getVal() << std::endl;
 
