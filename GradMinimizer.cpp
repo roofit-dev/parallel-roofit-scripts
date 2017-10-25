@@ -11,6 +11,9 @@ R__LOAD_LIBRARY(libRooFit)
 using namespace RooFit;
 
 void GradMinimizer() {
+  // produce the same random stuff every time
+  gRandom->SetSeed(1);
+
   RooWorkspace w = RooWorkspace();
 
   w.factory("Gaussian::g(x[-5,5],mu[-3,3],sigma[1])");
