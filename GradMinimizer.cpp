@@ -3,7 +3,7 @@
 // call from command line like, for instance:
 // root -l 'GradMinimizer.cpp()'
 
-R__LOAD_LIBRARY(libRooFit)
+// R__LOAD_LIBRARY(libRooFit)
 
 #include <iostream>
 // #include <exception>
@@ -42,6 +42,8 @@ void GradMinimizer() {
 
   std::cout << "trying nominal calculation" << std::endl;
   RooMinimizer m0(*nll);
+  m0.setMinimizerType("Minuit2");
+
   m0.setPrintLevel(3);
   m0.setVerbose();
 
