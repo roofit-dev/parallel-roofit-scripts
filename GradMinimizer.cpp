@@ -30,10 +30,10 @@ void GradMinimizer() {
   // save initial values for the start of all minimizations
   RooArgSet values = RooArgSet(*mu, *pdf, *nll);
   
-  std::cout << std::endl << std::endl;
-  values.Print("v");
-  mu->Print("v");
-  std::cout << std::endl << std::endl;
+  // std::cout << std::endl << std::endl;
+  // values.Print("v");
+  // mu->Print("v");
+  // std::cout << std::endl << std::endl;
 
   RooArgSet* savedValues = dynamic_cast<RooArgSet*>(values.snapshot());
   if (savedValues == nullptr) {
@@ -45,50 +45,54 @@ void GradMinimizer() {
   m0.setMinimizerType("Minuit2");
   m0.setStrategy(0);
 
-  m0.setPrintLevel(3);
-  m0.setVerbose();
+  m0.setPrintLevel(-1);
+  // m0.setVerbose();
 
   m0.migrad();
 
-  std::cout << std::endl << std::endl;
-  values.Print("v");
-  mu->Print("v");
-  std::cout << std::endl << std::endl;
+  // std::cout << std::endl << std::endl;
+  // values.Print("v");
+  // mu->Print("v");
+  // std::cout << std::endl << std::endl;
 
   // m0.hesse();
 
   // m0.minos();
 
-  std::cout << "nominal mu fit is," << mu->getVal() << std::endl;
+  std::cout << "nominal mu fit is " << mu->getVal() << std::endl;
 
   // reset initial values
-  std::cout << std::endl << std::endl;
-  values.Print("v");
-  mu->Print("v");
+  // std::cout << std::endl << std::endl;
+  // values.Print("v");
+  // mu->Print("v");
   std::cout << "\n === reset initial values === \n" << std::endl;
   values = *savedValues;
-  values.Print("v");
-  mu->Print("v");
-  std::cout << std::endl << std::endl;
+  // values.Print("v");
+  // mu->Print("v");
+  // std::cout << std::endl << std::endl;
 
   std::cout << "trying GradMinimizer" << std::endl;
   RooGradMinimizer m1(*nll);
   m1.setStrategy(0);
-  m1.setVerbose();
+  // m1.setVerbose();
 
-  std::cout << "RooGradMinimizer created" << std::endl;
+  // std::cout << "RooGradMinimizer created" << std::endl;
 
   m1.migrad();
-    
+
+  std::cout << "GradMinimizer mu fit is " << mu->getVal() << std::endl;
+
+
+  // std::cout << "run hesse" << std::endl;
   // m1.hesse();
   // std::cout << "hesse done" << std::endl;
   
   // m1.minos();
   // std::cout << "minos done" << std::endl;
 
-  std::cout << std::endl << std::endl;
-  values.Print("v");
-  mu->Print("v");
-  std::cout << std::endl << std::endl;
+  // std::cout << std::endl << std::endl;
+  // values.Print("v");
+  // mu->Print("v");
+  // std::cout << std::endl << std::endl;
 
 }
