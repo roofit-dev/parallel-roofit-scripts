@@ -43,6 +43,7 @@ void GradMinimizer() {
   std::cout << "trying nominal calculation" << std::endl;
   RooMinimizer m0(*nll);
   m0.setMinimizerType("Minuit2");
+  m0.setStrategy(0);
 
   m0.setPrintLevel(3);
   m0.setVerbose();
@@ -72,6 +73,7 @@ void GradMinimizer() {
 
   std::cout << "trying GradMinimizer" << std::endl;
   RooGradMinimizer m1(*nll);
+  m1.setStrategy(0);
   m1.setVerbose();
 
   std::cout << "RooGradMinimizer created" << std::endl;
