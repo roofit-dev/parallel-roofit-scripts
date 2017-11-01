@@ -1,3 +1,5 @@
+R__LOAD_LIBRARY(libRooFit)
+
 #include <chrono>
 #include <iostream>
 #include <sstream>
@@ -61,9 +63,9 @@ void unbinned_scaling2(int num_cpu=1, bool force_num_int=false,
             << optConst << print_level << timing_flag;
   }
 
-  RooTrace::timing_flag = timing_flag;
+  RooTimer::set_timing_flag(timing_flag);
   if (time_num_ints) {
-    RooTrace::set_time_numInts(kTRUE);
+    RooTimer::set_time_numInts(kTRUE);
   }
 
   // plotting configuration
