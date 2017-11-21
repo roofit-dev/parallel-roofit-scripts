@@ -4,6 +4,7 @@
 // root -l 'GradMinimizer.cpp()'
 
 // R__LOAD_LIBRARY(libRooFit)
+#pragma cling load("libRooFit")
 
 #include <iostream>
 // #include <exception>
@@ -16,7 +17,7 @@ void GradMinimizer() {
 
   RooWorkspace w = RooWorkspace();
 
-  w.factory("Gaussian::g(x[-5,5],mu[-3,3],sigma[1])");
+  w.factory("Gaussian::g(x[-5,5],mu[0,-3,3],sigma[1])");
 
   auto x = w.var("x");
   RooAbsPdf * pdf = w.pdf("g");
@@ -24,6 +25,7 @@ void GradMinimizer() {
 
   RooDataSet * data = pdf->generate(RooArgSet(*x), 10000);
   mu->setVal(-2.9);
+  // mu->setError(0.1);
 
   auto nll = pdf->createNLL(*data);
 
@@ -62,12 +64,14 @@ void GradMinimizer() {
   // m0.minos();
 
 
+  std::cout << " ====================================== " << std::endl;
   // --------
 
-  std::cout << "\n === reset initial values === \n" << std::endl;
+  std::cout << " ======== reset initial values ======== " << std::endl;
   values = *savedValues;
 
   // --------
+  std::cout << " ====================================== " << std::endl;
 
 
   std::cout << "trying GradMinimizer" << std::endl;
@@ -100,26 +104,26 @@ void GradMinimizer() {
 
   // --------
 
-  std::cout << "\n === reset initial values === \n" << std::endl;
-  values = *savedValues;
+  // std::cout << "\n === reset initial values === \n" << std::endl;
+  // values = *savedValues;
 
-  // --------
+  // // --------
 
 
-  std::cout << "trying nominal calculation AGAIN" << std::endl;
+  // std::cout << "trying nominal calculation AGAIN" << std::endl;
 
-  RooMinimizer m2(*nll);
-  m2.setMinimizerType("Minuit2");
+  // RooMinimizer m2(*nll);
+  // m2.setMinimizerType("Minuit2");
 
-  m2.setStrategy(0);
-  // m2.setVerbose();
-  m2.setPrintLevel(0);
+  // m2.setStrategy(0);
+  // // m2.setVerbose();
+  // m2.setPrintLevel(0);
 
-  wtimer.start();
-  m2.migrad();
-  wtimer.stop();
+  // wtimer.start();
+  // m2.migrad();
+  // wtimer.stop();
 
-  std::cout << "  -- second nominal calculation wall clock time: " << wtimer.timing_s() << "s" << std::endl;
+  // std::cout << "  -- second nominal calculation wall clock time: " << wtimer.timing_s() << "s" << std::endl;
 
   // m2.hesse();
 
