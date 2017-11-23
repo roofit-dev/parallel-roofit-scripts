@@ -17,15 +17,20 @@ void GradMinimizer_Ndim_hierarchical(int N_events = 1000) {
   // produce the same random stuff every time
   gRandom->SetSeed(1);
 
-  RooWorkspace w("w", 1) ;
+  RooWorkspace w("w", kFALSE);
 
   // 3rd level
-  w.factory("Gaussian::g0_0_0(v[-10,10],m0_0_0[0.6,-10,10],ga1_0)"); // two branch pdf, one up a level to different 1st level branch
-  w.factory("Gamma::ga0_0_1(u[-10,10],k0_0_1[3,2,10],theta0_0_1[5,0.1,10])"); // leaf pdf
+  w.factory("Gamma::ga0_0_1(k0_0_1[3,2,10],u[1,20],1,0)"); // leaf pdf
+  // Gamma(mu,N+1,1,0) ~ Pois(N,mu), so this is a "continuous Poissonian"
 
-  // 2nd level
+  // 2nd level that will be linked to from 3rd level
+  w.factory("Gamma::ga1_0(k1_0[4,2,10],z[1,20],1,0)"); // leaf pdf
+
+  // rest of 3rd level
+  w.factory("Gaussian::g0_0_0(v[-10,10],m0_0_0[0.6,-10,10],ga1_0)"); // two branch pdf, one up a level to different 1st level branch
+
+  // rest of 2nd level
   w.factory("Gaussian::g0_0(g0_0_0,m0_0[6,-10,10],ga0_0_1)"); // branch pdf
-  w.factory("Gamma::ga1_0(z[0,20],k1_0[4,2,10],theta1_0[3,0.1,10])"); // leaf pdf
 
   // 1st level
   w.factory("Gaussian::g0(x[-10,10],g0_0,s0[3,0.1,10])"); // branch pdf
@@ -36,7 +41,7 @@ void GradMinimizer_Ndim_hierarchical(int N_events = 1000) {
 
   // event counts for 1st level pdfs
   RooRealVar a("N_g0", "#events g0", 100, 0., 10*N_events);
-  RooRealVar b("N_g1", "#events g1", 100, 0., 10*N_events);  
+  RooRealVar b("N_g1", "#events g1", 100, 0., 10*N_events);
   w.import(a);
   w.import(b);
   // gather in count_set
@@ -49,48 +54,30 @@ void GradMinimizer_Ndim_hierarchical(int N_events = 1000) {
 
   // gather observables
   RooArgSet obs_set;
-  obs_set.add(*w.arg("x"));
-  obs_set.add(*w.arg("y"));
-  obs_set.add(*w.arg("z"));
-  obs_set.add(*w.arg("u"));
-  obs_set.add(*w.arg("v"));
-
+  for (auto obs : {"x", "y", "z", "u", "v"}) {
+    obs_set.add(*w.arg(obs));
+  }
+  
   // --- Generate a toyMC sample from composite PDF ---
   RooDataSet *data = sum.generate(obs_set, N_events);
 
   auto nll = sum.createNLL(*data);
 
-  // set parameter values randomly so that they actually need to do some fitting
-  for (int ix = 0; ix < n; ++ix) {
-    {
-      std::ostringstream os;
-      os << "m" << ix;
-      dynamic_cast<RooRealVar *>(w.arg(os.str().c_str()))->setVal(gRandom->Gaus(0, 2));
-    }
-    {
-      std::ostringstream os;
-      os << "s" << ix;
-      dynamic_cast<RooRealVar *>(w.arg(os.str().c_str()))->setVal(0.1 + abs(gRandom->Gaus(0, 2)));
-    }
-  }
-
   // gather all values of parameters, observables, pdfs and nll here for easy
   // saving and restoring
-  RooArgSet some_values = RooArgSet(obs_set, pdf_set, "some_values");
-  RooArgSet all_values = RooArgSet(some_values, count_set, "all_values");
-  all_values.add(*nll);
-  all_values.add(sum);
-  for (int ix = 0; ix < n; ++ix) {
-    {
-      std::ostringstream os;
-      os << "m" << ix;
-      all_values.add(*w.arg(os.str().c_str()));
-    }
-    {
-      std::ostringstream os;
-      os << "s" << ix;
-      all_values.add(*w.arg(os.str().c_str()));
-    }
+  RooArgSet some_values = RooArgSet(obs_set, w.allPdfs(), "some_values");
+  RooArgSet most_values = RooArgSet(some_values, level1_counts, "most_values");
+  most_values.add(*nll);
+  most_values.add(sum);
+
+  RooArgSet * param_set = nll->getParameters(obs_set);
+
+  RooArgSet all_values = RooArgSet(most_values, *param_set, "all_values");
+
+  // set parameter values randomly so that they actually need to do some fitting
+  auto it = all_values.fwdIterator();
+  while (RooRealVar * val = dynamic_cast<RooRealVar *>(it.next())) {
+    val->setVal(gRandom->Uniform(val->getMin(), val->getMax()));
   }
 
   // save initial values for the start of all minimizations  
@@ -102,7 +89,6 @@ void GradMinimizer_Ndim_hierarchical(int N_events = 1000) {
   // --------
 
   RooWallTimer wtimer;
-  // RooCPUTimer ctimer 
 
   // --------
 
@@ -112,7 +98,6 @@ void GradMinimizer_Ndim_hierarchical(int N_events = 1000) {
   m0.setMinimizerType("Minuit2");
 
   m0.setStrategy(0);
-  // m0.setVerbose();
   m0.setPrintLevel(0);
 
   wtimer.start();
@@ -120,10 +105,6 @@ void GradMinimizer_Ndim_hierarchical(int N_events = 1000) {
   wtimer.stop();
 
   std::cout << "  -- nominal calculation wall clock time:        " << wtimer.timing_s() << "s" << std::endl;
-
-  // m0.hesse();
-
-  // m0.minos();
 
 
   std::cout << " ====================================== " << std::endl;
@@ -141,7 +122,6 @@ void GradMinimizer_Ndim_hierarchical(int N_events = 1000) {
   RooGradMinimizer m1(*nll);
 
   m1.setStrategy(0);
-  // m1.setVerbose();
   m1.setPrintLevel(0);
 
   wtimer.start();
@@ -151,45 +131,13 @@ void GradMinimizer_Ndim_hierarchical(int N_events = 1000) {
   std::cout << "  -- GradMinimizer calculation wall clock time:  " << wtimer.timing_s() << "s" << std::endl;
 
 
-  // std::cout << "run hesse" << std::endl;
-  // m1.hesse();
-  // std::cout << "hesse done" << std::endl;
-  
-  // m1.minos();
-  // std::cout << "minos done" << std::endl;
-
-  // std::cout << std::endl << std::endl;
-  // values.Print("v");
-  // mu->Print("v");
-  // std::cout << std::endl << std::endl;
-
-
-  // --------
-
-  // std::cout << "\n === reset initial values === \n" << std::endl;
-  // values = *savedValues;
-
-  // // --------
-
-
-  // std::cout << "trying nominal calculation AGAIN" << std::endl;
-
-  // RooMinimizer m2(*nll);
-  // m2.setMinimizerType("Minuit2");
-
-  // m2.setStrategy(0);
-  // // m2.setVerbose();
-  // m2.setPrintLevel(0);
-
-  // wtimer.start();
-  // m2.migrad();
-  // wtimer.stop();
-
-  // std::cout << "  -- second nominal calculation wall clock time: " << wtimer.timing_s() << "s" << std::endl;
-
-  // m2.hesse();
-
-  // m2.minos();
-
+// N_g0    = 494.514  +/-  18.8621 (limited)
+// N_g1    = 505.817  +/-  24.6705 (limited)
+// k0_0_1    = 2.96883  +/-  0.00561152  (limited)
+// k1_0    = 4.12068  +/-  0.0565994 (limited)
+// m0_0    = 8.09563  +/-  1.30395 (limited)
+// m0_0_0    = 0.411472   +/-  0.183239  (limited)
+// m1    = -1.99988   +/-  0.00194089  (limited)
+// s0    = 3.04623  +/-  0.0982477 (limited)
 
 }

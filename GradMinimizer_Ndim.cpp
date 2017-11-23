@@ -15,7 +15,7 @@ void GradMinimizer_Ndim(int n = 3, int N_events = 1000) {
   // produce the same random stuff every time
   gRandom->SetSeed(1);
 
-  RooWorkspace w("w", 1) ;
+  RooWorkspace w("w", kFALSE);
 
   RooArgSet obs_set;
 
