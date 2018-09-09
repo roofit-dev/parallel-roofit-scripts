@@ -26,6 +26,7 @@ using namespace RooFit;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void workbench_sarajevo(std::string workspace_filepath,
+               bool just_migrad=true,
                int num_cpu=1,
                std::string workspace_name="HWWRun2GGF",
                std::string model_config_name="ModelConfig",
@@ -224,60 +225,64 @@ void workbench_sarajevo(std::string workspace_filepath,
         outfile_cpu << ctimer.timing_s() << "migrad" << getpid();
         ctime_migrad = ctimer.timing_s();
       }
-      if (timing_flag == 1) {
-        timer.start();
-      }
-      if (total_cpu_timing) {
-        ctimer.start();
-      }
 
-      m.hesse();
+      if (!just_migrad) {
 
-      if (timing_flag == 1) {
-        timer.stop();
-      }
-      if (total_cpu_timing) {
-        ctimer.stop();
-      }
-      if (timing_flag == 1) {
-        std::cout << "TIME hesse: " << timer.timing_s() << "s" << std::endl;
-        outfile << timer.timing_s() << "hesse" << getpid();
-        time_hesse = timer.timing_s();
-      }
-      if (total_cpu_timing) {
-        std::cout << "CPUTIME hesse: " << ctimer.timing_s() << "s" << std::endl;
-        outfile_cpu << ctimer.timing_s() << "hesse" << getpid();
-        ctime_hesse = ctimer.timing_s();
-      }
-      if (timing_flag == 1) {
-        timer.start();
-      }
-      if (total_cpu_timing) {
-        ctimer.start();
-      }
+        if (timing_flag == 1) {
+          timer.start();
+        }
+        if (total_cpu_timing) {
+          ctimer.start();
+        }
+
+        m.hesse();
+
+        if (timing_flag == 1) {
+          timer.stop();
+        }
+        if (total_cpu_timing) {
+          ctimer.stop();
+        }
+        if (timing_flag == 1) {
+          std::cout << "TIME hesse: " << timer.timing_s() << "s" << std::endl;
+          outfile << timer.timing_s() << "hesse" << getpid();
+          time_hesse = timer.timing_s();
+        }
+        if (total_cpu_timing) {
+          std::cout << "CPUTIME hesse: " << ctimer.timing_s() << "s" << std::endl;
+          outfile_cpu << ctimer.timing_s() << "hesse" << getpid();
+          ctime_hesse = ctimer.timing_s();
+        }
+        if (timing_flag == 1) {
+          timer.start();
+        }
+        if (total_cpu_timing) {
+          ctimer.start();
+        }
 
 
-      m.minos(*mc->GetParametersOfInterest());
+        m.minos(*mc->GetParametersOfInterest());
 
-      if (timing_flag == 1) {
-        timer.stop();
-      }
-      if (total_cpu_timing) {
-        ctimer.stop();
-      }
-      if (timing_flag == 1) {
-        std::cout << "TIME minos: " << timer.timing_s() << "s" << std::endl;
-        outfile << timer.timing_s() << "minos" << getpid();
-        time_minos = timer.timing_s();
+        if (timing_flag == 1) {
+          timer.stop();
+        }
+        if (total_cpu_timing) {
+          ctimer.stop();
+        }
+        if (timing_flag == 1) {
+          std::cout << "TIME minos: " << timer.timing_s() << "s" << std::endl;
+          outfile << timer.timing_s() << "minos" << getpid();
+          time_minos = timer.timing_s();
 
-        outfile << (time_migrad + time_hesse + time_minos) << "migrad+hesse+minos" << getpid();
-      }
-      if (total_cpu_timing) {
-        std::cout << "CPUTIME minos: " << ctimer.timing_s() << "s" << std::endl;
-        outfile_cpu << ctimer.timing_s() << "minos" << getpid();
-        ctime_minos = ctimer.timing_s();
+          outfile << (time_migrad + time_hesse + time_minos) << "migrad+hesse+minos" << getpid();
+        }
+        if (total_cpu_timing) {
+          std::cout << "CPUTIME minos: " << ctimer.timing_s() << "s" << std::endl;
+          outfile_cpu << ctimer.timing_s() << "minos" << getpid();
+          ctime_minos = ctimer.timing_s();
 
-        outfile_cpu << (ctime_migrad + ctime_hesse + ctime_minos) << "migrad+hesse+minos" << getpid();
+          outfile_cpu << (ctime_migrad + ctime_hesse + ctime_minos) << "migrad+hesse+minos" << getpid();
+        }
       }
 
       if (pid > 0) {
