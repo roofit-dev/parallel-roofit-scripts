@@ -26,7 +26,6 @@ using namespace RooFit;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void workbench_sarajevo(std::string workspace_filepath,
-               bool with_MPGradMinimizer=false,
                int num_cpu=1,
                std::string workspace_name="HWWRun2GGF",
                std::string model_config_name="ModelConfig",
@@ -159,18 +158,20 @@ void workbench_sarajevo(std::string workspace_filepath,
 
   // for (int it = 0; it < N_timing_loops; ++it)
   {
-    RooAbsReal* RARnll;
-    RooMinimizer *m;
+    RooAbsReal* RARnll(pdf->createNLL(*data, NumCPU(num_cpu, parallel_interleave),
+                       CPUAffinity(cpuAffinity)));//, "Extended");
+    // std::shared_ptr<RooAbsTestStatistic> nll(dynamic_cast<RooAbsTestStatistic*>(RARnll)); // shared_ptr gives odd error in ROOT cling!
+    // RooAbsTestStatistic * nll = dynamic_cast<RooAbsTestStatistic*>(RARnll);
 
-    if (!with_MPGradMinimizer) {
-      RARnll = pdf->createNLL(*data, NumCPU(num_cpu, parallel_interleave),
-                       CPUAffinity(cpuAffinity));
-      m = new RooMinimizer(*RARnll);
-    } else {
-      RARnll = pdf->createNLL(*data);
+    // if (time_evaluate_partition) {
+    //   nll->setTimeEvaluatePartition(kTRUE);
+    // }
 
-      m = new RooFit::MultiProcess::GradMinimizer(*RARnll, num_cpu);
-    }
+    // if (callNLLfirst) {
+    //   RARnll->getVal();
+    // }
+
+    RooMinimizer m(*RARnll);
     // m.setVerbose(1);
     m.setStrategy(0);
     m.setProfile(1);
@@ -223,65 +224,60 @@ void workbench_sarajevo(std::string workspace_filepath,
         outfile_cpu << ctimer.timing_s() << "migrad" << getpid();
         ctime_migrad = ctimer.timing_s();
       }
+      if (timing_flag == 1) {
+        timer.start();
+      }
+      if (total_cpu_timing) {
+        ctimer.start();
+      }
 
-      if (!with_MPGradMinimizer) {
+      m.hesse();
 
-        if (timing_flag == 1) {
-          timer.start();
-        }
-        if (total_cpu_timing) {
-          ctimer.start();
-        }
-
-        m.hesse();
-
-        if (timing_flag == 1) {
-          timer.stop();
-        }
-        if (total_cpu_timing) {
-          ctimer.stop();
-        }
-        if (timing_flag == 1) {
-          std::cout << "TIME hesse: " << timer.timing_s() << "s" << std::endl;
-          outfile << timer.timing_s() << "hesse" << getpid();
-          time_hesse = timer.timing_s();
-        }
-        if (total_cpu_timing) {
-          std::cout << "CPUTIME hesse: " << ctimer.timing_s() << "s" << std::endl;
-          outfile_cpu << ctimer.timing_s() << "hesse" << getpid();
-          ctime_hesse = ctimer.timing_s();
-        }
-        if (timing_flag == 1) {
-          timer.start();
-        }
-        if (total_cpu_timing) {
-          ctimer.start();
-        }
+      if (timing_flag == 1) {
+        timer.stop();
+      }
+      if (total_cpu_timing) {
+        ctimer.stop();
+      }
+      if (timing_flag == 1) {
+        std::cout << "TIME hesse: " << timer.timing_s() << "s" << std::endl;
+        outfile << timer.timing_s() << "hesse" << getpid();
+        time_hesse = timer.timing_s();
+      }
+      if (total_cpu_timing) {
+        std::cout << "CPUTIME hesse: " << ctimer.timing_s() << "s" << std::endl;
+        outfile_cpu << ctimer.timing_s() << "hesse" << getpid();
+        ctime_hesse = ctimer.timing_s();
+      }
+      if (timing_flag == 1) {
+        timer.start();
+      }
+      if (total_cpu_timing) {
+        ctimer.start();
+      }
 
 
-        m.minos(*mc->GetParametersOfInterest());
+      m.minos(*mc->GetParametersOfInterest());
 
-        if (timing_flag == 1) {
-          timer.stop();
-        }
-        if (total_cpu_timing) {
-          ctimer.stop();
-        }
-        if (timing_flag == 1) {
-          std::cout << "TIME minos: " << timer.timing_s() << "s" << std::endl;
-          outfile << timer.timing_s() << "minos" << getpid();
-          time_minos = timer.timing_s();
+      if (timing_flag == 1) {
+        timer.stop();
+      }
+      if (total_cpu_timing) {
+        ctimer.stop();
+      }
+      if (timing_flag == 1) {
+        std::cout << "TIME minos: " << timer.timing_s() << "s" << std::endl;
+        outfile << timer.timing_s() << "minos" << getpid();
+        time_minos = timer.timing_s();
 
-          outfile << (time_migrad + time_hesse + time_minos) << "migrad+hesse+minos" << getpid();
-        }
-        if (total_cpu_timing) {
-          std::cout << "CPUTIME minos: " << ctimer.timing_s() << "s" << std::endl;
-          outfile_cpu << ctimer.timing_s() << "minos" << getpid();
-          ctime_minos = ctimer.timing_s();
+        outfile << (time_migrad + time_hesse + time_minos) << "migrad+hesse+minos" << getpid();
+      }
+      if (total_cpu_timing) {
+        std::cout << "CPUTIME minos: " << ctimer.timing_s() << "s" << std::endl;
+        outfile_cpu << ctimer.timing_s() << "minos" << getpid();
+        ctime_minos = ctimer.timing_s();
 
-          outfile_cpu << (ctime_migrad + ctime_hesse + ctime_minos) << "migrad+hesse+minos" << getpid();
-        }
-
+        outfile_cpu << (ctime_migrad + ctime_hesse + ctime_minos) << "migrad+hesse+minos" << getpid();
       }
 
       if (pid > 0) {
@@ -290,7 +286,6 @@ void workbench_sarajevo(std::string workspace_filepath,
       }
     }
 
-    delete m;
     delete RARnll;
   }
 }
