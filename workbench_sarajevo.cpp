@@ -25,8 +25,8 @@ using namespace RooFit;
 //                      { BulkPartition=0, Interleave=1, SimComponents=2, Hybrid=3 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void workbench(std::string workspace_filepath,
-               std::string workspace_name="combined",
+void workbench_sarajevo(std::string workspace_filepath,
+               std::string workspace_name="HWWRun2GGF",
                std::string model_config_name="ModelConfig",
                std::string data_name="obsData",
                int num_cpu=1,
@@ -85,7 +85,11 @@ void workbench(std::string workspace_filepath,
   int optimizeConst(optConst);
   // int N_timing_loops(3); // not used
 
-  gRandom->SetSeed(seed);
+  if (printlevel == 0) {
+    RooMsgService::instance().setGlobalKillBelow(RooFit::ERROR);
+  }
+
+  RooRandom::randomGenerator()->SetSeed(seed);
 
   // Load the workspace data and pdf
   TFile *_file0 = TFile::Open(workspace_filepath.c_str());
