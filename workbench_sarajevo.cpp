@@ -160,15 +160,16 @@ void workbench_sarajevo(std::string workspace_filepath,
   // for (int it = 0; it < N_timing_loops; ++it)
   {
     RooAbsReal* RARnll;
+    RooMinimizer *m;
 
     if (!with_MPGradMinimizer) {
       RARnll = pdf->createNLL(*data, NumCPU(num_cpu, parallel_interleave),
                        CPUAffinity(cpuAffinity));
-      RooMinimizer m(*RARnll);
+      m = new RooMinimizer(*RARnll);
     } else {
       RARnll = pdf->createNLL(*data);
 
-      RooFit::MultiProcess::GradMinimizer m(*RARnll, num_cpu);
+      m = new RooFit::MultiProcess::GradMinimizer(*RARnll, num_cpu);
     }
     // m.setVerbose(1);
     m.setStrategy(0);
@@ -289,6 +290,7 @@ void workbench_sarajevo(std::string workspace_filepath,
       }
     }
 
+    delete m;
     delete RARnll;
   }
 }
