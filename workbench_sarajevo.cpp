@@ -178,6 +178,7 @@ void workbench_sarajevo(std::string workspace_filepath,
     m.setProfile(1);
     m.setPrintLevel(printlevel);
     m.optimizeConst(optimizeConst);
+    m.setMinimizerType("Minuit2");
 
     int pid = -1;
 
