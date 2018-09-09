@@ -27,10 +27,10 @@ using namespace RooFit;
 
 void workbench_sarajevo(std::string workspace_filepath,
                bool with_MPGradMinimizer=false,
+               int num_cpu=1,
                std::string workspace_name="HWWRun2GGF",
                std::string model_config_name="ModelConfig",
                std::string data_name="obsData",
-               int num_cpu=1,
                int optConst=2,
                int parallel_interleave=0,
                bool cpu_affinity=true,
