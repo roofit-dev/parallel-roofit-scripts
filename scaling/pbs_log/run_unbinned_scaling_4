@@ -1,0 +1,1381 @@
+Agent pid 28276
+setup cvmfs
+setup atlaslocalsetup
+[7mlsetup              [0m lsetup <tool1> [ <tool2> ...] (see lsetup -h):
+[7m lsetup agis        [0m  (or localSetupAGIS) to use AGIS
+[7m lsetup asetup      [0m  (or asetup) to use an Athena release
+[7m lsetup atlantis    [0m  (or localSetupAtlantis) to use Atlantis
+[7m lsetup dq2         [0m  (or localSetupDQ2Client) to use DQ2Client
+[7m lsetup eiclient    [0m  (or localSetupEIClient) to use EIClient
+[7m lsetup emi         [0m  (or localSetupEmi) to use  emi
+[7m lsetup fax         [0m  (or localSetupFAX) to use FAX
+[7m lsetup ganga       [0m  (or localSetupGanga) to use Ganga
+[7m lsetup lcgenv      [0m  to use lcgenv
+[7m lsetup panda       [0m  (or localSetupPandaClient) to use Panda Client
+[7m lsetup pod         [0m  (or localSetupPoD) to use Proof-on-Demand
+[7m lsetup pyami       [0m  (or localSetupPyAMI) to use pyAMI
+[7m lsetup rcsetup     [0m  (or rcSetup) to setup an ASG release
+[7m lsetup root        [0m  (or localSetupROOT) to use ROOT
+[7m lsetup rucio       [0m  (or localSetupRucioClients) to use rucio-clients
+[7m lsetup sft         [0m  (or localSetupSFT) to use SFT packages
+[7m lsetup xrootd      [0m  (or localSetupXRootD) to use XRootD
+[7madvancedTools       [0m for advanced tools
+[7mdiagnostics         [0m for diagnostic tools
+[7mhelpMe              [0m more help
+[7mprintMenu           [0m show this menu
+[7mshowVersions        [0m show versions of installed software
+
+[1m[4m14 Jul 2016[0m 
+  DQ2 clients are deprecated and no longer supported. 
+   [97m[101mThey will be removed completely by December 2016.[0m
+   Please use Rucio instead:
+       lsetup rucio
+   For more info: https://twiki.cern.ch/twiki/bin/view/AtlasComputing/RucioClientsHowTo
+
+setup python (2.7.9)
+************************************************************************
+Requested:  python ... 
+ Setting up [4mpython 2.7.9p1-x86_64-slc6-gcc49[0m ... 
+>>>>>>>>>>>>>>>>>>>>>>>>> Information for user <<<<<<<<<<<<<<<<<<<<<<<<<
+************************************************************************
+setup gcc (493)
+************************************************************************
+Requested:  gcc ... 
+ Setting up [4mgcc gcc493_x86_64_slc6[0m ... 
+>>>>>>>>>>>>>>>>>>>>>>>>> Information for user <<<<<<<<<<<<<<<<<<<<<<<<<
+************************************************************************
+setup boost
+************************************************************************
+Requested:  boost ... 
+ Setting up [4mboost boost-1.60.0-python2.7-x86_64-slc6-gcc49[0m ... 
+>>>>>>>>>>>>>>>>>>>>>>>>> Information for user <<<<<<<<<<<<<<<<<<<<<<<<<
+************************************************************************
+setup cmake
+************************************************************************
+Requested:  cmake ... 
+ Setting up [4mcmake 3.7.0[0m ... 
+>>>>>>>>>>>>>>>>>>>>>>>>> Information for user <<<<<<<<<<<<<<<<<<<<<<<<<
+************************************************************************
+setup root
+/user/pbos
+Repeat number 5
+
+Processing ../../unbinned_scaling.cpp(1,1,2,100000,1,0,1,0,1)...
+
+[1mRooFit v3.61a -- Developed by Wouter Verkerke and David Kirkby[0m 
+                Copyright (C) 2000-2013 NIKHEF, University of California & Stanford University
+                All rights reserved, please read http://roofit.sourceforge.net/license.txt
+
+[#1] INFO:ObjectHandling -- RooWorkspace::exportToCint(w) INFO: references to all objects in this workspace will be created in CINT in 'namespace w'
+0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nsig0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nbkg0
+[#1] INFO:Minization -- p.d.f. provides expected number of events, including extended term in likelihood.
+[#1] INFO:Minization -- RooMinimizer::optimizeConst: activating const optimization
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+Minuit2Minimizer: Minimize with max-calls 2000 convergence for edm < 1 strategy 0
+Minuit2Minimizer : Valid minimum - status = 0
+FVAL  = -822906.486797578866
+Edm   = 1.23331391777835265e-06
+Nfcn  = 113
+Nbkg0	  = 49879.3	 +/-  238.664	(limited)
+Nsig0	  = 50121	 +/-  239.072	(limited)
+m0	  = 2.00802	 +/-  0.00208997	(limited)
+s0	  = 0.411454	 +/-  0.00173231	(limited)
+[#1] INFO:Minization -- Command timer: Real time 0:00:02, CP time 2.820
+[#1] INFO:Minization -- Session timer: Real time 0:00:02, CP time 2.820
+2.83259s
+--- values of PDF parameters used for data generation:
+    gauss 0: m = 2.01126, s = 0.411647
+Repeat number 5
+
+Processing ../../unbinned_scaling.cpp(1,1,2,100000,2,0,1,0,1)...
+
+[1mRooFit v3.61a -- Developed by Wouter Verkerke and David Kirkby[0m 
+                Copyright (C) 2000-2013 NIKHEF, University of California & Stanford University
+                All rights reserved, please read http://roofit.sourceforge.net/license.txt
+
+[#1] INFO:ObjectHandling -- RooWorkspace::exportToCint(w) INFO: references to all objects in this workspace will be created in CINT in 'namespace w'
+0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nsig0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nbkg0
+[#1] INFO:Minization -- p.d.f. provides expected number of events, including extended term in likelihood.
+[#1] INFO:Minization -- RooMinimizer::optimizeConst: activating const optimization
+[#1] INFO:Eval -- RooAbsTestStatistic::initMPMode: started 2 remote server process.
+Minuit2Minimizer: Minimize with max-calls 2000 convergence for edm < 1 strategy 0
+CPU affinity set to cpu 1 in server process 31342
+CPU affinity set to cpu 0 in server process 31341
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+Minuit2Minimizer : Valid minimum - status = 0
+FVAL  = -822906.486797578749
+Edm   = 1.23331377548151515e-06
+Nfcn  = 113
+Nbkg0	  = 49879.3	 +/-  238.664	(limited)
+Nsig0	  = 50121	 +/-  239.072	(limited)
+m0	  = 2.00802	 +/-  0.00208997	(limited)
+s0	  = 0.411454	 +/-  0.00173231	(limited)
+[#1] INFO:Minization -- Command timer: Real time 0:00:01, CP time 0.060
+[#1] INFO:Minization -- Session timer: Real time 0:00:01, CP time 0.060
+1.5346s
+--- values of PDF parameters used for data generation:
+    gauss 0: m = 2.01126, s = 0.411647
+Repeat number 5
+
+Processing ../../unbinned_scaling.cpp(1,1,2,100000,3,0,1,0,1)...
+
+[1mRooFit v3.61a -- Developed by Wouter Verkerke and David Kirkby[0m 
+                Copyright (C) 2000-2013 NIKHEF, University of California & Stanford University
+                All rights reserved, please read http://roofit.sourceforge.net/license.txt
+
+[#1] INFO:ObjectHandling -- RooWorkspace::exportToCint(w) INFO: references to all objects in this workspace will be created in CINT in 'namespace w'
+0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nsig0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nbkg0
+[#1] INFO:Minization -- p.d.f. provides expected number of events, including extended term in likelihood.
+[#1] INFO:Minization -- RooMinimizer::optimizeConst: activating const optimization
+[#1] INFO:Eval -- RooAbsTestStatistic::initMPMode: started 3 remote server process.
+Minuit2Minimizer: Minimize with max-calls 2000 convergence for edm < 1 strategy 0
+CPU affinity set to cpu 2 in server process 31362
+CPU affinity set to cpu 1 in server process 31361
+CPU affinity set to cpu 0 in server process 31360
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+Minuit2Minimizer : Valid minimum - status = 0
+FVAL  = -822906.486797578866
+Edm   = 1.23331433714577049e-06
+Nfcn  = 113
+Nbkg0	  = 49879.3	 +/-  238.664	(limited)
+Nsig0	  = 50121	 +/-  239.072	(limited)
+m0	  = 2.00802	 +/-  0.00208997	(limited)
+s0	  = 0.411454	 +/-  0.00173231	(limited)
+[#1] INFO:Minization -- Command timer: Real time 0:00:01, CP time 0.070
+[#1] INFO:Minization -- Session timer: Real time 0:00:01, CP time 0.070
+1.08389s
+--- values of PDF parameters used for data generation:
+    gauss 0: m = 2.01126, s = 0.411647
+Repeat number 5
+
+Processing ../../unbinned_scaling.cpp(1,1,2,100000,4,0,1,0,1)...
+
+[1mRooFit v3.61a -- Developed by Wouter Verkerke and David Kirkby[0m 
+                Copyright (C) 2000-2013 NIKHEF, University of California & Stanford University
+                All rights reserved, please read http://roofit.sourceforge.net/license.txt
+
+[#1] INFO:ObjectHandling -- RooWorkspace::exportToCint(w) INFO: references to all objects in this workspace will be created in CINT in 'namespace w'
+0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nsig0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nbkg0
+[#1] INFO:Minization -- p.d.f. provides expected number of events, including extended term in likelihood.
+[#1] INFO:Minization -- RooMinimizer::optimizeConst: activating const optimization
+[#1] INFO:Eval -- RooAbsTestStatistic::initMPMode: started 4 remote server process.
+Minuit2Minimizer: Minimize with max-calls 2000 convergence for edm < 1 strategy 0
+CPU affinity set to cpu 2 in server process 31381
+CPU affinity set to cpu 0 in server process 31379
+CPU affinity set to cpu 1 in server process 31380
+CPU affinity set to cpu 3 in server process 31382
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+Minuit2Minimizer : Valid minimum - status = 0
+FVAL  = -822906.486797578866
+Edm   = 1.23331392239717312e-06
+Nfcn  = 113
+Nbkg0	  = 49879.3	 +/-  238.664	(limited)
+Nsig0	  = 50121	 +/-  239.072	(limited)
+m0	  = 2.00802	 +/-  0.00208997	(limited)
+s0	  = 0.411454	 +/-  0.00173231	(limited)
+[#1] INFO:Minization -- Command timer: Real time 0:00:00, CP time 0.070
+[#1] INFO:Minization -- Session timer: Real time 0:00:00, CP time 0.070
+0.855538s
+--- values of PDF parameters used for data generation:
+    gauss 0: m = 2.01126, s = 0.411647
+Repeat number 5
+
+Processing ../../unbinned_scaling.cpp(1,1,2,100000,5,0,1,0,1)...
+
+[1mRooFit v3.61a -- Developed by Wouter Verkerke and David Kirkby[0m 
+                Copyright (C) 2000-2013 NIKHEF, University of California & Stanford University
+                All rights reserved, please read http://roofit.sourceforge.net/license.txt
+
+[#1] INFO:ObjectHandling -- RooWorkspace::exportToCint(w) INFO: references to all objects in this workspace will be created in CINT in 'namespace w'
+0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nsig0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nbkg0
+[#1] INFO:Minization -- p.d.f. provides expected number of events, including extended term in likelihood.
+[#1] INFO:Minization -- RooMinimizer::optimizeConst: activating const optimization
+[#1] INFO:Eval -- RooAbsTestStatistic::initMPMode: started 5 remote server process.
+Minuit2Minimizer: Minimize with max-calls 2000 convergence for edm < 1 strategy 0
+CPU affinity set to cpu 2 in server process 31401
+CPU affinity set to cpu 4 in server process 31403
+CPU affinity set to cpu 0 in server process 31399
+CPU affinity set to cpu 1 in server process 31400
+CPU affinity set to cpu 3 in server process 31402
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+Minuit2Minimizer : Valid minimum - status = 0
+FVAL  = -822906.486797578866
+Edm   = 1.23331482794219669e-06
+Nfcn  = 113
+Nbkg0	  = 49879.3	 +/-  238.664	(limited)
+Nsig0	  = 50121	 +/-  239.072	(limited)
+m0	  = 2.00802	 +/-  0.00208997	(limited)
+s0	  = 0.411454	 +/-  0.00173231	(limited)
+[#1] INFO:Minization -- Command timer: Real time 0:00:00, CP time 0.090
+[#1] INFO:Minization -- Session timer: Real time 0:00:00, CP time 0.090
+0.697526s
+--- values of PDF parameters used for data generation:
+    gauss 0: m = 2.01126, s = 0.411647
+Repeat number 5
+
+Processing ../../unbinned_scaling.cpp(1,1,2,100000,6,0,1,0,1)...
+
+[1mRooFit v3.61a -- Developed by Wouter Verkerke and David Kirkby[0m 
+                Copyright (C) 2000-2013 NIKHEF, University of California & Stanford University
+                All rights reserved, please read http://roofit.sourceforge.net/license.txt
+
+[#1] INFO:ObjectHandling -- RooWorkspace::exportToCint(w) INFO: references to all objects in this workspace will be created in CINT in 'namespace w'
+0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nsig0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nbkg0
+[#1] INFO:Minization -- p.d.f. provides expected number of events, including extended term in likelihood.
+[#1] INFO:Minization -- RooMinimizer::optimizeConst: activating const optimization
+[#1] INFO:Eval -- RooAbsTestStatistic::initMPMode: started 6 remote server process.
+Minuit2Minimizer: Minimize with max-calls 2000 convergence for edm < 1 strategy 0
+CPU affinity set to cpu 1 in server process 31421
+CPU affinity set to cpu 0 in server process 31420
+CPU affinity set to cpu 2 in server process 31422
+CPU affinity set to cpu 4 in server process 31424
+CPU affinity set to cpu 5 in server process 31425
+CPU affinity set to cpu 3 in server process 31423
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+Minuit2Minimizer : Valid minimum - status = 0
+FVAL  = -822906.486797578866
+Edm   = 1.23331544302469474e-06
+Nfcn  = 113
+Nbkg0	  = 49879.3	 +/-  238.664	(limited)
+Nsig0	  = 50121	 +/-  239.072	(limited)
+m0	  = 2.00802	 +/-  0.00208997	(limited)
+s0	  = 0.411454	 +/-  0.00173231	(limited)
+[#1] INFO:Minization -- Command timer: Real time 0:00:00, CP time 0.080
+[#1] INFO:Minization -- Session timer: Real time 0:00:00, CP time 0.080
+0.615781s
+--- values of PDF parameters used for data generation:
+    gauss 0: m = 2.01126, s = 0.411647
+Repeat number 5
+
+Processing ../../unbinned_scaling.cpp(1,1,2,100000,7,0,1,0,1)...
+
+[1mRooFit v3.61a -- Developed by Wouter Verkerke and David Kirkby[0m 
+                Copyright (C) 2000-2013 NIKHEF, University of California & Stanford University
+                All rights reserved, please read http://roofit.sourceforge.net/license.txt
+
+[#1] INFO:ObjectHandling -- RooWorkspace::exportToCint(w) INFO: references to all objects in this workspace will be created in CINT in 'namespace w'
+0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nsig0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nbkg0
+[#1] INFO:Minization -- p.d.f. provides expected number of events, including extended term in likelihood.
+[#1] INFO:Minization -- RooMinimizer::optimizeConst: activating const optimization
+[#1] INFO:Eval -- RooAbsTestStatistic::initMPMode: started 7 remote server process.
+Minuit2Minimizer: Minimize with max-calls 2000 convergence for edm < 1 strategy 0
+CPU affinity set to cpu 0 in server process 31442
+CPU affinity set to cpu 1 in server process 31443
+CPU affinity set to cpu 2 in server process 31444
+CPU affinity set to cpu 4 in server process 31446
+CPU affinity set to cpu 6 in server process 31448
+CPU affinity set to cpu 5 in server process 31447
+CPU affinity set to cpu 3 in server process 31445
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+Minuit2Minimizer : Valid minimum - status = 0
+FVAL  = -822906.486797578866
+Edm   = 1.23331466225308026e-06
+Nfcn  = 113
+Nbkg0	  = 49879.3	 +/-  238.664	(limited)
+Nsig0	  = 50121	 +/-  239.072	(limited)
+m0	  = 2.00802	 +/-  0.00208997	(limited)
+s0	  = 0.411454	 +/-  0.00173231	(limited)
+[#1] INFO:Minization -- Command timer: Real time 0:00:00, CP time 0.090
+[#1] INFO:Minization -- Session timer: Real time 0:00:00, CP time 0.090
+0.558421s
+--- values of PDF parameters used for data generation:
+    gauss 0: m = 2.01126, s = 0.411647
+Repeat number 5
+
+Processing ../../unbinned_scaling.cpp(1,1,2,100000,8,0,1,0,1)...
+
+[1mRooFit v3.61a -- Developed by Wouter Verkerke and David Kirkby[0m 
+                Copyright (C) 2000-2013 NIKHEF, University of California & Stanford University
+                All rights reserved, please read http://roofit.sourceforge.net/license.txt
+
+[#1] INFO:ObjectHandling -- RooWorkspace::exportToCint(w) INFO: references to all objects in this workspace will be created in CINT in 'namespace w'
+0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nsig0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nbkg0
+[#1] INFO:Minization -- p.d.f. provides expected number of events, including extended term in likelihood.
+[#1] INFO:Minization -- RooMinimizer::optimizeConst: activating const optimization
+[#1] INFO:Eval -- RooAbsTestStatistic::initMPMode: started 8 remote server process.
+Minuit2Minimizer: Minimize with max-calls 2000 convergence for edm < 1 strategy 0
+CPU affinity set to cpu 0 in server process 31465
+CPU affinity set to cpu 1 in server process 31466
+CPU affinity set to cpu 3 in server process 31468
+CPU affinity set to cpu 2 in server process 31467
+CPU affinity set to cpu 4 in server process 31469
+CPU affinity set to cpu 7 in server process 31472
+CPU affinity set to cpu 5 in server process 31470
+CPU affinity set to cpu 6 in server process 31471
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+Minuit2Minimizer : Valid minimum - status = 0
+FVAL  = -822906.486797578749
+Edm   = 1.23331250166498105e-06
+Nfcn  = 113
+Nbkg0	  = 49879.3	 +/-  238.664	(limited)
+Nsig0	  = 50121	 +/-  239.072	(limited)
+m0	  = 2.00802	 +/-  0.00208997	(limited)
+s0	  = 0.411454	 +/-  0.00173231	(limited)
+[#1] INFO:Minization -- Command timer: Real time 0:00:00, CP time 0.090
+[#1] INFO:Minization -- Session timer: Real time 0:00:00, CP time 0.090
+0.561802s
+--- values of PDF parameters used for data generation:
+    gauss 0: m = 2.01126, s = 0.411647
+Repeat number 5
+
+Processing ../../unbinned_scaling.cpp(1,1,2,1000000,1,0,1,0,1)...
+
+[1mRooFit v3.61a -- Developed by Wouter Verkerke and David Kirkby[0m 
+                Copyright (C) 2000-2013 NIKHEF, University of California & Stanford University
+                All rights reserved, please read http://roofit.sourceforge.net/license.txt
+
+[#1] INFO:ObjectHandling -- RooWorkspace::exportToCint(w) INFO: references to all objects in this workspace will be created in CINT in 'namespace w'
+0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nsig0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nbkg0
+[#1] INFO:Minization -- p.d.f. provides expected number of events, including extended term in likelihood.
+[#1] INFO:Minization -- RooMinimizer::optimizeConst: activating const optimization
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+Minuit2Minimizer: Minimize with max-calls 2000 convergence for edm < 1 strategy 0
+Minuit2Minimizer : Valid minimum - status = 0
+FVAL  = -10527433.9988881927
+Edm   = 0.000224468177761051287
+Nfcn  = 105
+Nbkg0	  = 499782	 +/-  500.18	(limited)
+Nsig0	  = 500218	 +/-  501.273	(limited)
+m0	  = 2.01019	 +/-  0.000663774	(limited)
+s0	  = 0.412007	 +/-  0.000538497	(limited)
+[#1] INFO:Minization -- Command timer: Real time 0:00:26, CP time 26.450
+[#1] INFO:Minization -- Session timer: Real time 0:00:26, CP time 26.450
+26.4719s
+--- values of PDF parameters used for data generation:
+    gauss 0: m = 2.01126, s = 0.411647
+Repeat number 5
+
+Processing ../../unbinned_scaling.cpp(1,1,2,1000000,2,0,1,0,1)...
+
+[1mRooFit v3.61a -- Developed by Wouter Verkerke and David Kirkby[0m 
+                Copyright (C) 2000-2013 NIKHEF, University of California & Stanford University
+                All rights reserved, please read http://roofit.sourceforge.net/license.txt
+
+[#1] INFO:ObjectHandling -- RooWorkspace::exportToCint(w) INFO: references to all objects in this workspace will be created in CINT in 'namespace w'
+0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nsig0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nbkg0
+[#1] INFO:Minization -- p.d.f. provides expected number of events, including extended term in likelihood.
+[#1] INFO:Minization -- RooMinimizer::optimizeConst: activating const optimization
+[#1] INFO:Eval -- RooAbsTestStatistic::initMPMode: started 2 remote server process.
+Minuit2Minimizer: Minimize with max-calls 2000 convergence for edm < 1 strategy 0
+CPU affinity set to cpu 1 in server process 31510
+CPU affinity set to cpu 0 in server process 31509
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+Minuit2Minimizer : Valid minimum - status = 0
+FVAL  = -10527433.9988881927
+Edm   = 0.000224468176830369974
+Nfcn  = 105
+Nbkg0	  = 499782	 +/-  500.18	(limited)
+Nsig0	  = 500218	 +/-  501.273	(limited)
+m0	  = 2.01019	 +/-  0.000663774	(limited)
+s0	  = 0.412007	 +/-  0.000538497	(limited)
+[#1] INFO:Minization -- Command timer: Real time 0:00:13, CP time 0.070
+[#1] INFO:Minization -- Session timer: Real time 0:00:13, CP time 0.070
+13.6274s
+--- values of PDF parameters used for data generation:
+    gauss 0: m = 2.01126, s = 0.411647
+Repeat number 5
+
+Processing ../../unbinned_scaling.cpp(1,1,2,1000000,3,0,1,0,1)...
+
+[1mRooFit v3.61a -- Developed by Wouter Verkerke and David Kirkby[0m 
+                Copyright (C) 2000-2013 NIKHEF, University of California & Stanford University
+                All rights reserved, please read http://roofit.sourceforge.net/license.txt
+
+[#1] INFO:ObjectHandling -- RooWorkspace::exportToCint(w) INFO: references to all objects in this workspace will be created in CINT in 'namespace w'
+0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nsig0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nbkg0
+[#1] INFO:Minization -- p.d.f. provides expected number of events, including extended term in likelihood.
+[#1] INFO:Minization -- RooMinimizer::optimizeConst: activating const optimization
+[#1] INFO:Eval -- RooAbsTestStatistic::initMPMode: started 3 remote server process.
+Minuit2Minimizer: Minimize with max-calls 2000 convergence for edm < 1 strategy 0
+CPU affinity set to cpu 2 in server process 31532
+CPU affinity set to cpu 1 in server process 31531
+CPU affinity set to cpu 0 in server process 31530
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+Minuit2Minimizer : Valid minimum - status = 0
+FVAL  = -10527433.9988881908
+Edm   = 0.000224468180506684706
+Nfcn  = 105
+Nbkg0	  = 499782	 +/-  500.18	(limited)
+Nsig0	  = 500218	 +/-  501.273	(limited)
+m0	  = 2.01019	 +/-  0.000663774	(limited)
+s0	  = 0.412007	 +/-  0.000538497	(limited)
+[#1] INFO:Minization -- Command timer: Real time 0:00:10, CP time 0.080
+[#1] INFO:Minization -- Session timer: Real time 0:00:10, CP time 0.080
+10.3193s
+--- values of PDF parameters used for data generation:
+    gauss 0: m = 2.01126, s = 0.411647
+Repeat number 5
+
+Processing ../../unbinned_scaling.cpp(1,1,2,1000000,4,0,1,0,1)...
+
+[1mRooFit v3.61a -- Developed by Wouter Verkerke and David Kirkby[0m 
+                Copyright (C) 2000-2013 NIKHEF, University of California & Stanford University
+                All rights reserved, please read http://roofit.sourceforge.net/license.txt
+
+[#1] INFO:ObjectHandling -- RooWorkspace::exportToCint(w) INFO: references to all objects in this workspace will be created in CINT in 'namespace w'
+0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nsig0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nbkg0
+[#1] INFO:Minization -- p.d.f. provides expected number of events, including extended term in likelihood.
+[#1] INFO:Minization -- RooMinimizer::optimizeConst: activating const optimization
+[#1] INFO:Eval -- RooAbsTestStatistic::initMPMode: started 4 remote server process.
+Minuit2Minimizer: Minimize with max-calls 2000 convergence for edm < 1 strategy 0
+CPU affinity set to cpu 2 in server process 31552
+CPU affinity set to cpu 0 in server process 31550
+CPU affinity set to cpu 1 in server process 31551
+CPU affinity set to cpu 3 in server process 31553
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+Minuit2Minimizer : Valid minimum - status = 0
+FVAL  = -10527433.9988881927
+Edm   = 0.000224468174866142501
+Nfcn  = 105
+Nbkg0	  = 499782	 +/-  500.18	(limited)
+Nsig0	  = 500218	 +/-  501.273	(limited)
+m0	  = 2.01019	 +/-  0.000663774	(limited)
+s0	  = 0.412007	 +/-  0.000538497	(limited)
+[#1] INFO:Minization -- Command timer: Real time 0:00:07, CP time 0.080
+[#1] INFO:Minization -- Session timer: Real time 0:00:07, CP time 0.080
+7.96983s
+--- values of PDF parameters used for data generation:
+    gauss 0: m = 2.01126, s = 0.411647
+Repeat number 5
+
+Processing ../../unbinned_scaling.cpp(1,1,2,1000000,5,0,1,0,1)...
+
+[1mRooFit v3.61a -- Developed by Wouter Verkerke and David Kirkby[0m 
+                Copyright (C) 2000-2013 NIKHEF, University of California & Stanford University
+                All rights reserved, please read http://roofit.sourceforge.net/license.txt
+
+[#1] INFO:ObjectHandling -- RooWorkspace::exportToCint(w) INFO: references to all objects in this workspace will be created in CINT in 'namespace w'
+0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nsig0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nbkg0
+[#1] INFO:Minization -- p.d.f. provides expected number of events, including extended term in likelihood.
+[#1] INFO:Minization -- RooMinimizer::optimizeConst: activating const optimization
+[#1] INFO:Eval -- RooAbsTestStatistic::initMPMode: started 5 remote server process.
+Minuit2Minimizer: Minimize with max-calls 2000 convergence for edm < 1 strategy 0
+CPU affinity set to cpu 2 in server process 31572
+CPU affinity set to cpu 4 in server process 31574
+CPU affinity set to cpu 0 in server process 31570
+CPU affinity set to cpu 1 in server process 31571
+CPU affinity set to cpu 3 in server process 31573
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+Minuit2Minimizer : Valid minimum - status = 0
+FVAL  = -10527433.9988881908
+Edm   = 0.000224468181231238099
+Nfcn  = 105
+Nbkg0	  = 499782	 +/-  500.18	(limited)
+Nsig0	  = 500218	 +/-  501.273	(limited)
+m0	  = 2.01019	 +/-  0.000663774	(limited)
+s0	  = 0.412007	 +/-  0.000538497	(limited)
+[#1] INFO:Minization -- Command timer: Real time 0:00:05, CP time 0.090
+[#1] INFO:Minization -- Session timer: Real time 0:00:05, CP time 0.090
+5.96567s
+--- values of PDF parameters used for data generation:
+    gauss 0: m = 2.01126, s = 0.411647
+Repeat number 5
+
+Processing ../../unbinned_scaling.cpp(1,1,2,1000000,6,0,1,0,1)...
+
+[1mRooFit v3.61a -- Developed by Wouter Verkerke and David Kirkby[0m 
+                Copyright (C) 2000-2013 NIKHEF, University of California & Stanford University
+                All rights reserved, please read http://roofit.sourceforge.net/license.txt
+
+[#1] INFO:ObjectHandling -- RooWorkspace::exportToCint(w) INFO: references to all objects in this workspace will be created in CINT in 'namespace w'
+0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nsig0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nbkg0
+[#1] INFO:Minization -- p.d.f. provides expected number of events, including extended term in likelihood.
+[#1] INFO:Minization -- RooMinimizer::optimizeConst: activating const optimization
+[#1] INFO:Eval -- RooAbsTestStatistic::initMPMode: started 6 remote server process.
+Minuit2Minimizer: Minimize with max-calls 2000 convergence for edm < 1 strategy 0
+CPU affinity set to cpu 1 in server process 31598
+CPU affinity set to cpu 0 in server process 31597
+CPU affinity set to cpu 2 in server process 31599
+CPU affinity set to cpu 4 in server process 31601
+CPU affinity set to cpu 5 in server process 31602
+CPU affinity set to cpu 3 in server process 31600
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+Minuit2Minimizer : Valid minimum - status = 0
+FVAL  = -10527433.9988881908
+Edm   = 0.000224468178440709548
+Nfcn  = 105
+Nbkg0	  = 499782	 +/-  500.18	(limited)
+Nsig0	  = 500218	 +/-  501.273	(limited)
+m0	  = 2.01019	 +/-  0.000663774	(limited)
+s0	  = 0.412007	 +/-  0.000538497	(limited)
+[#1] INFO:Minization -- Command timer: Real time 0:00:05, CP time 0.080
+[#1] INFO:Minization -- Session timer: Real time 0:00:05, CP time 0.080
+5.07685s
+--- values of PDF parameters used for data generation:
+    gauss 0: m = 2.01126, s = 0.411647
+Repeat number 5
+
+Processing ../../unbinned_scaling.cpp(1,1,2,1000000,7,0,1,0,1)...
+
+[1mRooFit v3.61a -- Developed by Wouter Verkerke and David Kirkby[0m 
+                Copyright (C) 2000-2013 NIKHEF, University of California & Stanford University
+                All rights reserved, please read http://roofit.sourceforge.net/license.txt
+
+[#1] INFO:ObjectHandling -- RooWorkspace::exportToCint(w) INFO: references to all objects in this workspace will be created in CINT in 'namespace w'
+0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nsig0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nbkg0
+[#1] INFO:Minization -- p.d.f. provides expected number of events, including extended term in likelihood.
+[#1] INFO:Minization -- RooMinimizer::optimizeConst: activating const optimization
+[#1] INFO:Eval -- RooAbsTestStatistic::initMPMode: started 7 remote server process.
+Minuit2Minimizer: Minimize with max-calls 2000 convergence for edm < 1 strategy 0
+CPU affinity set to cpu 1 in server process 31620
+CPU affinity set to cpu 0 in server process 31619
+CPU affinity set to cpu 2 in server process 31621
+CPU affinity set to cpu 4 in server process 31623
+CPU affinity set to cpu 5 in server process 31624
+CPU affinity set to cpu 6 in server process 31625
+CPU affinity set to cpu 3 in server process 31622
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+Minuit2Minimizer : Valid minimum - status = 0
+FVAL  = -10527433.9988881908
+Edm   = 0.0002244681752365338
+Nfcn  = 105
+Nbkg0	  = 499782	 +/-  500.18	(limited)
+Nsig0	  = 500218	 +/-  501.273	(limited)
+m0	  = 2.01019	 +/-  0.000663774	(limited)
+s0	  = 0.412007	 +/-  0.000538497	(limited)
+[#1] INFO:Minization -- Command timer: Real time 0:00:04, CP time 0.090
+[#1] INFO:Minization -- Session timer: Real time 0:00:04, CP time 0.090
+4.43161s
+--- values of PDF parameters used for data generation:
+    gauss 0: m = 2.01126, s = 0.411647
+Repeat number 5
+
+Processing ../../unbinned_scaling.cpp(1,1,2,1000000,8,0,1,0,1)...
+
+[1mRooFit v3.61a -- Developed by Wouter Verkerke and David Kirkby[0m 
+                Copyright (C) 2000-2013 NIKHEF, University of California & Stanford University
+                All rights reserved, please read http://roofit.sourceforge.net/license.txt
+
+[#1] INFO:ObjectHandling -- RooWorkspace::exportToCint(w) INFO: references to all objects in this workspace will be created in CINT in 'namespace w'
+0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nsig0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nbkg0
+[#1] INFO:Minization -- p.d.f. provides expected number of events, including extended term in likelihood.
+[#1] INFO:Minization -- RooMinimizer::optimizeConst: activating const optimization
+[#1] INFO:Eval -- RooAbsTestStatistic::initMPMode: started 8 remote server process.
+Minuit2Minimizer: Minimize with max-calls 2000 convergence for edm < 1 strategy 0
+CPU affinity set to cpu 1 in server process 31643
+CPU affinity set to cpu 0 in server process 31642
+CPU affinity set to cpu 3 in server process 31645
+CPU affinity set to cpu 2 in server process 31644
+CPU affinity set to cpu 4 in server process 31646
+CPU affinity set to cpu 7 in server process 31649
+CPU affinity set to cpu 5 in server process 31647
+CPU affinity set to cpu 6 in server process 31648
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+Minuit2Minimizer : Valid minimum - status = 0
+FVAL  = -10527433.998888189
+Edm   = 0.000224468181401118891
+Nfcn  = 105
+Nbkg0	  = 499782	 +/-  500.18	(limited)
+Nsig0	  = 500218	 +/-  501.273	(limited)
+m0	  = 2.01019	 +/-  0.000663774	(limited)
+s0	  = 0.412007	 +/-  0.000538497	(limited)
+[#1] INFO:Minization -- Command timer: Real time 0:00:04, CP time 0.090
+[#1] INFO:Minization -- Session timer: Real time 0:00:04, CP time 0.090
+4.03102s
+--- values of PDF parameters used for data generation:
+    gauss 0: m = 2.01126, s = 0.411647
+Repeat number 5
+
+Processing ../../unbinned_scaling.cpp(1,1,2,10000000,1,0,1,0,1)...
+
+[1mRooFit v3.61a -- Developed by Wouter Verkerke and David Kirkby[0m 
+                Copyright (C) 2000-2013 NIKHEF, University of California & Stanford University
+                All rights reserved, please read http://roofit.sourceforge.net/license.txt
+
+[#1] INFO:ObjectHandling -- RooWorkspace::exportToCint(w) INFO: references to all objects in this workspace will be created in CINT in 'namespace w'
+0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nsig0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nbkg0
+[#1] INFO:Minization -- p.d.f. provides expected number of events, including extended term in likelihood.
+[#1] INFO:Minization -- RooMinimizer::optimizeConst: activating const optimization
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+Minuit2Minimizer: Minimize with max-calls 2000 convergence for edm < 1 strategy 0
+Minuit2Minimizer : Valid minimum - status = 0
+FVAL  = -128312282.499803483
+Edm   = 3.89101466524556332e-05
+Nfcn  = 154
+Nbkg0	  = 4.99966e+06	 +/-  1582.85	(limited)
+Nsig0	  = 5.00034e+06	 +/-  1582.98	(limited)
+m0	  = 2.01123	 +/-  0.000210426	(limited)
+s0	  = 0.411695	 +/-  0.000172461	(limited)
+[#1] INFO:Minization -- Command timer: Real time 0:07:02, CP time 422.640
+[#1] INFO:Minization -- Session timer: Real time 0:07:02, CP time 422.640
+422.915s
+--- values of PDF parameters used for data generation:
+    gauss 0: m = 2.01126, s = 0.411647
+Repeat number 5
+
+Processing ../../unbinned_scaling.cpp(1,1,2,10000000,2,0,1,0,1)...
+
+[1mRooFit v3.61a -- Developed by Wouter Verkerke and David Kirkby[0m 
+                Copyright (C) 2000-2013 NIKHEF, University of California & Stanford University
+                All rights reserved, please read http://roofit.sourceforge.net/license.txt
+
+[#1] INFO:ObjectHandling -- RooWorkspace::exportToCint(w) INFO: references to all objects in this workspace will be created in CINT in 'namespace w'
+0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nsig0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nbkg0
+[#1] INFO:Minization -- p.d.f. provides expected number of events, including extended term in likelihood.
+[#1] INFO:Minization -- RooMinimizer::optimizeConst: activating const optimization
+[#1] INFO:Eval -- RooAbsTestStatistic::initMPMode: started 2 remote server process.
+Minuit2Minimizer: Minimize with max-calls 2000 convergence for edm < 1 strategy 0
+CPU affinity set to cpu 1 in server process 31775
+CPU affinity set to cpu 0 in server process 31774
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+Minuit2Minimizer : Valid minimum - status = 0
+FVAL  = -128312282.499803483
+Edm   = 3.89101302133355214e-05
+Nfcn  = 154
+Nbkg0	  = 4.99966e+06	 +/-  1582.85	(limited)
+Nsig0	  = 5.00034e+06	 +/-  1582.98	(limited)
+m0	  = 2.01123	 +/-  0.000210426	(limited)
+s0	  = 0.411695	 +/-  0.000172461	(limited)
+[#1] INFO:Minization -- Command timer: Real time 0:03:17, CP time 0.080
+[#1] INFO:Minization -- Session timer: Real time 0:03:17, CP time 0.080
+197.851s
+--- values of PDF parameters used for data generation:
+    gauss 0: m = 2.01126, s = 0.411647
+Repeat number 5
+
+Processing ../../unbinned_scaling.cpp(1,1,2,10000000,3,0,1,0,1)...
+
+[1mRooFit v3.61a -- Developed by Wouter Verkerke and David Kirkby[0m 
+                Copyright (C) 2000-2013 NIKHEF, University of California & Stanford University
+                All rights reserved, please read http://roofit.sourceforge.net/license.txt
+
+[#1] INFO:ObjectHandling -- RooWorkspace::exportToCint(w) INFO: references to all objects in this workspace will be created in CINT in 'namespace w'
+0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nsig0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nbkg0
+[#1] INFO:Minization -- p.d.f. provides expected number of events, including extended term in likelihood.
+[#1] INFO:Minization -- RooMinimizer::optimizeConst: activating const optimization
+[#1] INFO:Eval -- RooAbsTestStatistic::initMPMode: started 3 remote server process.
+Minuit2Minimizer: Minimize with max-calls 2000 convergence for edm < 1 strategy 0
+CPU affinity set to cpu 2 in server process 31833
+CPU affinity set to cpu 0 in server process 31831
+CPU affinity set to cpu 1 in server process 31832
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+Minuit2Minimizer : Valid minimum - status = 0
+FVAL  = -128312282.499803483
+Edm   = 3.89101050814740721e-05
+Nfcn  = 154
+Nbkg0	  = 4.99966e+06	 +/-  1582.85	(limited)
+Nsig0	  = 5.00034e+06	 +/-  1582.98	(limited)
+m0	  = 2.01123	 +/-  0.000210426	(limited)
+s0	  = 0.411695	 +/-  0.000172461	(limited)
+[#1] INFO:Minization -- Command timer: Real time 0:02:29, CP time 0.090
+[#1] INFO:Minization -- Session timer: Real time 0:02:29, CP time 0.090
+149.765s
+--- values of PDF parameters used for data generation:
+    gauss 0: m = 2.01126, s = 0.411647
+Repeat number 5
+
+Processing ../../unbinned_scaling.cpp(1,1,2,10000000,4,0,1,0,1)...
+
+[1mRooFit v3.61a -- Developed by Wouter Verkerke and David Kirkby[0m 
+                Copyright (C) 2000-2013 NIKHEF, University of California & Stanford University
+                All rights reserved, please read http://roofit.sourceforge.net/license.txt
+
+[#1] INFO:ObjectHandling -- RooWorkspace::exportToCint(w) INFO: references to all objects in this workspace will be created in CINT in 'namespace w'
+0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nsig0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nbkg0
+[#1] INFO:Minization -- p.d.f. provides expected number of events, including extended term in likelihood.
+[#1] INFO:Minization -- RooMinimizer::optimizeConst: activating const optimization
+[#1] INFO:Eval -- RooAbsTestStatistic::initMPMode: started 4 remote server process.
+Minuit2Minimizer: Minimize with max-calls 2000 convergence for edm < 1 strategy 0
+CPU affinity set to cpu 2 in server process 31881
+CPU affinity set to cpu 0 in server process 31879
+CPU affinity set to cpu 1 in server process 31880
+CPU affinity set to cpu 3 in server process 31882
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+Minuit2Minimizer : Valid minimum - status = 0
+FVAL  = -128312282.499803513
+Edm   = 3.8910137270178011e-05
+Nfcn  = 154
+Nbkg0	  = 4.99966e+06	 +/-  1582.85	(limited)
+Nsig0	  = 5.00034e+06	 +/-  1582.98	(limited)
+m0	  = 2.01123	 +/-  0.000210426	(limited)
+s0	  = 0.411695	 +/-  0.000172461	(limited)
+[#1] INFO:Minization -- Command timer: Real time 0:01:42, CP time 0.100
+[#1] INFO:Minization -- Session timer: Real time 0:01:42, CP time 0.100
+102.38s
+--- values of PDF parameters used for data generation:
+    gauss 0: m = 2.01126, s = 0.411647
+Repeat number 5
+
+Processing ../../unbinned_scaling.cpp(1,1,2,10000000,5,0,1,0,1)...
+
+[1mRooFit v3.61a -- Developed by Wouter Verkerke and David Kirkby[0m 
+                Copyright (C) 2000-2013 NIKHEF, University of California & Stanford University
+                All rights reserved, please read http://roofit.sourceforge.net/license.txt
+
+[#1] INFO:ObjectHandling -- RooWorkspace::exportToCint(w) INFO: references to all objects in this workspace will be created in CINT in 'namespace w'
+0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nsig0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nbkg0
+[#1] INFO:Minization -- p.d.f. provides expected number of events, including extended term in likelihood.
+[#1] INFO:Minization -- RooMinimizer::optimizeConst: activating const optimization
+[#1] INFO:Eval -- RooAbsTestStatistic::initMPMode: started 5 remote server process.
+Minuit2Minimizer: Minimize with max-calls 2000 convergence for edm < 1 strategy 0
+CPU affinity set to cpu 0 in server process 31922
+CPU affinity set to cpu 2 in server process 31924
+CPU affinity set to cpu 4 in server process 31926
+CPU affinity set to cpu 1 in server process 31923
+CPU affinity set to cpu 3 in server process 31925
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+Minuit2Minimizer : Valid minimum - status = 0
+FVAL  = -128312282.499803483
+Edm   = 3.89101705857120312e-05
+Nfcn  = 154
+Nbkg0	  = 4.99966e+06	 +/-  1582.85	(limited)
+Nsig0	  = 5.00034e+06	 +/-  1582.98	(limited)
+m0	  = 2.01123	 +/-  0.000210426	(limited)
+s0	  = 0.411695	 +/-  0.000172461	(limited)
+[#1] INFO:Minization -- Command timer: Real time 0:01:32, CP time 0.120
+[#1] INFO:Minization -- Session timer: Real time 0:01:32, CP time 0.120
+92.0978s
+--- values of PDF parameters used for data generation:
+    gauss 0: m = 2.01126, s = 0.411647
+Repeat number 5
+
+Processing ../../unbinned_scaling.cpp(1,1,2,10000000,6,0,1,0,1)...
+
+[1mRooFit v3.61a -- Developed by Wouter Verkerke and David Kirkby[0m 
+                Copyright (C) 2000-2013 NIKHEF, University of California & Stanford University
+                All rights reserved, please read http://roofit.sourceforge.net/license.txt
+
+[#1] INFO:ObjectHandling -- RooWorkspace::exportToCint(w) INFO: references to all objects in this workspace will be created in CINT in 'namespace w'
+0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nsig0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nbkg0
+[#1] INFO:Minization -- p.d.f. provides expected number of events, including extended term in likelihood.
+[#1] INFO:Minization -- RooMinimizer::optimizeConst: activating const optimization
+[#1] INFO:Eval -- RooAbsTestStatistic::initMPMode: started 6 remote server process.
+Minuit2Minimizer: Minimize with max-calls 2000 convergence for edm < 1 strategy 0
+CPU affinity set to cpu 1 in server process 31962
+CPU affinity set to cpu 0 in server process 31961
+CPU affinity set to cpu 4 in server process 31965
+CPU affinity set to cpu 2 in server process 31963
+CPU affinity set to cpu 5 in server process 31966
+CPU affinity set to cpu 3 in server process 31964
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+Minuit2Minimizer : Valid minimum - status = 0
+FVAL  = -128312282.499803483
+Edm   = 3.89101250544547254e-05
+Nfcn  = 154
+Nbkg0	  = 4.99966e+06	 +/-  1582.85	(limited)
+Nsig0	  = 5.00034e+06	 +/-  1582.98	(limited)
+m0	  = 2.01123	 +/-  0.000210426	(limited)
+s0	  = 0.411695	 +/-  0.000172461	(limited)
+[#1] INFO:Minization -- Command timer: Real time 0:01:10, CP time 0.110
+[#1] INFO:Minization -- Session timer: Real time 0:01:10, CP time 0.110
+70.3485s
+--- values of PDF parameters used for data generation:
+    gauss 0: m = 2.01126, s = 0.411647
+Repeat number 5
+
+Processing ../../unbinned_scaling.cpp(1,1,2,10000000,7,0,1,0,1)...
+
+[1mRooFit v3.61a -- Developed by Wouter Verkerke and David Kirkby[0m 
+                Copyright (C) 2000-2013 NIKHEF, University of California & Stanford University
+                All rights reserved, please read http://roofit.sourceforge.net/license.txt
+
+[#1] INFO:ObjectHandling -- RooWorkspace::exportToCint(w) INFO: references to all objects in this workspace will be created in CINT in 'namespace w'
+0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nsig0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nbkg0
+[#1] INFO:Minization -- p.d.f. provides expected number of events, including extended term in likelihood.
+[#1] INFO:Minization -- RooMinimizer::optimizeConst: activating const optimization
+[#1] INFO:Eval -- RooAbsTestStatistic::initMPMode: started 7 remote server process.
+Minuit2Minimizer: Minimize with max-calls 2000 convergence for edm < 1 strategy 0
+CPU affinity set to cpu 1 in server process 31993
+CPU affinity set to cpu 0 in server process 31992
+CPU affinity set to cpu 2 in server process 31994
+CPU affinity set to cpu 4 in server process 31996
+CPU affinity set to cpu 6 in server process 31998
+CPU affinity set to cpu 5 in server process 31997
+CPU affinity set to cpu 3 in server process 31995
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+Minuit2Minimizer : Valid minimum - status = 0
+FVAL  = -128312282.499803439
+Edm   = 3.8910181819322922e-05
+Nfcn  = 154
+Nbkg0	  = 4.99966e+06	 +/-  1582.85	(limited)
+Nsig0	  = 5.00034e+06	 +/-  1582.98	(limited)
+m0	  = 2.01123	 +/-  0.000210426	(limited)
+s0	  = 0.411695	 +/-  0.000172461	(limited)
+[#1] INFO:Minization -- Command timer: Real time 0:01:03, CP time 0.120
+[#1] INFO:Minization -- Session timer: Real time 0:01:03, CP time 0.120
+63.0751s
+--- values of PDF parameters used for data generation:
+    gauss 0: m = 2.01126, s = 0.411647
+Repeat number 5
+
+Processing ../../unbinned_scaling.cpp(1,1,2,10000000,8,0,1,0,1)...
+
+[1mRooFit v3.61a -- Developed by Wouter Verkerke and David Kirkby[0m 
+                Copyright (C) 2000-2013 NIKHEF, University of California & Stanford University
+                All rights reserved, please read http://roofit.sourceforge.net/license.txt
+
+[#1] INFO:ObjectHandling -- RooWorkspace::exportToCint(w) INFO: references to all objects in this workspace will be created in CINT in 'namespace w'
+0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nsig0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nbkg0
+[#1] INFO:Minization -- p.d.f. provides expected number of events, including extended term in likelihood.
+[#1] INFO:Minization -- RooMinimizer::optimizeConst: activating const optimization
+[#1] INFO:Eval -- RooAbsTestStatistic::initMPMode: started 8 remote server process.
+Minuit2Minimizer: Minimize with max-calls 2000 convergence for edm < 1 strategy 0
+CPU affinity set to cpu 0 in server process 32028
+CPU affinity set to cpu 1 in server process 32029
+CPU affinity set to cpu 3 in server process 32031
+CPU affinity set to cpu 2 in server process 32030
+CPU affinity set to cpu 4 in server process 32032
+CPU affinity set to cpu 5 in server process 32033
+CPU affinity set to cpu 7 in server process 32035
+CPU affinity set to cpu 6 in server process 32034
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+Minuit2Minimizer : Valid minimum - status = 0
+FVAL  = -128312282.499803483
+Edm   = 3.89101509495282864e-05
+Nfcn  = 154
+Nbkg0	  = 4.99966e+06	 +/-  1582.85	(limited)
+Nsig0	  = 5.00034e+06	 +/-  1582.98	(limited)
+m0	  = 2.01123	 +/-  0.000210426	(limited)
+s0	  = 0.411695	 +/-  0.000172461	(limited)
+[#1] INFO:Minization -- Command timer: Real time 0:00:54, CP time 0.120
+[#1] INFO:Minization -- Session timer: Real time 0:00:54, CP time 0.120
+54.3539s
+--- values of PDF parameters used for data generation:
+    gauss 0: m = 2.01126, s = 0.411647
+Repeat number 5
+
+Processing ../../unbinned_scaling.cpp(1,1,2,100000000,1,0,1,0,1)...
+
+[1mRooFit v3.61a -- Developed by Wouter Verkerke and David Kirkby[0m 
+                Copyright (C) 2000-2013 NIKHEF, University of California & Stanford University
+                All rights reserved, please read http://roofit.sourceforge.net/license.txt
+
+[#1] INFO:ObjectHandling -- RooWorkspace::exportToCint(w) INFO: references to all objects in this workspace will be created in CINT in 'namespace w'
+0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nsig0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nbkg0
+[#1] INFO:Minization -- p.d.f. provides expected number of events, including extended term in likelihood.
+[#1] INFO:Minization -- RooMinimizer::optimizeConst: activating const optimization
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+Minuit2Minimizer: Minimize with max-calls 2000 convergence for edm < 1 strategy 0
+Minuit2Minimizer : Invalid Minimum - status = 3
+FVAL  = -1.45278e+09
+Edm   = 413895
+Nfcn  = 122
+[#1] INFO:Minization -- Command timer: Real time 1:02:20, CP time 3738.420
+[#1] INFO:Minization -- Session timer: Real time 1:02:20, CP time 3738.420
+3740.76s
+--- values of PDF parameters used for data generation:
+    gauss 0: m = 2.01126, s = 0.411647
+Repeat number 5
+
+Processing ../../unbinned_scaling.cpp(1,1,2,100000000,2,0,1,0,1)...
+
+[1mRooFit v3.61a -- Developed by Wouter Verkerke and David Kirkby[0m 
+                Copyright (C) 2000-2013 NIKHEF, University of California & Stanford University
+                All rights reserved, please read http://roofit.sourceforge.net/license.txt
+
+[#1] INFO:ObjectHandling -- RooWorkspace::exportToCint(w) INFO: references to all objects in this workspace will be created in CINT in 'namespace w'
+0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nsig0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nbkg0
+[#1] INFO:Minization -- p.d.f. provides expected number of events, including extended term in likelihood.
+[#1] INFO:Minization -- RooMinimizer::optimizeConst: activating const optimization
+[#1] INFO:Eval -- RooAbsTestStatistic::initMPMode: started 2 remote server process.
+Minuit2Minimizer: Minimize with max-calls 2000 convergence for edm < 1 strategy 0
+CPU affinity set to cpu 1 in server process 455
+CPU affinity set to cpu 0 in server process 454
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+Minuit2Minimizer : Invalid Minimum - status = 3
+FVAL  = -1.45278e+09
+Edm   = 413895
+Nfcn  = 122
+[#1] INFO:Minization -- Command timer: Real time 0:28:41, CP time 0.090
+[#1] INFO:Minization -- Session timer: Real time 0:28:41, CP time 0.090
+1721.66s
+--- values of PDF parameters used for data generation:
+    gauss 0: m = 2.01126, s = 0.411647
+Repeat number 5
+
+Processing ../../unbinned_scaling.cpp(1,1,2,100000000,3,0,1,0,1)...
+
+[1mRooFit v3.61a -- Developed by Wouter Verkerke and David Kirkby[0m 
+                Copyright (C) 2000-2013 NIKHEF, University of California & Stanford University
+                All rights reserved, please read http://roofit.sourceforge.net/license.txt
+
+[#1] INFO:ObjectHandling -- RooWorkspace::exportToCint(w) INFO: references to all objects in this workspace will be created in CINT in 'namespace w'
+0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nsig0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nbkg0
+[#1] INFO:Minization -- p.d.f. provides expected number of events, including extended term in likelihood.
+[#1] INFO:Minization -- RooMinimizer::optimizeConst: activating const optimization
+[#1] INFO:Eval -- RooAbsTestStatistic::initMPMode: started 3 remote server process.
+Minuit2Minimizer: Minimize with max-calls 2000 convergence for edm < 1 strategy 0
+CPU affinity set to cpu 2 in server process 809
+CPU affinity set to cpu 1 in server process 808
+CPU affinity set to cpu 0 in server process 807
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+Minuit2Minimizer : Invalid Minimum - status = 3
+FVAL  = -1.45278e+09
+Edm   = 413895
+Nfcn  = 122
+[#1] INFO:Minization -- Command timer: Real time 0:22:36, CP time 0.090
+[#1] INFO:Minization -- Session timer: Real time 0:22:36, CP time 0.090
+1356.02s
+--- values of PDF parameters used for data generation:
+    gauss 0: m = 2.01126, s = 0.411647
+Repeat number 5
+
+Processing ../../unbinned_scaling.cpp(1,1,2,100000000,4,0,1,0,1)...
+
+[1mRooFit v3.61a -- Developed by Wouter Verkerke and David Kirkby[0m 
+                Copyright (C) 2000-2013 NIKHEF, University of California & Stanford University
+                All rights reserved, please read http://roofit.sourceforge.net/license.txt
+
+[#1] INFO:ObjectHandling -- RooWorkspace::exportToCint(w) INFO: references to all objects in this workspace will be created in CINT in 'namespace w'
+0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nsig0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nbkg0
+[#1] INFO:Minization -- p.d.f. provides expected number of events, including extended term in likelihood.
+[#1] INFO:Minization -- RooMinimizer::optimizeConst: activating const optimization
+[#1] INFO:Eval -- RooAbsTestStatistic::initMPMode: started 4 remote server process.
+Minuit2Minimizer: Minimize with max-calls 2000 convergence for edm < 1 strategy 0
+CPU affinity set to cpu 0 in server process 1088
+CPU affinity set to cpu 1 in server process 1089
+CPU affinity set to cpu 2 in server process 1090
+CPU affinity set to cpu 3 in server process 1091
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+Minuit2Minimizer : Invalid Minimum - status = 3
+FVAL  = -1.45278e+09
+Edm   = 413895
+Nfcn  = 122
+[#1] INFO:Minization -- Command timer: Real time 0:16:39, CP time 0.080
+[#1] INFO:Minization -- Session timer: Real time 0:16:39, CP time 0.080
+999.294s
+--- values of PDF parameters used for data generation:
+    gauss 0: m = 2.01126, s = 0.411647
+Repeat number 5
+
+Processing ../../unbinned_scaling.cpp(1,1,2,100000000,5,0,1,0,1)...
+
+[1mRooFit v3.61a -- Developed by Wouter Verkerke and David Kirkby[0m 
+                Copyright (C) 2000-2013 NIKHEF, University of California & Stanford University
+                All rights reserved, please read http://roofit.sourceforge.net/license.txt
+
+[#1] INFO:ObjectHandling -- RooWorkspace::exportToCint(w) INFO: references to all objects in this workspace will be created in CINT in 'namespace w'
+0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nsig0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nbkg0
+[#1] INFO:Minization -- p.d.f. provides expected number of events, including extended term in likelihood.
+[#1] INFO:Minization -- RooMinimizer::optimizeConst: activating const optimization
+[#1] INFO:Eval -- RooAbsTestStatistic::initMPMode: started 5 remote server process.
+Minuit2Minimizer: Minimize with max-calls 2000 convergence for edm < 1 strategy 0
+CPU affinity set to cpu 0 in server process 1379
+CPU affinity set to cpu 4 in server process 1383
+CPU affinity set to cpu 1 in server process 1380
+CPU affinity set to cpu 3 in server process 1382
+CPU affinity set to cpu 2 in server process 1381
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+Minuit2Minimizer : Invalid Minimum - status = 3
+FVAL  = -1.45278e+09
+Edm   = 413895
+Nfcn  = 122
+[#1] INFO:Minization -- Command timer: Real time 0:12:27, CP time 0.090
+[#1] INFO:Minization -- Session timer: Real time 0:12:27, CP time 0.090
+747.865s
+--- values of PDF parameters used for data generation:
+    gauss 0: m = 2.01126, s = 0.411647
+Repeat number 5
+
+Processing ../../unbinned_scaling.cpp(1,1,2,100000000,6,0,1,0,1)...
+
+[1mRooFit v3.61a -- Developed by Wouter Verkerke and David Kirkby[0m 
+                Copyright (C) 2000-2013 NIKHEF, University of California & Stanford University
+                All rights reserved, please read http://roofit.sourceforge.net/license.txt
+
+[#1] INFO:ObjectHandling -- RooWorkspace::exportToCint(w) INFO: references to all objects in this workspace will be created in CINT in 'namespace w'
+0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nsig0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nbkg0
+[#1] INFO:Minization -- p.d.f. provides expected number of events, including extended term in likelihood.
+[#1] INFO:Minization -- RooMinimizer::optimizeConst: activating const optimization
+[#1] INFO:Eval -- RooAbsTestStatistic::initMPMode: started 6 remote server process.
+Minuit2Minimizer: Minimize with max-calls 2000 convergence for edm < 1 strategy 0
+CPU affinity set to cpu 1 in server process 1539
+CPU affinity set to cpu 0 in server process 1538
+CPU affinity set to cpu 2 in server process 1540
+CPU affinity set to cpu 5 in server process 1543
+CPU affinity set to cpu 4 in server process 1542
+CPU affinity set to cpu 3 in server process 1541
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+Minuit2Minimizer : Invalid Minimum - status = 3
+FVAL  = -1.45278e+09
+Edm   = 413895
+Nfcn  = 122
+[#1] INFO:Minization -- Command timer: Real time 0:10:37, CP time 0.100
+[#1] INFO:Minization -- Session timer: Real time 0:10:37, CP time 0.100
+637.378s
+--- values of PDF parameters used for data generation:
+    gauss 0: m = 2.01126, s = 0.411647
+Repeat number 5
+
+Processing ../../unbinned_scaling.cpp(1,1,2,100000000,7,0,1,0,1)...
+
+[1mRooFit v3.61a -- Developed by Wouter Verkerke and David Kirkby[0m 
+                Copyright (C) 2000-2013 NIKHEF, University of California & Stanford University
+                All rights reserved, please read http://roofit.sourceforge.net/license.txt
+
+[#1] INFO:ObjectHandling -- RooWorkspace::exportToCint(w) INFO: references to all objects in this workspace will be created in CINT in 'namespace w'
+0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nsig0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nbkg0
+[#1] INFO:Minization -- p.d.f. provides expected number of events, including extended term in likelihood.
+[#1] INFO:Minization -- RooMinimizer::optimizeConst: activating const optimization
+[#1] INFO:Eval -- RooAbsTestStatistic::initMPMode: started 7 remote server process.
+Minuit2Minimizer: Minimize with max-calls 2000 convergence for edm < 1 strategy 0
+CPU affinity set to cpu 0 in server process 1700
+CPU affinity set to cpu 1 in server process 1701
+CPU affinity set to cpu 2 in server process 1702
+CPU affinity set to cpu 4 in server process 1704
+CPU affinity set to cpu 5 in server process 1705
+CPU affinity set to cpu 6 in server process 1707
+CPU affinity set to cpu 3 in server process 1703
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+Minuit2Minimizer : Invalid Minimum - status = 3
+FVAL  = -1.45278e+09
+Edm   = 413895
+Nfcn  = 122
+[#1] INFO:Minization -- Command timer: Real time 0:09:24, CP time 0.120
+[#1] INFO:Minization -- Session timer: Real time 0:09:24, CP time 0.120
+564.073s
+--- values of PDF parameters used for data generation:
+    gauss 0: m = 2.01126, s = 0.411647
+Repeat number 5
+
+Processing ../../unbinned_scaling.cpp(1,1,2,100000000,8,0,1,0,1)...
+
+[1mRooFit v3.61a -- Developed by Wouter Verkerke and David Kirkby[0m 
+                Copyright (C) 2000-2013 NIKHEF, University of California & Stanford University
+                All rights reserved, please read http://roofit.sourceforge.net/license.txt
+
+[#1] INFO:ObjectHandling -- RooWorkspace::exportToCint(w) INFO: references to all objects in this workspace will be created in CINT in 'namespace w'
+0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nsig0
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooRealVar::Nbkg0
+[#1] INFO:Minization -- p.d.f. provides expected number of events, including extended term in likelihood.
+[#1] INFO:Minization -- RooMinimizer::optimizeConst: activating const optimization
+[#1] INFO:Eval -- RooAbsTestStatistic::initMPMode: started 8 remote server process.
+Minuit2Minimizer: Minimize with max-calls 2000 convergence for edm < 1 strategy 0
+CPU affinity set to cpu 1 in server process 1844
+CPU affinity set to cpu 0 in server process 1843
+CPU affinity set to cpu 3 in server process 1846
+CPU affinity set to cpu 2 in server process 1845
+CPU affinity set to cpu 7 in server process 1850
+CPU affinity set to cpu 5 in server process 1848
+CPU affinity set to cpu 6 in server process 1849
+CPU affinity set to cpu 4 in server process 1847
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (u0)
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (g0)
+Minuit2Minimizer : Invalid Minimum - status = 3
+FVAL  = -1.45278e+09
+Edm   = 413895
+Nfcn  = 122
+[#1] INFO:Minization -- Command timer: Real time 0:08:03, CP time 0.100
+[#1] INFO:Minization -- Session timer: Real time 0:08:03, CP time 0.100
+483.985s
+--- values of PDF parameters used for data generation:
+    gauss 0: m = 2.01126, s = 0.411647
+/user/pbos
