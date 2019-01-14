@@ -2,8 +2,8 @@
 
 #PBS -l nodes=1:ppn=8
 #PBS -q short7
-#PBS -o $PBS_JOBNAME/$PBS_JOBID.out
-#PBS -e $PBS_JOBNAME/$PBS_JOBID.err
+#PBS -o $PBS_JOBID.out
+#PBS -e $PBS_JOBID.err
 
 #set -e
 # Any subsequent(*) commands which fail will cause the shell script to exit immediately
@@ -17,7 +17,7 @@ source $HOME/project_atlas/root-roofit-dev/cmake-build-release-20181218/bin/this
 export EXEC_PATH="$HOME/project_atlas/rootbench/cmake-build-release-20181218/root/roofit/roofit/RoofitMPworkspace"
 
 export BASERUNDIR="$HOME/project_atlas/apcocsm_code/rootbench"
-export RUNDIR="$BASERUNDIR/$PBS_JOBNAME/$PBS_JOBID"
+export RUNDIR="$BASERUNDIR/$PBS_JOBID"
 
 # go to run-dir
 mkdir -p $RUNDIR
