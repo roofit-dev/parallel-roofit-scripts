@@ -17,5 +17,7 @@ timing*.json
 profiling/workbench/**/*.txt
 profiling/workbench/**/*.trace
 profiling/workbench/**/Trace*.run
+# forgot what this does exactly, but I have it on my laptop and not sure whether allowed to publish:
+profiling/workbench/vincemark_Sep6/workspace.root
 
 .ipynb_checkpoints
