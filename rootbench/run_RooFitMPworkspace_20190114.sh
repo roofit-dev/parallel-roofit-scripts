@@ -5,9 +5,8 @@
 #PBS -o $PBS_JOBID.out
 #PBS -e $PBS_JOBID.err
 
-#set -e
 # Any subsequent(*) commands which fail will cause the shell script to exit immediately
-# DON'T USE SET -E TOGETHER WITH EXPAND_ALIASES!
+# DON'T USE SET -E TOGETHER WITH EXPAND_ALIASES! Correction: don't use with source root_deps.sh.
 shopt -s expand_aliases
 # ALIASES MOETEN AANGEZET WORDEN (http://unix.stackexchange.com/a/1498/193258)
 
@@ -19,9 +18,10 @@ export EXEC_PATH="$HOME/project_atlas/rootbench/cmake-build-release-20181218/roo
 export BASERUNDIR="$HOME/project_atlas/apcocsm_code/rootbench"
 export RUNDIR="$BASERUNDIR/$PBS_JOBID"
 
+set -e
 # go to run-dir
 mkdir -p $RUNDIR
-cp $BASERUNDIR/run_RooFitMPworkspace20190114.conf $RUNDIR/workspace_benchmark.conf
+cp $BASERUNDIR/run_RooFitMPworkspace_20190114.conf $RUNDIR/workspace_benchmark.conf
 cd $RUNDIR
 
 function start_run() {
