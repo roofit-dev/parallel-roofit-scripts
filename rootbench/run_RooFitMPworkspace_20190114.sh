@@ -21,7 +21,7 @@ export RUNDIR="$BASERUNDIR/$PBS_JOBID"
 
 # go to run-dir
 mkdir -p $RUNDIR
-cp run_RooFitMPworkspace20190114.conf $RUNDIR/workspace_benchmark.conf
+cp $BASERUNDIR/run_RooFitMPworkspace20190114.conf $RUNDIR/workspace_benchmark.conf
 cd $RUNDIR
 
 function start_run() {
