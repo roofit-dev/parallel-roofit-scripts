@@ -13,3 +13,9 @@ timing*.json
 *.png
 .DS_Store
 *.hdf
+
+profiling/workbench/**/*.txt
+profiling/workbench/**/*.trace
+profiling/workbench/**/Trace*.run
+
+.ipynb_checkpoints
