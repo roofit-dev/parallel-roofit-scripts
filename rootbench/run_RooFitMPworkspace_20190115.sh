@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#PBS -l nodes=1:ppn=64
+#PBS -l nodes=1:ppn=32
 #PBS -q short7
 #PBS -o $PBS_JOBID.out
 #PBS -e $PBS_JOBID.err
