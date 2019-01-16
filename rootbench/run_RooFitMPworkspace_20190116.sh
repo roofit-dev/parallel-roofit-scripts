@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-#PBS -l nodes=1:ppn=32
-#PBS -l walltime=00:00:59
-#PBS -q short7
+#PBS -l nodes=1:ppn=1
+#PBS -l walltime=00:59:00
+#PBS -q short
 #PBS -o $PBS_JOBID.out
 #PBS -e $PBS_JOBID.err
 
