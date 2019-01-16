@@ -22,4 +22,6 @@ profiling/workbench/vincemark_Sep6/workspace.root
 *argument_string_list*.txt
 profiling/numIntSet_timing/tmp
 
+rootbench/*.nikhef.nl*
+
 .ipynb_checkpoints
