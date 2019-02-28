@@ -112,7 +112,8 @@ void workbench_sarajevo(std::string workspace_filepath,
   RooStats::ModelConfig* mc = static_cast<RooStats::ModelConfig*>(w->genobj(model_config_name.c_str()));
 
   // 
-  auto globs = static_cast<RooArgSet*>(mc->GlobalObservables());
+  auto globs = mc->GetGlobalObservables();
+  auto nuisance_params = mc->GetNuisanceParameters();
 
   // RooAbsPdf* pdf = w->pdf(mc->GetPdf()->GetName()) ;
   RooAbsPdf* pdf = mc->GetPdf();
@@ -162,12 +163,18 @@ void workbench_sarajevo(std::string workspace_filepath,
 
   // for (int it = 0; it < N_timing_loops; ++it)
   {
+    RooAbsReal * RARnll;
     if (globs == nullptr) {
-      RooAbsReal* RARnll(pdf->createNLL(*data, NumCPU(num_cpu, parallel_interleave),
-                        CPUAffinity(cpuAffinity)), GlobalObservables(globs));//, "Extended");
+      RARnll = pdf->createNLL(*data, NumCPU(num_cpu, parallel_interleave),
+                        CPUAffinity(cpuAffinity),
+			GlobalObservables(*globs),
+			Constrain(*nuisance_params),
+  			Offset(kTRUE));//, "Extended");
     } else {
-      RooAbsReal* RARnll(pdf->createNLL(*data, NumCPU(num_cpu, parallel_interleave),
-                  CPUAffinity(cpuAffinity)));//, "Extended");
+      RARnll = pdf->createNLL(*data, NumCPU(num_cpu, parallel_interleave),
+                	CPUAffinity(cpuAffinity),
+		 	Constrain(*nuisance_params),
+			Offset(kTRUE));//, "Extended");
     }
     // std::shared_ptr<RooAbsTestStatistic> nll(dynamic_cast<RooAbsTestStatistic*>(RARnll)); // shared_ptr gives odd error in ROOT cling!
     // RooAbsTestStatistic * nll = dynamic_cast<RooAbsTestStatistic*>(RARnll);
