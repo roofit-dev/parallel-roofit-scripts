@@ -254,6 +254,35 @@ def build_comb_df_split_timing_info(fn):
     return pd.concat(dflist)
 
 
+def combine_split_total_timings(df_total_timings, df_split_timings, calculate_rest=True):
+    df_meta = df_total_timings.drop(['real_time', 'real or ideal'], axis=1).dropna().set_index('benchmark_number', drop=True)
+
+    df_all_timings = df_total_timings.rename(columns={'real_time': 'time [s]'})
+    df_all_timings['time [s]'] /= 1000  # convert to seconds
+    df_all_timings['timing_type'] = 'total'
+
+    df_split_sum = {}
+    for name, df in df_split_timings.items():
+        df_split_sum[name] = df.groupby('benchmark_number').sum().join(df_meta, on='benchmark_number').reset_index()
+        df_split_sum[name]['real or ideal'] = 'real'
+        df_split_sum[name]['timing_type'] = name
+
+    df_all_timings = pd.concat([df_all_timings, ] + list(df_split_sum.values()))
+
+    if calculate_rest:
+        rest_time = df_all_timings[(df_all_timings['timing_type'] == 'total') & (df_all_timings['real or ideal'] == 'real')].set_index('benchmark_number')['time [s]']
+        for name, df in df_split_sum.items():
+            rest_time = rest_time - df.set_index('benchmark_number')['time [s]']
+
+        df_rest_time = rest_time.to_frame().join(df_meta, on='benchmark_number').reset_index()
+        df_rest_time['timing_type'] = 'rest'
+        df_rest_time['real or ideal'] = 'real'
+
+        df_all_timings = df_all_timings.append(df_rest_time)
+
+    return df_all_timings
+
+
 # Functions for plotting detailed partial derivatives timing statistics
 
 def plot_partial_derivative_per_worker(data, figsize=(16, 10)):
