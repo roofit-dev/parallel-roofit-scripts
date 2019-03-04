@@ -283,6 +283,15 @@ def combine_split_total_timings(df_total_timings, df_split_timings, calculate_re
     return df_all_timings
 
 
+def combine_detailed_with_gbench_timings_by_name(df_gbench, df_detailed, timing_types={}, **kwargs):
+    detailed_selection = {}
+    if len(timing_types) == 0:
+        raise Exception("Please give some timing_types, otherwise this function is pointless.")
+    for name, timing_type in timing_types.items():
+        detailed_selection[name] = df_detailed[df_detailed['timing_type'] == timing_type].drop('timing_type', axis=1)
+    return combine_split_total_timings(df_gbench, detailed_selection, **kwargs)
+
+
 # Functions for plotting detailed partial derivatives timing statistics
 
 def plot_partial_derivative_per_worker(data, figsize=(16, 10)):
