@@ -39,7 +39,28 @@ def sort_raw_benchmarks_by_named_type(raw_dict):
     return benchmarks
 
 
-def df_from_raw_named_bmlist(bmlist, name, add_ideal, group_ideal_by):
+def add_ideal_timings(df, group_ideal_by=None, time_col='real_time'):
+    if group_ideal_by is not None:
+        min_single_core = df[df['NumCPU'] == 1].groupby(group_ideal_by)[time_col].min()
+        df_ideal = min_single_core.to_frame(time_col)
+        df_ideal.reset_index(level=0, inplace=True)
+    else:
+        min_single_core = df[df['NumCPU'] == 1][time_col].min()
+        df_ideal = pd.DataFrame({time_col: [min_single_core]})
+    numCPU = np.unique(df['NumCPU'])
+    numCPU.sort()
+    df_numCPU = pd.Series(numCPU, name='NumCPU').to_frame()
+    # necessary for doing a cross merge (cartesian product):
+    df_numCPU['key'] = 1
+    df_ideal['key'] = 1
+    df_ideal = df_ideal.merge(df_numCPU, on='key', how='outer').drop('key', axis=1)
+    df_ideal[time_col] /= df_ideal['NumCPU']
+    df_ideal['real or ideal'] = "ideal"
+    df = pd.concat([df, df_ideal], sort=False)
+    return df
+
+
+def df_from_raw_named_bmlist(bmlist, name, add_ideal, group_ideal_by=None):
     df = pd.DataFrame(bmlist)
     df_names = pd.DataFrame(df.name.str.slice(start=len("BM_RooFit_")).str.split('/').values.tolist(), columns=columns[name])
     for c in columns[name][1:-1]:
@@ -59,23 +80,7 @@ def df_from_raw_named_bmlist(bmlist, name, add_ideal, group_ideal_by):
     df["real or ideal"] = "real"
 
     if add_ideal:
-        if group_ideal_by is not None:
-            min_single_core = df[df['NumCPU'] == 1].groupby(group_ideal_by)['real_time'].min()
-            df_ideal = min_single_core.to_frame('real_time')
-            df_ideal.reset_index(level=0, inplace=True)
-        else:
-            min_single_core = df[df['NumCPU'] == 1]['real_time'].min()
-            df_ideal = pd.DataFrame({'real_time': [min_single_core]})
-        numCPU = np.unique(df['NumCPU'])
-        numCPU.sort()
-        df_numCPU = pd.Series(numCPU, name='NumCPU').to_frame()
-        # necessary for doing a cross merge (cartesian product):
-        df_numCPU['key'] = 1
-        df_ideal['key'] = 1
-        df_ideal = df_ideal.merge(df_numCPU, on='key', how='outer').drop('key', axis=1)
-        df_ideal['real_time'] /= df_ideal['NumCPU']
-        df_ideal['real or ideal'] = "ideal"
-        df = pd.concat([df, df_ideal], sort=False)
+        df = add_ideal_timings(df, group_ideal_by)
 
     df = df.astype(dtype={'benchmark_number': 'Int64'})
     return df
@@ -255,7 +260,8 @@ def build_comb_df_split_timing_info(fn):
 
 
 def combine_split_total_timings(df_total_timings, df_split_timings,
-                                calculate_rest=True, exclude_from_rest=[]):
+                                calculate_rest=True, exclude_from_rest=[],
+                                add_ideal=[]):
     df_meta = df_total_timings.drop(['real_time', 'real or ideal'], axis=1).dropna().set_index('benchmark_number', drop=True)
 
     df_all_timings = df_total_timings.rename(columns={'real_time': 'time [s]'})
@@ -266,6 +272,8 @@ def combine_split_total_timings(df_total_timings, df_split_timings,
     for name, df in df_split_timings.items():
         df_split_sum[name] = df.groupby('benchmark_number').sum().join(df_meta, on='benchmark_number').reset_index()
         df_split_sum[name]['real or ideal'] = 'real'
+        if name in add_ideal:
+            df_split_sum[name] = add_ideal_timings(df_split_sum[name], time_col='time [s]')
         df_split_sum[name]['timing_type'] = name
 
     # note: sort sorts the *columns* if they are not aligned, nothing happens with the column data itself
