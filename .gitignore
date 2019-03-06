@@ -25,3 +25,5 @@ profiling/numIntSet_timing/tmp
 rootbench/*.nikhef.nl*
 
 .ipynb_checkpoints
+
+.vscode
