@@ -14,7 +14,9 @@ columns = {'BM_RooFit_BinnedMultiProcGradient': ('bm_name', 'bins', 'NumCPU', 'm
            'BM_RooFit_1DUnbinnedGaussianMultiProcessGradMinimizer': default_columns,
            'BM_RooFit_NDUnbinnedGaussianMultiProcessGradMinimizer': ('bm_name', 'NumCPU', 'dims', 'manual_time'),
            'BM_RooFit_MP_GradMinimizer_workspace_file': default_columns,
-           'BM_RooFit_RooMinimizer_workspace_file': ('bm_name', 'manual_time')
+           'BM_RooFit_MP_GradMinimizer_workspace_file_noOptConst': default_columns,
+           'BM_RooFit_RooMinimizer_workspace_file': ('bm_name', 'manual_time'),
+           'BM_RooFit_RooMinimizer_workspace_file_noOptConst':  ('bm_name', 'manual_time')
            }
 
 
