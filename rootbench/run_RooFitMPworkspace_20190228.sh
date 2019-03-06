@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#PBS -l nodes=1:ppn=32
+#PBS -l nodes=1:ppn=32,mem=250GB
 #PBS -q generic7
 #PBS -o $PBS_JOBID.out
 #PBS -e $PBS_JOBID.err
@@ -12,6 +12,7 @@ shopt -s expand_aliases
 
 source $HOME/root_deps.sh
 source $HOME/project_atlas/root-roofit-dev/cmake-build-release-20181218/bin/thisroot.sh
+source $HOME/project_atlas/RooFitExtensions/setup.sh
 
 export EXEC_PATH="$HOME/project_atlas/rootbench/cmake-build-release-20181218/root/roofit/roofit/RoofitMPworkspace"
 
@@ -23,6 +24,9 @@ set -e
 mkdir -p $RUNDIR
 cp $BASERUNDIR/run_RooFitMPworkspace_20190228.conf $RUNDIR/workspace_benchmark.conf
 cd $RUNDIR
+
+# unset stack size limits
+ulimit -s unlimited
 
 function start_run() {
   $EXEC_PATH --benchmark_out=$(basename ${EXEC_PATH})_$(date +%s).json --benchmark_repetitions=10
