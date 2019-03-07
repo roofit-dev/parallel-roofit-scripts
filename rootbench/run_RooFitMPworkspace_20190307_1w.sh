@@ -14,7 +14,7 @@ source $HOME/root_deps.sh
 source $HOME/project_atlas/root-roofit-dev/cmake-build-release-20181218/bin/thisroot.sh
 source $HOME/project_atlas/RooFitExtensions/setup.sh
 
-export EXEC_PATH="$HOME/project_atlas/rootbench/cmake-build-release-20181218/root/roofit/roofit/RoofitMPworkspace"
+export EXEC_PATH="$HOME/project_atlas/rootbench/cmake-build-release-20181218/root/roofit/roofit/RoofitMPworkspaceNumCPUInConfigFile"
 
 export BASERUNDIR="$HOME/project_atlas/apcocsm_code/rootbench"
 export RUNDIR="$BASERUNDIR/$PBS_JOBID"
@@ -29,7 +29,7 @@ cd $RUNDIR
 ulimit -s unlimited
 
 function start_run() {
-  $EXEC_PATH --benchmark_out=$(basename ${EXEC_PATH})_$(date +%s).json --benchmark_repetitions=10
+  $EXEC_PATH --benchmark_out=$(basename ${EXEC_PATH})_$(date +%s).json --benchmark_repetitions=3
 }
 
 start_run
