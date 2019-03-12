@@ -16,6 +16,15 @@ using namespace RooFit;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void acat19() {
+    RooMsgService::instance().deleteStream(0);
+    RooMsgService::instance().deleteStream(0);
+
+    RooMsgService::instance().addStream(RooFit::DEBUG, RooFit::Topic(RooFit::Benchmarking1));
+    RooMsgService::instance().addStream(RooFit::DEBUG, RooFit::Topic(RooFit::Benchmarking2));
+
+    std::size_t seed = 1;
+    RooRandom::randomGenerator()->SetSeed(seed);
+
     TFile *_file0 = TFile::Open("/user/pbos/data_atlas/carsten/comb-5xs-80ifb-v8.root");
 
     RooWorkspace* w = static_cast<RooWorkspace*>(gDirectory->Get("combWS"));
