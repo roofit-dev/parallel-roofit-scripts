@@ -15,7 +15,7 @@ using namespace RooFit;
 //                      { BulkPartition=0, Interleave=1, SimComponents=2, Hybrid=3 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void workbench_sarajevo() {
+void acat19() {
     TFile *_file0 = TFile::Open("/user/pbos/data_atlas/carsten/comb-5xs-80ifb-v8.root");
 
     RooWorkspace* w = static_cast<RooWorkspace*>(gDirectory->Get("combWS"));
@@ -47,6 +47,6 @@ void workbench_sarajevo() {
     auto end = std::chrono::high_resolution_clock::now();
     auto elapsed_seconds =
         std::chrono::duration_cast<std::chrono::duration<double>>(
-            end - start);
+            end - start).count();
     std::cout << "migrad: " << elapsed_seconds << "s" << std::endl;
 }
