@@ -35,21 +35,21 @@ void acat19() {
     auto nuisance_parameters = mc->GetNuisanceParameters();
     RooAbsPdf *pdf = w->pdf(mc->GetPdf()->GetName());
 
-    w->var("mu")->setVal(1.5);
+    // w->var("mu")->setVal(1.5);
 
     RooAbsReal *nll = pdf->createNLL(*data,
                             RooFit::GlobalObservables(*global_observables),
                             RooFit::Constrain(*nuisance_parameters),
                             RooFit::Offset(kTRUE));
 
-    RooFit::MultiProcess::GradMinimizer m(*nll, 1);
+    RooFit::MultiProcess::GradMinimizer m(*nll, 8);
 
     m.setPrintLevel(-1);
     m.setStrategy(0);
     m.setProfile(false);
     m.optimizeConst(2);
     m.setMinimizerType("Minuit2");
-    m.setVerbose(kTRUE);
+    // m.setVerbose(kTRUE);
 
     auto start = std::chrono::high_resolution_clock::now();
     m.migrad();
