@@ -151,8 +151,12 @@ void acat19_ND_gauss(std::size_t n_param) {
     m.setMinimizerType("Minuit2");
     // m.setVerbose(kTRUE);
 
+    auto get_time = [](){return std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count();};
+
     auto start = std::chrono::high_resolution_clock::now();
+    std::cout << "start migrad at " << get_time() << std::endl;
     m.migrad();
+    std::cout << "end migrad at " << get_time() << std::endl;
     auto end = std::chrono::high_resolution_clock::now();
     auto elapsed_seconds =
         std::chrono::duration_cast<std::chrono::duration<double>>(
