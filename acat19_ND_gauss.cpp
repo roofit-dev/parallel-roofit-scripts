@@ -11,7 +11,8 @@ using namespace RooFit;
 // return two unique_ptrs, the first because nll is a pointer,
 // the second because RooArgSet doesn't have a move ctor
 std::tuple<std::unique_ptr<RooAbsReal>, std::unique_ptr<RooArgSet>>
-generate_ND_gaussian_pdf_nll(RooWorkspace &w, unsigned int n, unsigned long N_events) {
+generate_ND_gaussian_pdf_nll(RooWorkspace &w, unsigned int n, unsigned long N_events,
+                             bool randomize) {
   RooArgSet obs_set;
 
   // create gaussian parameters
@@ -82,16 +83,18 @@ generate_ND_gaussian_pdf_nll(RooWorkspace &w, unsigned int n, unsigned long N_ev
   std::unique_ptr<RooAbsReal> nll {sum->createNLL(*data)};
 
   // set values randomly so that they actually need to do some fitting
-  for (unsigned ix = 0; ix < n; ++ix) {
-    {
-      std::ostringstream os;
-      os << "m" << ix;
-      dynamic_cast<RooRealVar *>(w.arg(os.str().c_str()))->setVal(RooRandom::randomGenerator()->Gaus(0, 2));
-    }
-    {
-      std::ostringstream os;
-      os << "s" << ix;
-      dynamic_cast<RooRealVar *>(w.arg(os.str().c_str()))->setVal(0.1 + abs(RooRandom::randomGenerator()->Gaus(0, 2)));
+  if (randomize) {
+    for (unsigned ix = 0; ix < n; ++ix) {
+      {
+        std::ostringstream os;
+        os << "m" << ix;
+        dynamic_cast<RooRealVar *>(w.arg(os.str().c_str()))->setVal(RooRandom::randomGenerator()->Gaus(0, 2));
+      }
+      {
+        std::ostringstream os;
+        os << "s" << ix;
+        dynamic_cast<RooRealVar *>(w.arg(os.str().c_str()))->setVal(0.1 + abs(RooRandom::randomGenerator()->Gaus(0, 2)));
+      }
     }
   }
 
@@ -123,7 +126,7 @@ generate_ND_gaussian_pdf_nll(RooWorkspace &w, unsigned int n, unsigned long N_ev
 //                      { BulkPartition=0, Interleave=1, SimComponents=2, Hybrid=3 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void acat19_ND_gauss(std::size_t n_param) {
+void acat19_ND_gauss(std::size_t n_param, bool randomize) {
     RooMsgService::instance().deleteStream(0);
     RooMsgService::instance().deleteStream(0);
 
@@ -140,7 +143,7 @@ void acat19_ND_gauss(std::size_t n_param) {
 
     std::unique_ptr<RooAbsReal> nll;
     std::unique_ptr<RooArgSet> values;
-    std::tie(nll, values) = generate_ND_gaussian_pdf_nll(w, n_dim, 1000);
+    std::tie(nll, values) = generate_ND_gaussian_pdf_nll(w, n_dim, 1000, randomize);
 
     RooFit::MultiProcess::GradMinimizer m(*nll, 8);
 
