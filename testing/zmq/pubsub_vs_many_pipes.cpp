@@ -181,7 +181,9 @@ std::tuple<double, double, double, double> pub_sub(int N_children, bool verbose)
     if (verbose) std::cout << "pub_sub " << N_children << " CHILDREN took on average " << rest_time << " seconds (plus " << initial_time << " seconds on the first receive, " << mean_time << " seconds average per receive)\n";
 
     // close things manually here as well to make sure we don't prematurely kill the children
+    subscribers_syncer.setsockopt(ZMQ_LINGER, 0);
     subscribers_syncer.close();
+    publisher.setsockopt(ZMQ_LINGER, 0);
     publisher.close();
     context.close();
 
@@ -234,7 +236,9 @@ std::tuple<double, double, double, double> pub_sub(int N_children, bool verbose)
     // well, not strictly necessary, but otherwise the program will hang
     // too long and it has to be sent a SIGKILL, if you close them manually
     // instead of relying on some magic in the context, it exits cleanly.
+    announcer.setsockopt(ZMQ_LINGER, 0);
     announcer.close();
+    subscriber.setsockopt(ZMQ_LINGER, 0);
     subscriber.close();
     // and finally close the context as well
     context.close();
