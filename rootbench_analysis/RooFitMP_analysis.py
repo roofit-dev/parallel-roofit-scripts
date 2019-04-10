@@ -15,8 +15,10 @@ columns = {'BM_RooFit_BinnedMultiProcGradient': ('bm_name', 'bins', 'NumCPU', 'm
            'BM_RooFit_NDUnbinnedGaussianMultiProcessGradMinimizer': ('bm_name', 'NumCPU', 'dims', 'manual_time'),
            'BM_RooFit_MP_GradMinimizer_workspace_file': default_columns,
            'BM_RooFit_MP_GradMinimizer_workspace_file_noOptConst': default_columns,
+           'BM_RooFit_MP_GradMinimizer_workspace_file_NumCPUInConfigFile': ('bm_name', 'manual_time'),
            'BM_RooFit_RooMinimizer_workspace_file': ('bm_name', 'manual_time'),
-           'BM_RooFit_RooMinimizer_workspace_file_noOptConst':  ('bm_name', 'manual_time')
+           'BM_RooFit_RooMinimizer_workspace_file_noOptConst':  ('bm_name', 'manual_time'),
+           'BM_RooFit_RooMinimizer_workspace_file_NumCPUInConfigFile': ('bm_name', 'manual_time')
            }
 
 
@@ -41,13 +43,14 @@ def sort_raw_benchmarks_by_named_type(raw_dict):
     return benchmarks
 
 
-def add_ideal_timings(df, group_ideal_by=None, time_col='real_time'):
+def add_ideal_timings(df, group_ideal_by=None, time_col='real_time',
+                      return_ideal=False, ideal_stat='min'):
     if group_ideal_by is not None:
-        min_single_core = df[df['NumCPU'] == 1].groupby(group_ideal_by)[time_col].min()
+        min_single_core = df[df['NumCPU'] == 1].groupby(group_ideal_by)[time_col].agg(ideal_stat)
         df_ideal = min_single_core.to_frame(time_col)
         df_ideal.reset_index(level=0, inplace=True)
     else:
-        min_single_core = df[df['NumCPU'] == 1][time_col].min()
+        min_single_core = df[df['NumCPU'] == 1][time_col].agg(ideal_stat)
         df_ideal = pd.DataFrame({time_col: [min_single_core]})
     numCPU = np.unique(df['NumCPU'])
     numCPU.sort()
@@ -59,7 +62,10 @@ def add_ideal_timings(df, group_ideal_by=None, time_col='real_time'):
     df_ideal[time_col] /= df_ideal['NumCPU']
     df_ideal['real or ideal'] = "ideal"
     df = pd.concat([df, df_ideal], sort=False)
-    return df
+    if return_ideal:
+        return df_ideal
+    else:
+        return df
 
 
 def df_from_raw_named_bmlist(bmlist, name, add_ideal, group_ideal_by=None):
@@ -88,37 +94,32 @@ def df_from_raw_named_bmlist(bmlist, name, add_ideal, group_ideal_by=None):
     return df
 
 
-def load_result_file(fn, show_dfs=False, figscale=6, plot_ideal=True, match_y_axes=False):
-    dfs = {}
+def hue_from_name(name):
+    if name == 'BM_RooFit_BinnedMultiProcGradient':
+        hue = 'bins'
+    elif name == 'BM_RooFit_NDUnbinnedGaussianMultiProcessGradMinimizer':
+        hue = 'dims'
+    else:
+        hue = None
+    return hue
 
-    with open(fn) as fh:
-        raw = json.load(fh)
 
-    print(raw['context'])
-    benchmarks = sort_raw_benchmarks_by_named_type(raw)
-
-    fig, ax = egp.plot.subplots(len(benchmarks), wrap=3,
-                                figsize=(len(benchmarks) * 1.1 * figscale, figscale),
+def plot_result_dfs(dfs, show_dfs=False, figscale=6, match_y_axes=False):
+    fig, ax = egp.plot.subplots(len(dfs), wrap=3,
+                                figsize=(len(dfs) * 1.1 * figscale, figscale),
                                 squeeze=False)
     ax = ax.flatten()
 
-    for ix, (name, bmlist) in enumerate(benchmarks.items()):
-        if name == 'BM_RooFit_BinnedMultiProcGradient':
-            hue = 'bins'
-        elif name == 'BM_RooFit_NDUnbinnedGaussianMultiProcessGradMinimizer':
-            hue = 'dims'
-        else:
-            hue = None
-
-        dfs[name] = df_from_raw_named_bmlist(bmlist, name, plot_ideal, hue)
+    for ix, (name, df) in enumerate(dfs.items()):
         if show_dfs:
-            display(dfs[name])
+            display(df)
 
         ax[ix].set_title(name)
 
-        sns.lineplot(data=dfs[name], x='NumCPU', y='real_time', hue=hue, style="real or ideal",
-                     markers=True, err_style="bars", legend='full',
-                     ax=ax[ix])
+        sns.lineplot(data=df, x='NumCPU', y='real_time',
+                    hue=hue_from_name(name), style="real or ideal",
+                    markers=True, err_style="bars", legend='full',
+                    ax=ax[ix])
 
     if match_y_axes:
         ymin, ymax = ax[0].get_ylim()
@@ -128,6 +129,23 @@ def load_result_file(fn, show_dfs=False, figscale=6, plot_ideal=True, match_y_ax
 
         for axi in ax:
             axi.set_ylim((ymin, ymax))
+
+
+def load_result_file(fn, show_dfs=False, figscale=6, plot_ideal=True,
+                     match_y_axes=False, plot_results=True):
+    dfs = {}
+
+    with open(fn) as fh:
+        raw = json.load(fh)
+
+    print(raw['context'])
+    benchmarks = sort_raw_benchmarks_by_named_type(raw)
+
+    for ix, (name, bmlist) in enumerate(benchmarks.items()):
+        dfs[name] = df_from_raw_named_bmlist(bmlist, name, plot_ideal, hue_from_name(name))
+
+    if plot_results:
+        plot_result_dfs(dfs, show_dfs=show_dfs, figscale=figscale, match_y_axes=match_y_axes)
 
     return dfs
 
