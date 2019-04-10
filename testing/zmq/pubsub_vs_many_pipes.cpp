@@ -180,6 +180,11 @@ std::tuple<double, double, double, double> pub_sub(int N_children, bool verbose)
 
     if (verbose) std::cout << "pub_sub " << N_children << " CHILDREN took on average " << rest_time << " seconds (plus " << initial_time << " seconds on the first receive, " << mean_time << " seconds average per receive)\n";
 
+    // close things manually here as well to make sure we don't prematurely kill the children
+    subscribers_syncer.close();
+    publisher.close();
+    context.close();
+
     for (int i = 0; i < N_children; ++i) {
       wait_for_child(child_pids[i], true, 5, 500);
     }
