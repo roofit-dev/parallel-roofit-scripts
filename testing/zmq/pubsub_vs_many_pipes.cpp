@@ -151,11 +151,12 @@ std::tuple<double, double, double, double> pub_sub(int N_children, int iteration
   if (this_child_pid > 0) { // parent
     zmq::context_t context {};
     zmq::socket_t publisher {context, zmq::socket_type::pub};
-
-    bind_socket(publisher, "tcp://*:5555");
+//    bind_socket(publisher, "tcp://*:5555");
+    bind_socket(publisher, "ipc:///tmp/zmq_socket_tests_publisher.ipc");
 
     zmq::socket_t subscribers_syncer {context, zmq::socket_type::pull};
-    bind_socket(subscribers_syncer, "tcp://*:5556");
+//    bind_socket(subscribers_syncer, "tcp://*:5556");
+    bind_socket(subscribers_syncer, "ipc:///tmp/zmq_socket_tests_subscriber.ipc");
 
     // wait with sending until all subscribers are connected
     int countdown = N_children;
@@ -255,11 +256,13 @@ std::tuple<double, double, double, double> pub_sub(int N_children, int iteration
     subscriber.setsockopt(ZMQ_SUBSCRIBE, "", 0);
     int timeout = 1000;  // milliseconds
     subscriber.setsockopt(ZMQ_RCVTIMEO, &timeout, sizeof(timeout));
-    subscriber.connect("tcp://127.0.0.1:5555");
+//    subscriber.connect("tcp://127.0.0.1:5555");
+    subscriber.connect("ipc:///tmp/zmq_socket_tests_publisher.ipc");
 
     // announce to the parent that we're subscribed
     zmq::socket_t announcer {context, zmq::socket_type::push};
-    announcer.connect("tcp://127.0.0.1:5556");
+//    announcer.connect("tcp://127.0.0.1:5556");
+    announcer.connect("ipc:///tmp/zmq_socket_tests_subscriber.ipc");
     zmq::message_t message {"", 0};
     announcer.send(message);
 
@@ -370,7 +373,8 @@ std::tuple<double, double, double, double> many_pipes(int N_children, int iterat
     for (int child = 0; child < N_children; ++child) {
       sockets.emplace_back(context, zmq::socket_type::pair);
       std::stringstream address;
-      address << "tcp://*:" << (5555 + child);
+//      address << "tcp://*:" << (5555 + child);
+      address << "ipc:///tmp/zmq_socket_tests_" << child << ".ipc";
       bind_socket(sockets.back(), address.str().c_str());
     }
 
@@ -439,7 +443,8 @@ std::tuple<double, double, double, double> many_pipes(int N_children, int iterat
 
     zmq::socket_t socket {context, zmq::socket_type::pair};
     std::stringstream address;
-    address << "tcp://127.0.0.1:" << (5555 + child_id);
+//    address << "tcp://127.0.0.1:" << (5555 + child_id);
+    address << "ipc:///tmp/zmq_socket_tests_" << child_id << ".ipc";
     socket.connect(address.str());
 
     // and go!
@@ -499,7 +504,7 @@ std::tuple<double, double, double, double> many_pipes(int N_children, int iterat
 
 int main(int argc, char const *argv[]) {
   int repeats = 100;
-  int iterations = 5000;  // per repeat
+  int iterations = 1000;  // per repeat
   int max_children = 4;
 
   std::vector<std::tuple<double, double, double, double>> pub_sub_results(repeats);
