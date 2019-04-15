@@ -501,6 +501,165 @@ std::tuple<double, double, double, double> many_pipes(int N_children, int iterat
 }
 
 
+template <int stop_pubs=5>
+std::tuple<double, double, double, double> push_pull(int N_children, int iterations, bool verbose) {
+  std::vector<pid_t> child_pids(N_children);
+  pid_t this_child_pid {0};
+  int child_id = -1;  // parent
+  for (int child = 0; child < N_children; ++child) {
+    this_child_pid = 0;
+    do {
+      this_child_pid = fork();
+    } while (this_child_pid == -1);  // retry if fork fails
+    if (this_child_pid == 0) {
+      child_id = child;
+      // don't continue creating children on child processes
+      break;
+    } else {
+      child_pids[child] = this_child_pid;
+    }
+  }
+
+  if (this_child_pid > 0) { // parent
+    zmq::context_t context {};
+    std::vector<zmq::socket_t> push_sockets;
+    for (int child = 0; child < N_children; ++child) {
+      push_sockets.emplace_back(context, zmq::socket_type::push);
+      std::stringstream address;
+      address << "tcp://*:" << (5556 + child);
+      bind_socket(push_sockets.back(), address.str().c_str());
+    }
+    zmq::socket_t pull_socket {context, zmq::socket_type::pull};
+    bind_socket(pull_socket, "tcp://*:5555");
+
+    decltype(get_time()) t1, t2;
+
+    t1 = get_time();
+    for (int i = 0; i < iterations; ++i) {
+      for (int child = 0; child < N_children; ++child) {
+        push_sockets[child].send({"extra,extra", 11});
+      }
+    }
+    t2 = get_time();
+
+    double parent_time = (t2 - t1)/1.e9;
+    if (verbose) std::cout << "push_pull PARENT took " << parent_time << " seconds\n";
+
+    // again wait for all children to be finished before killing them off
+    std::vector<double> initial_times(N_children), rest_times(N_children), mean_times(N_children);
+    if (verbose) std::cerr << "receive timings\n";
+
+    for (int child = 0; child < N_children; ++child) {
+      if (verbose) std::cerr << "tick.";
+      initial_times[child] = from_string<double>(receive(pull_socket));
+      if (verbose) std::cerr << ".";
+      rest_times[child] = from_string<double>(receive(pull_socket));
+      if (verbose) std::cerr << ".";
+      mean_times[child] = from_string<double>(receive(pull_socket));
+      if (verbose) std::cerr << "tock\n";
+    }
+    if (verbose) std::cerr << "received timings\n";
+
+    // averages
+    double initial_time {0}, rest_time {0}, mean_time {0};
+    for (int i = 0; i < N_children; ++i) {
+      initial_time += initial_times[i];
+      rest_time += rest_times[i];
+      mean_time += mean_times[i];
+    }
+    initial_time /= N_children;
+    rest_time /= N_children;
+    mean_time /= N_children;
+
+    if (verbose) std::cout << "push_pull " << N_children << " CHILDREN took on average " << rest_time << " seconds (plus " << initial_time << " seconds on the first receive, " << mean_time << " seconds average per receive)\n";
+
+    // close things manually here as well to make sure we don't prematurely kill the children
+    for (int child = 0; child < N_children; ++child) {
+      push_sockets[child].setsockopt(ZMQ_LINGER, 0);
+      push_sockets[child].close();
+    }
+    pull_socket.setsockopt(ZMQ_LINGER, 0);
+    pull_socket.close();
+    context.close();
+
+    for (int child = 0; child < N_children; ++child) {
+      wait_for_child(child_pids[child], true, 5, 500);
+    }
+
+    return {parent_time, initial_time, rest_time, mean_time};
+
+
+    // end of parent
+
+
+  } else { // child
+
+
+    zmq::context_t context {};
+
+    zmq::socket_t pull_socket {context, zmq::socket_type::pull};
+    std::stringstream address;
+    address << "tcp://127.0.0.1:" << (5556 + child_id);
+    pull_socket.connect(address.str());
+    zmq::socket_t push_socket {context, zmq::socket_type::push};
+    push_socket.connect("tcp://127.0.0.1:5555");
+
+    // and go!
+    int received = 0;
+
+    std::vector<decltype(get_time())> t1, t2;
+    t1.reserve(iterations);
+    t2.reserve(iterations);
+
+    for (int i = 0; i < iterations; ++i) {
+      t1.push_back(get_time());
+      std::string s;
+      try {
+        s = receive(pull_socket);
+      } catch (const receive_exception& e) {
+        std::cerr << "child PID " << getpid() << " stopped after receiving " << received << " and a half (the follow number) messages, missed " << iterations - received << "!\n";
+        t2.push_back(get_time());
+        break;
+      }
+      // note that this check has negligible cost, try commenting it out if you don't believe me ;)
+      if (s != "extra,extra") {
+        if (verbose) std::cerr << "ohnoes, it's " << s << "\n";
+      } else {
+        ++received;
+      }
+      t2.push_back(get_time());
+    }
+
+    double initial_time = (t2[0] - t1[0]) / 1.e9;
+    double rest_time = (t2[t2.size() - 1] - t1[1]) / 1.e9;
+    double mean_time = rest_time/(t2.size() - 1);
+
+    auto s = to_string_with_precision(initial_time, 10);
+    if (verbose) std::cerr << "first send PID " << getpid() << "\n";
+    push_socket.send({s.c_str(), s.length()}, ZMQ_SNDMORE);
+    s = to_string_with_precision(rest_time, 10);
+    if (verbose) std::cerr << "second send PID " << getpid() << "\n";
+    push_socket.send({s.c_str(), s.length()}, ZMQ_SNDMORE);
+    s = to_string_with_precision(mean_time, 10);
+    if (verbose) std::cerr << "third send PID " << getpid() << "\n";
+    push_socket.send({s.c_str(), s.length()});
+    if (verbose) std::cerr << "done sending PID " << getpid() << "\n";
+
+    // note: closing the sockets is apparently still necessary here!
+    // well, not strictly necessary, but otherwise the program will hang
+    // too long and it has to be sent a SIGKILL, if you close them manually
+    // instead of relying on some magic in the context, it exits cleanly.
+    pull_socket.setsockopt(ZMQ_LINGER, 0);
+    pull_socket.close();
+    push_socket.setsockopt(ZMQ_LINGER, 0);
+    push_socket.close();
+    // and finally close the context as well
+    context.close();
+    _Exit(0);
+  }
+}
+
+
 
 int main(int argc, char const *argv[]) {
   int repeats = 100;
@@ -509,9 +668,11 @@ int main(int argc, char const *argv[]) {
 
   std::vector<std::tuple<double, double, double, double>> pub_sub_results(repeats);
   std::vector<std::tuple<double, double, double, double>> many_pipes_results(repeats);
+  std::vector<std::tuple<double, double, double, double>> push_pull_results(repeats);
 
   std::vector<std::tuple<double, double, double, double>> pub_sub_means;
   std::vector<std::tuple<double, double, double, double>> many_pipes_means;
+  std::vector<std::tuple<double, double, double, double>> push_pull_means;
 
   std::cout << " === PUB-SUB ===\n";
 
@@ -573,7 +734,38 @@ int main(int argc, char const *argv[]) {
   }
 
 
-  std::cout << "\n === SPEED-UP " << iterations << " send/receives: MANY-PIPES/PUB-SUB (how much faster would using PUB-SUB be compared to many pipes) ===\n";
+//  std::cout << "\n === PUSH-PULL ===\n";
+//
+//  for (std::size_t children = 1; children <= max_children; ++children) {
+//    for (std::size_t i = 0; i < repeats; ++i) {
+//      push_pull_results[i] = push_pull(children, iterations, true);
+//    }
+//
+//    double parent = 0, init = 0, rest = 0, mean = 0;
+//    int successes = 0;
+//    for (int i = 0; i < repeats; ++i) {
+//      if (std::get<1>(push_pull_results[i]) != -1) {
+//        parent += std::get<0>(push_pull_results[i]);
+//        init += std::get<1>(push_pull_results[i]);
+//        rest += std::get<2>(push_pull_results[i]);
+//        mean += std::get<3>(push_pull_results[i]);
+//        ++successes;
+//      }
+//    }
+//    parent /= successes;
+//    init /= successes;
+//    rest /= successes;
+//    mean /= successes;
+//
+//    push_pull_means.emplace_back(parent, init, rest, mean);
+//    std::cout << "-- mean over " << successes << " successful repeats:\n"
+//              << "PARENT: " << parent << "\n"
+//              << children << " CHILDREN: " << rest << " (plus initial " << init << " = " << (rest + init) << " total); mean per receive: " << mean
+//              << "\n";
+//  }
+
+
+  std::cout << "\n\n === SPEED-UP " << iterations << " send/receives: MANY-PIPES/PUB-SUB (how much faster would using PUB-SUB be compared to many pipes) ===\n";
 
   for (std::size_t c = 0; c < max_children; ++c) {
     double parent = std::get<0>(many_pipes_means[c])/std::get<0>(pub_sub_means[c]);
@@ -587,4 +779,21 @@ int main(int argc, char const *argv[]) {
               << c + 1 << " CHILDREN: " << rest << " (+ initial " << init << " = " << total << " total); mean per receive: " << mean
               << "\n";
   }
+
+
+//  std::cout << "\n\n === SPEED-UP " << iterations << " send/receives: MANY-PIPES/PUSH-PULL (how much faster would using PUSH-PULL be compared to many pipes) ===\n";
+//
+//  for (std::size_t c = 0; c < max_children; ++c) {
+//    double parent = std::get<0>(many_pipes_means[c])/std::get<0>(push_pull_means[c]);
+//    double init = std::get<1>(many_pipes_means[c])/std::get<1>(push_pull_means[c]);
+//    double rest = std::get<2>(many_pipes_means[c])/std::get<2>(push_pull_means[c]);
+//    double mean = std::get<3>(many_pipes_means[c])/std::get<3>(push_pull_means[c]);
+//
+//    double total = (std::get<1>(many_pipes_means[c]) + std::get<2>(many_pipes_means[c])) /
+//                   (std::get<1>(push_pull_means[c]) + std::get<2>(push_pull_means[c]));
+//    std::cout << "PARENT: " << parent << "\n"
+//              << c + 1 << " CHILDREN: " << rest << " (+ initial " << init << " = " << total << " total); mean per receive: " << mean
+//              << "\n";
+//  }
+
 }
