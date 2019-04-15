@@ -131,8 +131,8 @@ T from_string(const std::string s) {
 }
 
 
-template <int iterations = 400, int stop_pubs=5>
-std::tuple<double, double, double, double> pub_sub(int N_children, bool verbose) {
+template <int stop_pubs=5>
+std::tuple<double, double, double, double> pub_sub(int N_children, int iterations, bool verbose) {
   std::vector<pid_t> child_pids(N_children);
   pid_t this_child_pid {0};
   for (int i = 0; i < N_children; ++i) {
@@ -208,16 +208,26 @@ std::tuple<double, double, double, double> pub_sub(int N_children, bool verbose)
 
     // averages
     double initial_time {0}, rest_time {0}, mean_time {0};
+    int N_successful = 0;
     for (int i = 0; i < N_children; ++i) {
-      initial_time += initial_times[i];
-      rest_time += rest_times[i];
-      mean_time += mean_times[i];
+      if (initial_times[i] != -1) {  // don't count failed runs
+        initial_time += initial_times[i];
+        rest_time += rest_times[i];
+        mean_time += mean_times[i];
+        ++N_successful;
+      }
     }
-    initial_time /= N_children;
-    rest_time /= N_children;
-    mean_time /= N_children;
+    if (N_successful == 0) {
+      initial_time = -1;
+      rest_time = -1;
+      mean_time = -1;
+    } else {
+      initial_time /= N_successful;
+      rest_time /= N_successful;
+      mean_time /= N_successful;
+    }
 
-    if (verbose) std::cout << "pub_sub " << N_children << " CHILDREN took on average " << rest_time << " seconds (plus " << initial_time << " seconds on the first receive, " << mean_time << " seconds average per receive)\n";
+    if (verbose) std::cout << "pub_sub " << N_children << " CHILDREN (of which " << N_successful << " ran successfully) took on average " << rest_time << " seconds (plus " << initial_time << " seconds on the first receive, " << mean_time << " seconds average per receive)\n";
 
     // close things manually here as well to make sure we don't prematurely kill the children
     subscribers_syncer.setsockopt(ZMQ_LINGER, 0);
@@ -260,6 +270,7 @@ std::tuple<double, double, double, double> pub_sub(int N_children, bool verbose)
     t1.reserve(iterations);
     t2.reserve(iterations);
 
+    bool failed = false;
     for (int i = 0; i < iterations; ++i) {
       t1.push_back(get_time());
       // Our protocol: multi-part messages, first part is a follow number (i
@@ -271,12 +282,12 @@ std::tuple<double, double, double, double> pub_sub(int N_children, bool verbose)
         follow = std::stoi(receive(subscriber));
       } catch (const receive_exception& e) {
         std::cerr << "child PID " << getpid() << " stopped after receiving " << received << " messages, missed " << iterations - received << "!\n";
-        t2.push_back(get_time());
+        failed = true;
         break;
       }
       if (follow == -1) {
         std::cerr << "child PID " << getpid() << " stopped after receiving " << received << " messages, missed " << iterations - received << "!\n";
-        t2.push_back(get_time());
+        failed = true;
         break;
       }
       std::string s;
@@ -284,7 +295,7 @@ std::tuple<double, double, double, double> pub_sub(int N_children, bool verbose)
         s = receive(subscriber);
       } catch (const receive_exception& e) {
         std::cerr << "child PID " << getpid() << " stopped after receiving " << received << " and a half (the follow number) messages, missed " << iterations - received << "!\n";
-        t2.push_back(get_time());
+        failed = true;
         break;
       }
       // note that this check has negligible cost, try commenting it out if you don't believe me ;)
@@ -296,9 +307,16 @@ std::tuple<double, double, double, double> pub_sub(int N_children, bool verbose)
       t2.push_back(get_time());
     }
 
-    double initial_time = (t2[0] - t1[0]) / 1.e9;
-    double rest_time = (t2[t2.size() - 1] - t1[1]) / 1.e9;
-    double mean_time = rest_time/(t2.size() - 1);
+    double initial_time, rest_time, mean_time;
+    if (!failed) {
+      initial_time = (t2[0] - t1[0]) / 1.e9;
+      rest_time = (t2[t2.size() - 1] - t1[1]) / 1.e9;
+      mean_time = rest_time/(t2.size() - 1);
+    } else {
+      initial_time = -1.;
+      rest_time = -1.;
+      mean_time = -1.;
+    }
 
     auto s = to_string_with_precision(initial_time, 10);
     if (verbose) std::cerr << "first send PID " << getpid() << "\n";
@@ -327,8 +345,8 @@ std::tuple<double, double, double, double> pub_sub(int N_children, bool verbose)
 
 
 
-template <int iterations = 400, int stop_pubs=5>
-std::tuple<double, double, double, double> many_pipes(int N_children, bool verbose) {
+template <int stop_pubs=5>
+std::tuple<double, double, double, double> many_pipes(int N_children, int iterations, bool verbose) {
   std::vector<pid_t> child_pids(N_children);
   pid_t this_child_pid {0};
   int child_id = -1;  // parent
@@ -352,7 +370,7 @@ std::tuple<double, double, double, double> many_pipes(int N_children, bool verbo
     for (int child = 0; child < N_children; ++child) {
       sockets.emplace_back(context, zmq::socket_type::pair);
       std::stringstream address;
-      address << "tcp://*:555" << (5 + child);
+      address << "tcp://*:" << (5555 + child);
       bind_socket(sockets.back(), address.str().c_str());
     }
 
@@ -421,7 +439,7 @@ std::tuple<double, double, double, double> many_pipes(int N_children, bool verbo
 
     zmq::socket_t socket {context, zmq::socket_type::pair};
     std::stringstream address;
-    address << "tcp://127.0.0.1:555" << (5 + child_id);
+    address << "tcp://127.0.0.1:" << (5555 + child_id);
     socket.connect(address.str());
 
     // and go!
@@ -481,6 +499,7 @@ std::tuple<double, double, double, double> many_pipes(int N_children, bool verbo
 
 int main(int argc, char const *argv[]) {
   int repeats = 100;
+  int iterations = 5000;  // per repeat
   int max_children = 4;
 
   std::vector<std::tuple<double, double, double, double>> pub_sub_results(repeats);
@@ -492,66 +511,75 @@ int main(int argc, char const *argv[]) {
   std::cout << " === PUB-SUB ===\n";
 
   for (std::size_t children = 1; children <= max_children; ++children) {
-//  for (std::size_t children = 8; children >= 1; --children) {
-    for (int i = 0; i < repeats; ++i) {
-      pub_sub_results[i] = pub_sub<100>(children, false);
+    for (std::size_t i = 0; i < repeats; ++i) {
+      pub_sub_results[i] = pub_sub(children, iterations, false);
     }
 
     double parent = 0, init = 0, rest = 0, mean = 0;
+    int successes = 0;
     for (int i = 0; i < repeats; ++i) {
-      parent += std::get<0>(pub_sub_results[i]);
-      init += std::get<1>(pub_sub_results[i]);
-      rest += std::get<2>(pub_sub_results[i]);
-      mean += std::get<3>(pub_sub_results[i]);
+      if (std::get<1>(pub_sub_results[i]) != -1) {
+        parent += std::get<0>(pub_sub_results[i]);
+        init += std::get<1>(pub_sub_results[i]);
+        rest += std::get<2>(pub_sub_results[i]);
+        mean += std::get<3>(pub_sub_results[i]);
+        ++successes;
+      }
     }
-    parent /= repeats;
-    init /= repeats;
-    rest /= repeats;
-    mean /= repeats;
+    parent /= successes;
+    init /= successes;
+    rest /= successes;
+    mean /= successes;
 
     pub_sub_means.emplace_back(parent, init, rest, mean);
-    std::cout << "-- mean over " << repeats << " repeats:\n"
+    std::cout << "-- mean over " << successes << " successful repeats:\n"
               << "PARENT: " << parent << "\n"
-              << children << " CHILDREN: " << rest << " (plus initial " << init << "); mean per receive: " << mean
+              << children << " CHILDREN: " << rest << " (plus initial " << init << " = " << (rest + init) << " total); mean per receive: " << mean
               << "\n";
   }
 
   std::cout << "\n === MANY PIPES ===\n";
   for (std::size_t children = 1; children <= max_children; ++children) {
-//  for (std::size_t children = 8; children >= 1; --children) {
     for (int i = 0; i < repeats; ++i) {
-      many_pipes_results[i] = many_pipes<100>(children, false);
+      many_pipes_results[i] = many_pipes(children, iterations, false);
     }
 
     double parent = 0, init = 0, rest = 0, mean = 0;
+    int successes = 0;
     for (int i = 0; i < repeats; ++i) {
-      parent += std::get<0>(many_pipes_results[i]);
-      init += std::get<1>(many_pipes_results[i]);
-      rest += std::get<2>(many_pipes_results[i]);
-      mean += std::get<3>(many_pipes_results[i]);
+      if (std::get<1>(many_pipes_results[i]) != -1) {
+        parent += std::get<0>(many_pipes_results[i]);
+        init += std::get<1>(many_pipes_results[i]);
+        rest += std::get<2>(many_pipes_results[i]);
+        mean += std::get<3>(many_pipes_results[i]);
+        ++successes;
+      }
     }
-    parent /= repeats;
-    init /= repeats;
-    rest /= repeats;
-    mean /= repeats;
+    parent /= successes;
+    init /= successes;
+    rest /= successes;
+    mean /= successes;
 
     many_pipes_means.emplace_back(parent, init, rest, mean);
-    std::cout << "-- mean over " << repeats << " repeats:\n"
+    std::cout << "-- mean over " << successes << " successful repeats:\n"
               << "PARENT: " << parent << "\n"
-              << children << " CHILDREN: " << rest << " (plus initial " << init << "); mean per receive: " << mean
+              << children << " CHILDREN: " << rest << " (+ initial " << init << " = " << (rest + init) << " total); mean per receive: " << mean
               << "\n";
   }
 
 
-  std::cout << "\n === SPEED-UP: MANY-PIPES/PUB-SUB (how much faster would using PUB-SUB be compared to many pipes) ===\n";
+  std::cout << "\n === SPEED-UP " << iterations << " send/receives: MANY-PIPES/PUB-SUB (how much faster would using PUB-SUB be compared to many pipes) ===\n";
 
   for (std::size_t c = 0; c < max_children; ++c) {
     double parent = std::get<0>(many_pipes_means[c])/std::get<0>(pub_sub_means[c]);
     double init = std::get<1>(many_pipes_means[c])/std::get<1>(pub_sub_means[c]);
     double rest = std::get<2>(many_pipes_means[c])/std::get<2>(pub_sub_means[c]);
     double mean = std::get<3>(many_pipes_means[c])/std::get<3>(pub_sub_means[c]);
+
+    double total = (std::get<1>(many_pipes_means[c]) + std::get<2>(many_pipes_means[c])) /
+        (std::get<1>(pub_sub_means[c]) + std::get<2>(pub_sub_means[c]));
     std::cout << "PARENT: " << parent << "\n"
-              << c + 1 << " CHILDREN: " << rest << " (plus initial " << init << "); mean per receive: " << mean
+              << c + 1 << " CHILDREN: " << rest << " (+ initial " << init << " = " << total << " total); mean per receive: " << mean
               << "\n";
   }
 }
