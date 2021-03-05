@@ -13,6 +13,7 @@ timing*.json
 *.png
 .DS_Store
 *.hdf
+*.x
 
 profiling/workbench/**/*.txt
 profiling/workbench/**/*.trace
@@ -27,3 +28,5 @@ rootbench/*.nikhef.nl*
 .ipynb_checkpoints
 
 .vscode
+
+testing/zmq
