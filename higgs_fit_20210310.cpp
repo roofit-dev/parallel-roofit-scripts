@@ -1,10 +1,12 @@
 // call from command line like, for instance:
-// root -l 'higgs_fit_20210310.cpp()'
+// root -l 'higgs_fit_20210310.cpp(...)'
 
 R__LOAD_LIBRARY(libRooFit)
 
 #include <chrono>
 #include <iostream>
+#include <fstream>
+#include <sstream>
 
 using namespace RooFit;
 
@@ -15,7 +17,27 @@ using namespace RooFit;
 //                      { BulkPartition=0, Interleave=1, SimComponents=2, Hybrid=3 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void higgs_fit_20210310(const char* workspace_filename, std::size_t N_workers = 2) {
+std::tuple<std::string, std::string, std::string, std::string, std::size_t> read_config_file(const char * config_filename) {
+  std::string workspace_filename, workspace_name, dataset_name, modelconfig_name, NumCPU_s;
+  std::size_t NumCPU;
+
+  std::ifstream workspace_file_config_file(config_filename);
+  if (workspace_file_config_file.is_open()) {
+    std::getline(workspace_file_config_file, workspace_filename);
+    std::getline(workspace_file_config_file, workspace_name);
+    std::getline(workspace_file_config_file, dataset_name);
+    std::getline(workspace_file_config_file, modelconfig_name);
+    std::getline(workspace_file_config_file, NumCPU_s);
+    std::stringstream ss;
+    ss << NumCPU_s;
+    ss >> NumCPU;
+  } else {
+    throw std::runtime_error("Could not open workspace_benchmark.conf configuration file");
+  }
+  return {workspace_filename, workspace_name, dataset_name, modelconfig_name, NumCPU};
+}
+
+void higgs_fit_20210310(const char* config_filename, bool use_multiprocess = true) {
     RooMsgService::instance().deleteStream(0);
     RooMsgService::instance().deleteStream(0);
 
@@ -25,30 +47,38 @@ void higgs_fit_20210310(const char* workspace_filename, std::size_t N_workers = 
     std::size_t seed = 1;
     RooRandom::randomGenerator()->SetSeed(seed);
 
-    // TFile *_file0 = TFile::Open("/user/pbos/data_atlas/carsten/comb-5xs-80ifb-v8.root");
-    TFile *_file0 = TFile::Open(workspace_filename);
+    // read filename and dataset / modelconfig names from configuration file
+    std::string workspace_filename, workspace_name, dataset_name, modelconfig_name;
+    std::size_t NumCPU;
+    std::tie(workspace_filename, workspace_name, dataset_name, modelconfig_name, NumCPU) = read_config_file(config_filename);
 
-    RooWorkspace* w = static_cast<RooWorkspace*>(gDirectory->Get("combWS"));
+    TFile *_file0 = TFile::Open(workspace_filename.c_str());
 
-    RooAbsData *data = w->data("combData");
-    auto mc = dynamic_cast<RooStats::ModelConfig *>(w->genobj("ModelConfig"));
+    RooWorkspace* w = static_cast<RooWorkspace*>(gDirectory->Get(workspace_name.c_str()));
+
+    RooAbsData *data = w->data(dataset_name.c_str());
+    auto mc = dynamic_cast<RooStats::ModelConfig *>(w->genobj(modelconfig_name.c_str()));
     auto global_observables = mc->GetGlobalObservables();
     auto nuisance_parameters = mc->GetNuisanceParameters();
     RooAbsPdf *pdf = w->pdf(mc->GetPdf()->GetName());
 
+    std::unique_ptr<RooMinimizer> m;
+
     // w->var("mu")->setVal(1.5);
 
-    // RooAbsReal *nll = pdf->createNLL(*data,
-    //                         RooFit::GlobalObservables(*global_observables),
-    //                         RooFit::Constrain(*nuisance_parameters),
-    //                         RooFit::Offset(kTRUE));
+    if (use_multiprocess) {
+        RooFit::MultiProcess::JobManager::default_N_workers = NumCPU;
+        auto likelihood = RooFit::TestStatistics::build_simultaneous_likelihood(pdf, data, RooFit::TestStatistics::ConstrainedParameters(*nuisance_parameters), RooFit::TestStatistics::GlobalObservables(*global_observables));
+        likelihood->enable_offsetting(true);
+        m = RooMinimizer::create<RooFit::TestStatistics::LikelihoodSerial, RooFit::TestStatistics::LikelihoodGradientJob>(likelihood);
+    } else {
+        RooAbsReal *nll = pdf->createNLL(*data,
+                                         RooFit::GlobalObservables(*global_observables),
+                                         RooFit::Constrain(*nuisance_parameters),
+                                         RooFit::Offset(kTRUE));
 
-    // RooFit::MultiProcess::GradMinimizer m(*nll, 8);
-
-    RooFit::MultiProcess::JobManager::default_N_workers = N_workers;
-    auto likelihood = RooFit::TestStatistics::build_simultaneous_likelihood(pdf, data, RooFit::TestStatistics::ConstrainedParameters(*nuisance_parameters), RooFit::TestStatistics::GlobalObservables(*global_observables));
-    likelihood->enable_offsetting(true);
-    std::unique_ptr<RooMinimizer> m = RooMinimizer::create<RooFit::TestStatistics::LikelihoodSerial, RooFit::TestStatistics::LikelihoodGradientJob>(likelihood);
+        m = RooMinimizer::create(*nll);
+    }
 
     m->setPrintLevel(-1);
     m->setStrategy(0);
