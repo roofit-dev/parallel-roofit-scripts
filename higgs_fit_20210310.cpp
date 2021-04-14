@@ -69,8 +69,8 @@ void higgs_fit_20210310(const char* config_filename, bool use_multiprocess = tru
     if (use_multiprocess) {
         RooFit::MultiProcess::JobManager::default_N_workers = NumCPU;
         auto likelihood = RooFit::TestStatistics::build_simultaneous_likelihood(pdf, data, RooFit::TestStatistics::ConstrainedParameters(*nuisance_parameters), RooFit::TestStatistics::GlobalObservables(*global_observables));
-        likelihood->enable_offsetting(true);
         m = RooMinimizer::create<RooFit::TestStatistics::LikelihoodSerial, RooFit::TestStatistics::LikelihoodGradientJob>(likelihood);
+        m->enable_likelihood_offsetting(true);
     } else {
         RooAbsReal *nll = pdf->createNLL(*data,
                                          RooFit::GlobalObservables(*global_observables),
