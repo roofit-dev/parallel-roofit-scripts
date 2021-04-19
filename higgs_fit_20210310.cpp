@@ -80,7 +80,7 @@ void higgs_fit_20210310(const char* config_filename, bool use_multiprocess = tru
         m = RooMinimizer::create(*nll);
     }
 
-    m->setPrintLevel(-1);
+    m->setPrintLevel(1);
     m->setStrategy(0);
     m->setProfile(false);
     m->optimizeConst(2);
@@ -98,4 +98,6 @@ void higgs_fit_20210310(const char* config_filename, bool use_multiprocess = tru
         std::chrono::duration_cast<std::chrono::duration<double>>(
             end - start).count();
     std::cout << "migrad: " << elapsed_seconds << "s" << std::endl;
+
+    m->cleanup();
 }
